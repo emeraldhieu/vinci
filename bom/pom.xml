@@ -1,0 +1,421 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>com.emeraldhieu.vinci</groupId>
+    <artifactId>bom</artifactId>
+    <name>Bill of Materials</name>
+    <version>1.0-SNAPSHOT</version>
+    <packaging>pom</packaging>
+
+    <properties>
+        <!-- Used by maven-compiler-plugin if source and target are not configured -->
+        <maven.compiler.source>${javaVersion}</maven.compiler.source>
+        <maven.compiler.target>${javaVersion}</maven.compiler.target>
+        <maven.compiler.release>${javaVersion}</maven.compiler.release>
+
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+        <maven.build.timestamp.format>yyyyMMddHHmmss</maven.build.timestamp.format>
+        <resourceDelimiter>@</resourceDelimiter>
+
+        <!--
+            Something related to SecureRandom.
+            See https://www.baeldung.com/java-security-egd
+        -->
+        <argLine>-Djava.security.egd=file:/dev/./urandom -Xmx256m</argLine>
+        <run.addResources>false</run.addResources>
+
+        <!-- Test report configs -->
+        <testResultDirectory>${project.build.directory}/testResults</testResultDirectory>
+        <unitTestReportDirectory>${testResultDirectory}/unitTests</unitTestReportDirectory>
+        <integrationTestReportDirectory>${testResultDirectory}/integrationTests</integrationTestReportDirectory>
+
+        <!-- Usage:
+            mvn clean install -DskipTests
+            mvn clean install -DskipUnitTests
+            mvn clean install -DskipIntegrationTests
+        -->
+        <skipTests>false</skipTests>
+        <skipUnitTests>${skipTests}</skipUnitTests>
+        <skipIntegrationTests>${skipTests}</skipIntegrationTests>
+
+        <!-- Versions. -->
+        <javaVersion>18</javaVersion>
+        <springBootVersion>2.7.4</springBootVersion>
+        <springCloudVersion>2021.0.4</springCloudVersion>
+        <mavenS3WagonVersion>1.3.3</mavenS3WagonVersion>
+        <springCloudSleuthOtelVersion>1.1.0-M6</springCloudSleuthOtelVersion>
+        <springDocOpenApiUiVersion>1.6.9</springDocOpenApiUiVersion>
+        <mavenResourcesPluginVersion>3.2.0</mavenResourcesPluginVersion>
+        <mavenSurefirePluginVersion>2.22.2</mavenSurefirePluginVersion>
+        <mavenFailsafePluginVersion>2.22.2</mavenFailsafePluginVersion>
+        <javaJwtVersion>4.0.0</javaJwtVersion>
+        <jwksRsaVersion>0.9.0</jwksRsaVersion>
+        <amazonBomV1Version>1.12.315</amazonBomV1Version>
+        <amazonBomV2Version>2.17.285</amazonBomV2Version>
+        <jacocoMavenPluginVersion>0.8.8</jacocoMavenPluginVersion>
+        <mavenCompilerPluginVersion>3.10.1</mavenCompilerPluginVersion>
+        <jacksonDatabindVersion>2.14.0-rc1</jacksonDatabindVersion>
+        <nettyResolverDnsNativeMacosVersion>4.1.82.Final</nettyResolverDnsNativeMacosVersion>
+        <lombokVersion>1.18.24</lombokVersion>
+        <mapstructVersion>1.5.2.Final</mapstructVersion>
+        <hibernateVersion>5.6.10.Final</hibernateVersion>
+        <jaxbRuntimeVersion>4.0.0</jaxbRuntimeVersion>
+        <hibernateValidatorVersion>8.0.0.Final</hibernateValidatorVersion>
+        <openApiGeneratorMavenPluginVersion>6.0.1</openApiGeneratorMavenPluginVersion>
+        <jacksonDatabindNullableVersion>0.2.3</jacksonDatabindNullableVersion>
+    </properties>
+
+    <dependencyManagement>
+        <dependencies>
+            <!--
+                Import Spring Boot dependency management.
+                See https://docs.spring.io/spring-boot/docs/current/maven-plugin/reference/htmlsingle/#using.import
+            -->
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-dependencies</artifactId>
+                <version>${springBootVersion}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+
+            <!-- Import Spring Cloud dependency management. -->
+            <dependency>
+                <groupId>org.springframework.cloud</groupId>
+                <artifactId>spring-cloud-dependencies</artifactId>
+                <version>${springCloudVersion}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+
+            <dependency>
+                <groupId>org.springframework.cloud</groupId>
+                <artifactId>spring-cloud-sleuth-otel-dependencies</artifactId>
+                <!-- Provide the version of the Spring Cloud Sleuth OpenTelemetry project -->
+                <version>${springCloudSleuthOtelVersion}</version>
+                <scope>import</scope>
+                <type>pom</type>
+            </dependency>
+
+            <!--
+                Deploy Swagger UI to Spring Boot application.
+                See https://springdoc.org/#getting-started
+            -->
+            <dependency>
+                <groupId>org.springdoc</groupId>
+                <artifactId>springdoc-openapi-ui</artifactId>
+                <version>${springDocOpenApiUiVersion}</version>
+            </dependency>
+
+            <!--
+                Fix "Unable to load io.netty.resolver.dns.macos.MacOSDnsServerAddressStreamProvider,
+                fallback to system defaults. This may result in incorrect DNS resolutions on MacOS." on Apple M1
+                See https://stackoverflow.com/questions/65954571/spring-boot-2-4-2-dns-resolution-problem-at-start-on-apple-m1#66471176
+            -->
+            <dependency>
+                <groupId>io.netty</groupId>
+                <artifactId>netty-resolver-dns-native-macos</artifactId>
+                <version>${nettyResolverDnsNativeMacosVersion}</version>
+            </dependency>
+
+            <!-- Use JWTVerifier and DecodedJWT to verify and decode Auth0 access token. -->
+            <dependency>
+                <groupId>com.auth0</groupId>
+                <artifactId>java-jwt</artifactId>
+                <version>${javaJwtVersion}</version>
+            </dependency>
+            <!-- Use JwkProvider and Jwk to get Auth0 public key from the issuer. -->
+            <dependency>
+                <groupId>com.auth0</groupId>
+                <artifactId>jwks-rsa</artifactId>
+                <version>${jwksRsaVersion}</version>
+            </dependency>
+
+            <!-- AWS SDK v1's Bill of Materials -->
+            <dependency>
+                <groupId>com.amazonaws</groupId>
+                <artifactId>aws-java-sdk-bom</artifactId>
+                <version>${amazonBomV1Version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+
+            <!-- AWS SDK v2's Bill of Materials -->
+            <dependency>
+                <groupId>software.amazon.awssdk</groupId>
+                <artifactId>bom</artifactId>
+                <version>${amazonBomV2Version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+
+            <!-- TODO Is this needed? -->
+            <dependency>
+                <groupId>org.openapitools</groupId>
+                <artifactId>jackson-databind-nullable</artifactId>
+                <version>${jacksonDatabindVersion}</version>
+            </dependency>
+
+            <!-- TODO Is this needed? -->
+            <dependency>
+                <groupId>com.fasterxml.jackson.core</groupId>
+                <artifactId>jackson-databind</artifactId>
+                <version>${jacksonDatabindVersion}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.projectlombok</groupId>
+                <artifactId>lombok</artifactId>
+                <version>${lombokVersion}</version>
+            </dependency>
+
+            <!-- Create mappers -->
+            <dependency>
+                <groupId>org.mapstruct</groupId>
+                <artifactId>mapstruct</artifactId>
+                <version>${mapstructVersion}</version>
+            </dependency>
+
+            <!-- Hibernate validation -->
+            <dependency>
+                <groupId>org.hibernate.validator</groupId>
+                <artifactId>hibernate-validator</artifactId>
+                <version>${hibernateValidatorVersion}</version>
+            </dependency>
+
+            <!-- Used for Open API -->
+            <dependency>
+                <groupId>org.openapitools</groupId>
+                <artifactId>jackson-databind-nullable</artifactId>
+                <version>${jacksonDatabindNullableVersion}</version>
+            </dependency>
+
+        </dependencies>
+    </dependencyManagement>
+
+    <build>
+        <pluginManagement>
+            <plugins>
+                <!--
+                    Repackage jar file into executable jar.
+                    See https://docs.spring.io/spring-boot/docs/current/maven-plugin/reference/htmlsingle/#packaging
+                 -->
+                <plugin>
+                    <groupId>org.springframework.boot</groupId>
+                    <artifactId>spring-boot-maven-plugin</artifactId>
+                    <version>${springBootVersion}</version>
+                    <executions>
+                        <execution>
+                            <goals>
+                                <goal>repackage</goal>
+                            </goals>
+                        </execution>
+                    </executions>
+                    <configuration>
+                        <mainClass>${start-class}</mainClass>
+                        <excludes>
+                            <exclude>
+                                <groupId>org.projectlombok</groupId>
+                                <artifactId>lombok</artifactId>
+                            </exclude>
+                        </excludes>
+                    </configuration>
+                </plugin>
+
+                <!--
+                    Sensible resource filtering for application.properties and application.yml including profile-specific files.
+                    See https://maven.apache.org/plugins/maven-resources-plugin/examples/filter.html
+                -->
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-resources-plugin</artifactId>
+                    <version>${mavenResourcesPluginVersion}</version>
+                    <configuration>
+                        <delimiters>
+                            <delimiter>${resourceDelimiter}</delimiter>
+                        </delimiters>
+                        <useDefaultDelimiters>false</useDefaultDelimiters>
+                    </configuration>
+                </plugin>
+
+                <!-- Configure unit tests. -->
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-surefire-plugin</artifactId>
+                    <version>${mavenSurefirePluginVersion}</version>
+                    <configuration>
+                        <!-- Force alphabetical order to have a reproducible build -->
+                        <runOrder>alphabetical</runOrder>
+                        <!-- Fixes a bug which will be solved in next version after 2.22.1 then this can be removed -->
+                        <!-- see: https://issues.apache.org/jira/browse/SUREFIRE-1588 -->
+                        <useSystemClassLoader>false</useSystemClassLoader>
+                        <reportsDirectory>${unitTestReportDirectory}</reportsDirectory>
+                        <skipTests>${skipUnitTests}</skipTests>
+                        <!-- Disable spring cloud k8s in unit test -->
+                        <systemPropertyVariables>
+                            <spring.cloud.kubernetes.enabled>false</spring.cloud.kubernetes.enabled>
+                        </systemPropertyVariables>
+                        <excludes>
+                            <exclude>**/*IntegrationTest</exclude>
+                        </excludes>
+                    </configuration>
+                </plugin>
+
+                <!-- Configure integration tests -->
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-failsafe-plugin</artifactId>
+                    <version>${mavenFailsafePluginVersion}</version>
+                    <configuration>
+                        <!-- Due to spring-boot repackage, without adding this property test classes are not found
+                             See https://github.com/spring-projects/spring-boot/issues/6254 -->
+                        <classesDirectory>${project.build.outputDirectory}</classesDirectory>
+                        <!-- Force alphabetical order to have a reproducible build -->
+                        <runOrder>alphabetical</runOrder>
+                        <reportsDirectory>${integrationTestReportDirectory}</reportsDirectory>
+                        <includes>
+                            <include>**/*IT*</include>
+                            <include>**/*IntegrationTest</include>
+                            <include>**/*IntTest*</include>
+                            <include>**/*CucumberIT*</include>
+                        </includes>
+                        <skipTests>${skipIntegrationTests}</skipTests>
+                    </configuration>
+                    <executions>
+                        <execution>
+                            <id>integration-test</id>
+                            <goals>
+                                <goal>integration-test</goal>
+                            </goals>
+                        </execution>
+                        <execution>
+                            <id>verify</id>
+                            <goals>
+                                <goal>verify</goal>
+                            </goals>
+                        </execution>
+                    </executions>
+                </plugin>
+
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-compiler-plugin</artifactId>
+                    <version>${mavenCompilerPluginVersion}</version>
+                    <configuration>
+                        <source>${javaVersion}</source>
+                        <target>${javaVersion}</target>
+                        <annotationProcessorPaths>
+                            <path>
+                                <groupId>org.mapstruct</groupId>
+                                <artifactId>mapstruct-processor</artifactId>
+                                <version>${mapstructVersion}</version>
+                            </path>
+                            <!-- For JPA static metamodel generation -->
+                            <path>
+                                <groupId>org.hibernate</groupId>
+                                <artifactId>hibernate-jpamodelgen</artifactId>
+                                <version>${hibernateVersion}</version>
+                            </path>
+                            <path>
+                                <groupId>org.glassfish.jaxb</groupId>
+                                <artifactId>jaxb-runtime</artifactId>
+                                <version>${jaxbRuntimeVersion}</version>
+                            </path>
+                            <!-- Recognize Lombok annotations upon build -->
+                            <path>
+                                <groupId>org.projectlombok</groupId>
+                                <artifactId>lombok</artifactId>
+                                <version>${lombokVersion}</version>
+                            </path>
+                        </annotationProcessorPaths>
+                    </configuration>
+                </plugin>
+
+                <plugin>
+                    <!--
+                        Provide API-first development using openapi-generator-cli to
+                        generate Spring-MVC endpoint stubs at compile time from an OpenAPI definition file
+                    -->
+                    <groupId>org.openapitools</groupId>
+                    <artifactId>openapi-generator-maven-plugin</artifactId>
+                    <version>${openApiGeneratorMavenPluginVersion}</version>
+                    <executions>
+                        <execution>
+                            <goals>
+                                <goal>generate</goal>
+                            </goals>
+                        </execution>
+                    </executions>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>${mavenCompilerPluginVersion}</version>
+                <configuration>
+                    <source>${javaVersion}</source>
+                    <target>${javaVersion}</target>
+                </configuration>
+            </plugin>
+        </plugins>
+
+        <!-- Extension for private S3 Maven repository. -->
+        <extensions>
+            <extension>
+                <groupId>com.github.seahen</groupId>
+                <artifactId>maven-s3-wagon</artifactId>
+                <version>${mavenS3WagonVersion}</version>
+            </extension>
+        </extensions>
+    </build>
+
+    <repositories>
+        <!-- Used for spring-cloud-sleuth-otel-dependencies -->
+        <repository>
+            <id>spring-milestones</id>
+            <url>https://repo.spring.io/milestone</url>
+        </repository>
+    </repositories>
+
+    <profiles>
+        <profile>
+            <id>coverage</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.jacoco</groupId>
+                        <artifactId>jacoco-maven-plugin</artifactId>
+                        <version>${jacocoMavenPluginVersion}</version>
+                        <executions>
+                            <execution>
+                                <id>prepare-agent</id>
+                                <goals>
+                                    <goal>prepare-agent</goal>
+                                </goals>
+                            </execution>
+                            <execution>
+                                <id>report</id>
+                                <goals>
+                                    <goal>report</goal>
+                                </goals>
+                                <configuration>
+                                    <formats>
+                                        <format>XML</format>
+                                    </formats>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
+
+</project>
