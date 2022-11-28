@@ -153,20 +153,6 @@
                 <scope>import</scope>
             </dependency>
 
-            <!-- TODO Is this needed? -->
-            <dependency>
-                <groupId>org.openapitools</groupId>
-                <artifactId>jackson-databind-nullable</artifactId>
-                <version>${jacksonDatabindVersion}</version>
-            </dependency>
-
-            <!-- TODO Is this needed? -->
-            <dependency>
-                <groupId>com.fasterxml.jackson.core</groupId>
-                <artifactId>jackson-databind</artifactId>
-                <version>${jacksonDatabindVersion}</version>
-            </dependency>
-
             <dependency>
                 <groupId>org.projectlombok</groupId>
                 <artifactId>lombok</artifactId>
@@ -187,7 +173,7 @@
                 <version>${hibernateValidatorVersion}</version>
             </dependency>
 
-            <!-- Used for Open API -->
+            <!-- Use @JsonNullable for Open API -->
             <dependency>
                 <groupId>org.openapitools</groupId>
                 <artifactId>jackson-databind-nullable</artifactId>
@@ -337,8 +323,9 @@
 
                 <plugin>
                     <!--
-                        Provide API-first development using openapi-generator-cli to
-                        generate Spring-MVC endpoint stubs at compile time from an OpenAPI definition file
+                        Generate API code based on Open API Specifications file.
+                        Default phase is "generate-sources" phase.
+                        See https://github.com/OpenAPITools/openapi-generator/tree/master/modules/openapi-generator-maven-plugin
                     -->
                     <groupId>org.openapitools</groupId>
                     <artifactId>openapi-generator-maven-plugin</artifactId>
