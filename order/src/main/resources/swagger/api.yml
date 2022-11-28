@@ -10,127 +10,130 @@ tags:
     description: Everything about order
 paths:
   /orders:
-    put:
+    get:
       tags:
         - Orders
-      summary: Update an existing order
-      description: Update an existing order by Id
-      operationId: updateOrder
-      requestBody:
-        description: Update an existent order
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/Order'
-          application/xml:
-            schema:
-              $ref: '#/components/schemas/Order'
-          application/x-www-form-urlencoded:
-            schema:
-              $ref: '#/components/schemas/Order'
-        required: true
+      summary: Get a list of orders
+      description: Get a list of orders
+      operationId: listOrders
       responses:
         '200':
-          description: Successful operation
+          description: Order listed
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Order'
-            application/xml:
-              schema:
-                $ref: '#/components/schemas/Order'
-        '400':
-          description: Invalid ID supplied
-        '404':
-          description: Order not found
-        '405':
-          description: Validation exception
-
+                $ref: '#/components/schemas/OrderResponse'
     post:
       tags:
         - Orders
       summary: Create a new order
-      description: Create a new order
+      description: POST /orders
       operationId: createOrder
       requestBody:
         description: Create a new order
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/Order'
-          application/xml:
-            schema:
-              $ref: '#/components/schemas/Order'
-          application/x-www-form-urlencoded:
-            schema:
-              $ref: '#/components/schemas/Order'
+              $ref: '#/components/schemas/OrderRequest'
         required: true
       responses:
-        '200':
-          description: Successful operation
+        '201':
+          description: Order created
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Order'
-            application/xml:
-              schema:
-                $ref: '#/components/schemas/Order'
-        '405':
-          description: Invalid input
-
+                $ref: '#/components/schemas/OrderResponse'
   /orders/{id}:
-    get:
+    patch:
       tags:
         - Orders
-      summary: Get order by ID
-      description: Returns a single order
-      operationId: getOrderById
+      summary: Update an existing order
+      description: Update an existing order by ID
+      operationId: updateOrder
       parameters:
         - name: id
           in: path
-          description: ID of order to return
+          description: Order ID to update
+          required: true
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        description: Update an existent order
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/OrderRequest'
+        required: true
+      responses:
+        '200':
+          description: Order updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OrderResponse'
+        '404':
+          description: Order not found
+    get:
+      tags:
+        - Orders
+      summary: Get an existing order
+      description: Get an existing order
+      operationId: getOrder
+      parameters:
+        - name: id
+          in: path
+          description: Order ID
           required: true
           schema:
             type: integer
             format: int64
       responses:
         '200':
-          description: successful operation
+          description: Order retrieved
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Order'
-            application/xml:
-              schema:
-                $ref: '#/components/schemas/Order'
-        '400':
-          description: Invalid ID supplied
+                $ref: '#/components/schemas/OrderResponse'
         '404':
           description: Order not found
-
     delete:
       tags:
         - Orders
-      summary: Deletes an order
-      description: delete an order
+      summary: Delete an order
+      description: Delete an order
       operationId: deleteOrder
       parameters:
         - name: id
           in: path
-          description: Order id to delete
+          description: Order ID to delete
           required: true
           schema:
             type: integer
             format: int64
       responses:
-        '400':
-          description: Invalid order value
-
+        '204':
+          description: Deletion succeeded
+        '404':
+          description: Order not found
 components:
   schemas:
-    Order:
+    OrderRequest:
+      type: object
       required:
-        - name
+        - userId
+        - products
+      properties:
+        userId:
+          type: integer
+          format: int64
+          example: 42
+        products:
+          type: array
+          items:
+            type: string
+          example: [ "pizza", "burger", "spaghetti" ]
+    OrderResponse:
       type: object
       properties:
         id:
@@ -146,3 +149,17 @@ components:
           items:
             type: string
           example: [ "pizza", "burger", "spaghetti" ]
+        createdBy:
+          type: string
+          example: 'John'
+        createdAt:
+          type: string
+          format: date-time
+          example: '2022-11-27T01:02:03Z'
+        updatedBy:
+          type: string
+          example: 'Jane'
+        updatedAt:
+          type: string
+          format: date-time
+          example: '2022-11-28T04:05:06Z'
