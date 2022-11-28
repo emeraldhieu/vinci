@@ -140,10 +140,22 @@
                                 <generatorName>spring</generatorName>
                                 <apiPackage>com.emeraldhieu.vinci.order.logic</apiPackage>
                                 <modelPackage>com.emeraldhieu.vinci.order.logic</modelPackage>
-                                <supportingFilesToGenerate>ApiUtil.java</supportingFilesToGenerate>
+                                <!-- Replace types in Open API file with the desired types -->
+                                <typeMappings>
+                                    <typeMapping>OffsetDateTime=LocalDateTime</typeMapping>
+                                </typeMappings>
+                                <!-- Replace imports in Open API file with the desired imports -->
+                                <importMappings>
+                                    <importMapping>java.time.OffsetDateTime=java.time.LocalDateTime</importMapping>
+                                </importMappings>
+                                <!---
+                                    Override generated code templates.
+                                    See https://www.youtube.com/watch?v=Jp2y15Xgk9g
+                                -->
+                                <templateDirectory>${project.basedir}/src/main/resources/templates</templateDirectory>
                                 <configOptions>
-                                    <delegatePattern>true</delegatePattern>
-                                    <title>order</title>
+                                    <interfaceOnly>true</interfaceOnly>
+                                    <skipDefaultInterface>true</skipDefaultInterface>
                                 </configOptions>
                             </configuration>
                         </execution>
