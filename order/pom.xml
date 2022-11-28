@@ -154,8 +154,12 @@
                                 -->
                                 <templateDirectory>${project.basedir}/src/main/resources/templates</templateDirectory>
                                 <configOptions>
+                                    <!-- Skip generating API controller class -->
                                     <interfaceOnly>true</interfaceOnly>
+                                    <!--- Skip generating default methods in API interface -->
                                     <skipDefaultInterface>true</skipDefaultInterface>
+                                    <!-- Use OAS's tags for @Tag -->
+                                    <useTags>true</useTags>
                                 </configOptions>
                             </configuration>
                         </execution>
