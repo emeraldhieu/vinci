@@ -68,6 +68,7 @@
         <openApiGeneratorMavenPluginVersion>6.0.1</openApiGeneratorMavenPluginVersion>
         <jacksonDatabindNullableVersion>0.2.3</jacksonDatabindNullableVersion>
         <mustacheVersion>0.9.10</mustacheVersion>
+        <lombokMapstructBindingVersion>0.2.0</lombokMapstructBindingVersion>
     </properties>
 
     <dependencyManagement>
@@ -327,6 +328,16 @@
                                 <groupId>org.projectlombok</groupId>
                                 <artifactId>lombok</artifactId>
                                 <version>${lombokVersion}</version>
+                            </path>
+                            <!--
+                                Use Lombok's builder inside mapstruct's mapperImpl.
+                                See https://stackoverflow.com/questions/65955000/how-to-instruct-mapstruct-to-use-lombok-builder#65955495
+                                See https://github.com/projectlombok/lombok/issues/1538#issuecomment-729651302
+                            -->
+                            <path>
+                                <groupId>org.projectlombok</groupId>
+                                <artifactId>lombok-mapstruct-binding</artifactId>
+                                <version>${lombokMapstructBindingVersion}</version>
                             </path>
                         </annotationProcessorPaths>
                     </configuration>
