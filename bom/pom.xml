@@ -67,6 +67,7 @@
         <hibernateValidatorVersion>8.0.0.Final</hibernateValidatorVersion>
         <openApiGeneratorMavenPluginVersion>6.0.1</openApiGeneratorMavenPluginVersion>
         <jacksonDatabindNullableVersion>0.2.3</jacksonDatabindNullableVersion>
+        <mustacheVersion>0.9.10</mustacheVersion>
     </properties>
 
     <dependencyManagement>
@@ -178,6 +179,16 @@
                 <groupId>org.openapitools</groupId>
                 <artifactId>jackson-databind-nullable</artifactId>
                 <version>${jacksonDatabindNullableVersion}</version>
+            </dependency>
+
+            <!--
+                Use Mustache template.
+                See https://www.baeldung.com/mustache
+            -->
+            <dependency>
+                <groupId>com.github.spullara.mustache.java</groupId>
+                <artifactId>compiler</artifactId>
+                <version>${mustacheVersion}</version>
             </dependency>
 
         </dependencies>
