@@ -116,6 +116,10 @@
             <scope>runtime</scope>
         </dependency>
 
+        <!--
+            Use Mustache template.
+            See https://www.baeldung.com/mustache
+        -->
         <dependency>
             <groupId>com.github.spullara.mustache.java</groupId>
             <artifactId>compiler</artifactId>
