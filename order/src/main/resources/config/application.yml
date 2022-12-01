@@ -7,10 +7,7 @@ spring:
       poolName: Hikari
       auto-commit: false
   jpa:
-    hibernate:
-      ddl-auto: none
     database-platform: org.hibernate.dialect.PostgreSQLDialect
     open-in-view: false
   liquibase:
-    # Remove 'faker' if you do not want the sample data to be loaded automatically
-    contexts: dev, faker
+    change-log: classpath:liquibase/master.yml
