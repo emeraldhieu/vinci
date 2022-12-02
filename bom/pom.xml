@@ -44,7 +44,7 @@
 
         <!-- Versions. -->
         <javaVersion>18</javaVersion>
-        <springBootVersion>2.7.4</springBootVersion>
+        <springBootVersion>3.0.0</springBootVersion>
         <springCloudVersion>2021.0.4</springCloudVersion>
         <mavenS3WagonVersion>1.3.3</mavenS3WagonVersion>
         <springCloudSleuthOtelVersion>1.1.0-M6</springCloudSleuthOtelVersion>
