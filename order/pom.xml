@@ -122,6 +122,15 @@
             <groupId>com.mattbertolini</groupId>
             <artifactId>liquibase-slf4j</artifactId>
         </dependency>
+
+        <!--
+            Provide Hibernate Validator implementation
+            See https://repo1.maven.org/maven2/org/springframework/boot/spring-boot-starter-validation/3.0.0/spring-boot-starter-validation-3.0.0.pom
+        -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-validation</artifactId>
+        </dependency>
     </dependencies>
 
     <build>
