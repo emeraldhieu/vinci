@@ -67,6 +67,7 @@
         <mustacheVersion>0.9.10</mustacheVersion>
         <lombokMapstructBindingVersion>0.2.0</lombokMapstructBindingVersion>
         <liquibaseSlf4jVersion>4.1.0</liquibaseSlf4jVersion>
+        <springDocOpenApiStarterWebMvcUiVersion>2.0.0</springDocOpenApiStarterWebMvcUiVersion>
     </properties>
 
     <dependencyManagement>
@@ -191,6 +192,13 @@
                 <groupId>com.mattbertolini</groupId>
                 <artifactId>liquibase-slf4j</artifactId>
                 <version>${liquibaseSlf4jVersion}</version>
+            </dependency>
+
+            <!-- Open API and Swagger UI -->
+            <dependency>
+                <groupId>org.springdoc</groupId>
+                <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
+                <version>${springDocOpenApiStarterWebMvcUiVersion}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>

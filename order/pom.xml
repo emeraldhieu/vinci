@@ -86,18 +86,13 @@
             <artifactId>mapstruct</artifactId>
         </dependency>
 
-        <!-- Open API -->
+        <!-- Open API and Swagger UI -->
         <dependency>
             <groupId>org.springdoc</groupId>
-            <artifactId>springdoc-openapi-ui</artifactId>
+            <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
         </dependency>
 
-        <!-- Use @JsonNullable for Open API -->
-        <dependency>
-            <groupId>org.openapitools</groupId>
-            <artifactId>jackson-databind-nullable</artifactId>
-        </dependency>
-
+        <!-- Postgres driver -->
         <dependency>
             <groupId>org.postgresql</groupId>
             <artifactId>postgresql</artifactId>
