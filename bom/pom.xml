@@ -62,13 +62,11 @@
         <nettyResolverDnsNativeMacosVersion>4.1.82.Final</nettyResolverDnsNativeMacosVersion>
         <lombokVersion>1.18.24</lombokVersion>
         <mapstructVersion>1.5.2.Final</mapstructVersion>
-        <hibernateVersion>5.6.10.Final</hibernateVersion>
-        <jaxbRuntimeVersion>4.0.0</jaxbRuntimeVersion>
-        <hibernateValidatorVersion>8.0.0.Final</hibernateValidatorVersion>
         <openApiGeneratorMavenPluginVersion>6.0.1</openApiGeneratorMavenPluginVersion>
         <jacksonDatabindNullableVersion>0.2.3</jacksonDatabindNullableVersion>
         <mustacheVersion>0.9.10</mustacheVersion>
         <lombokMapstructBindingVersion>0.2.0</lombokMapstructBindingVersion>
+        <liquibaseSlf4jVersion>4.1.0</liquibaseSlf4jVersion>
     </properties>
 
     <dependencyManagement>
@@ -168,13 +166,6 @@
                 <version>${mapstructVersion}</version>
             </dependency>
 
-            <!-- Hibernate validation -->
-            <dependency>
-                <groupId>org.hibernate.validator</groupId>
-                <artifactId>hibernate-validator</artifactId>
-                <version>${hibernateValidatorVersion}</version>
-            </dependency>
-
             <!-- Use @JsonNullable for Open API -->
             <dependency>
                 <groupId>org.openapitools</groupId>
@@ -199,9 +190,8 @@
             <dependency>
                 <groupId>com.mattbertolini</groupId>
                 <artifactId>liquibase-slf4j</artifactId>
-                <version>1.2.1</version>
+                <version>${liquibaseSlf4jVersion}</version>
             </dependency>
-
         </dependencies>
     </dependencyManagement>
 
@@ -321,17 +311,6 @@
                                 <groupId>org.mapstruct</groupId>
                                 <artifactId>mapstruct-processor</artifactId>
                                 <version>${mapstructVersion}</version>
-                            </path>
-                            <!-- For JPA static metamodel generation -->
-                            <path>
-                                <groupId>org.hibernate</groupId>
-                                <artifactId>hibernate-jpamodelgen</artifactId>
-                                <version>${hibernateVersion}</version>
-                            </path>
-                            <path>
-                                <groupId>org.glassfish.jaxb</groupId>
-                                <artifactId>jaxb-runtime</artifactId>
-                                <version>${jaxbRuntimeVersion}</version>
                             </path>
                             <!-- Recognize Lombok annotations upon build -->
                             <path>
