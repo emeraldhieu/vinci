@@ -1,5 +1,6 @@
 package com.emeraldhieu.vinci.order.exception;
 
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.TypeMismatchException;
@@ -8,6 +9,7 @@ import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -17,7 +19,6 @@ import org.springframework.web.method.annotation.MethodArgumentTypeMismatchExcep
 import org.springframework.web.servlet.NoHandlerFoundException;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
-import javax.servlet.http.HttpServletRequest;
 import java.time.LocalDateTime;
 
 /**
@@ -43,7 +44,7 @@ import java.time.LocalDateTime;
 @Order(Ordered.HIGHEST_PRECEDENCE)
 public class RestExceptionHandler extends ResponseEntityExceptionHandler {
 
-    private final HttpServletRequest request;
+    private final HttpServletRequest httpServletRequest;
     private final MessageSource messageSource;
 
     @ExceptionHandler({
@@ -63,7 +64,7 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
 
     @Override
     protected ResponseEntity<Object> handleHttpMessageNotReadable(HttpMessageNotReadableException exception,
-                                                                  HttpHeaders headers, HttpStatus status, WebRequest webRequest) {
+                                                                  HttpHeaders headers, HttpStatusCode status, WebRequest request) {
         log.error(exception.getMessage());
 
         CustomError customError = CustomError.builder()
@@ -74,15 +75,14 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
             // Show a common error for clients. Avoid leaking internal details.
             .message(messageSource.getMessage("invalidJson", null, null))
 
-            .path(request.getContextPath() + request.getServletPath())
+            .path(request.getContextPath() + httpServletRequest.getServletPath())
             .build();
 
         return new ResponseEntity<>(customError, HttpStatus.BAD_REQUEST);
     }
 
     @Override
-    protected ResponseEntity<Object> handleNoHandlerFoundException(
-        NoHandlerFoundException exception, HttpHeaders headers, HttpStatus status, WebRequest webRequest) {
+    protected ResponseEntity<Object> handleNoHandlerFoundException(NoHandlerFoundException exception, HttpHeaders headers, HttpStatusCode status, WebRequest request) {
         // Log detailed message for developers to know what's going on.
         log.error(exception.getMessage());
 
@@ -96,15 +96,14 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
             // Show a common error for clients. Avoid leaking internal details.
             .message(message)
 
-            .path(request.getContextPath() + request.getServletPath())
+            .path(request.getContextPath() + httpServletRequest.getServletPath())
             .build();
 
         return new ResponseEntity<>(customError, HttpStatus.NOT_FOUND);
     }
 
     @Override
-    protected ResponseEntity<Object> handleExceptionInternal(
-        Exception exception, Object body, HttpHeaders headers, HttpStatus status, WebRequest webRequest) {
+    protected ResponseEntity<Object> handleExceptionInternal(Exception exception, Object body, HttpHeaders headers, HttpStatusCode statusCode, WebRequest request) {
         // Log detailed message for developers to know what's going on.
         log.error(exception.getMessage());
 
@@ -116,15 +115,14 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
             // Show a common error for clients. Avoid leaking internal details.
             .message(messageSource.getMessage("internalServerError", null, null))
 
-            .path(request.getContextPath() + request.getServletPath())
+            .path(request.getContextPath() + httpServletRequest.getServletPath())
             .build();
 
         return new ResponseEntity<>(customError, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     @Override
-    protected ResponseEntity<Object> handleTypeMismatch(
-        TypeMismatchException exception, HttpHeaders headers, HttpStatus status, WebRequest webRequest) {
+    protected ResponseEntity<Object> handleTypeMismatch(TypeMismatchException exception, HttpHeaders headers, HttpStatusCode status, WebRequest request) {
         // Log detailed message for developers to know what's going on.
         log.error(exception.getMessage());
 
@@ -138,7 +136,7 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
             // Show a common error for clients. Avoid leaking internal details.
             .message(message)
 
-            .path(request.getContextPath() + request.getServletPath())
+            .path(request.getContextPath() + httpServletRequest.getServletPath())
             .build();
 
         return new ResponseEntity<>(customError, HttpStatus.BAD_REQUEST);
@@ -176,13 +174,13 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
     }
 
     @ExceptionHandler
-    protected ResponseEntity<Object> handleHttpMessageNotReadable(TooManyRequestException exception, HttpServletRequest request) {
+    protected ResponseEntity<Object> handleTooManyRequestException(TooManyRequestException exception) {
         CustomError customError = CustomError.builder()
             .timestamp(LocalDateTime.now())
             .status(HttpStatus.TOO_MANY_REQUESTS.value())
             .error(HttpStatus.TOO_MANY_REQUESTS.getReasonPhrase())
             .message(exception.getMessage()) // This message comes from feign client
-            .path(request.getContextPath() + request.getServletPath())
+            .path(httpServletRequest.getContextPath() + httpServletRequest.getServletPath())
             .build();
 
         return new ResponseEntity<>(customError, HttpStatus.TOO_MANY_REQUESTS);
