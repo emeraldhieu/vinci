@@ -148,11 +148,11 @@
                                 <modelPackage>com.emeraldhieu.vinci.order.logic</modelPackage>
                                 <!-- Replace types in Open API file with the desired types -->
                                 <typeMappings>
-                                    <typeMapping>OffsetDateTime=LocalDateTime</typeMapping>
+                                    <typeMapping>string+date-time=LocalDateTime</typeMapping>
                                 </typeMappings>
                                 <!-- Replace imports in Open API file with the desired imports -->
                                 <importMappings>
-                                    <importMapping>java.time.OffsetDateTime=java.time.LocalDateTime</importMapping>
+                                    <importMapping>LocalDateTime=java.time.LocalDateTime</importMapping>
                                 </importMappings>
                                 <!---
                                     Override generated code templates.
