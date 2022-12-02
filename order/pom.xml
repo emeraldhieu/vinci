@@ -166,6 +166,12 @@
                                     <skipDefaultInterface>true</skipDefaultInterface>
                                     <!-- Use OAS's tags for @Tag -->
                                     <useTags>true</useTags>
+
+                                    <!-- Use Spring Boot 3 with Jakarta EE9 -->
+                                    <useSpringBoot3>true</useSpringBoot3>
+
+                                    <!-- Do not allow updating data with nulls -->
+                                    <openApiNullable>false</openApiNullable>
                                 </configOptions>
                             </configuration>
                         </execution>
