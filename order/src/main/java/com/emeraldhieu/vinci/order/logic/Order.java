@@ -1,5 +1,6 @@
 package com.emeraldhieu.vinci.order.logic;
 
+import com.vladmihalcea.hibernate.type.json.JsonType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EntityListeners;
@@ -13,6 +14,7 @@ import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.hibernate.annotations.Type;
 import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedBy;
@@ -40,6 +42,7 @@ public class Order {
     @Column(nullable = false)
     private Long userId;
 
+    @Type(JsonType.class)
     @Column(nullable = false)
     private List<String> products;
 
