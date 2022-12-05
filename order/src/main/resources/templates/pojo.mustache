@@ -65,7 +65,7 @@ public class {{classname}}{{#parent}} extends {{{parent}}}{{/parent}}{{^parent}}
   private final {{>nullableDataType}} {{name}} = {{#isNullable}}JsonNullable.undefined(){{/isNullable}}{{^isNullable}}{{#required}}{{{defaultValue}}}{{/required}}{{^required}}null{{/required}}{{/isNullable}};
   {{/openApiNullable}}
   {{^openApiNullable}}
-  private final {{>nullableDataType}} {{name}} = {{#required}}{{{defaultValue}}}{{/required}}{{^required}}null{{/required}};
+  private final {{>nullableDataType}} {{name}};
   {{/openApiNullable}}
   {{/isContainer}}
   {{^isContainer}}
