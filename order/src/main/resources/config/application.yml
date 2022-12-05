@@ -11,3 +11,7 @@ spring:
     open-in-view: false
   liquibase:
     change-log: classpath:liquibase/master.yml
+server:
+  tomcat:
+    # Allow pipe character in URL to support passing commas such as "userId,asc"
+    relaxed-query-chars: "|"
