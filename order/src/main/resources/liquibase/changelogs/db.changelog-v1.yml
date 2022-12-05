@@ -51,6 +51,10 @@ databaseChangeLog:
   - changeSet:
       id: initialOrders
       author: emeraldhieu
+      preConditions:
+        - rowCount:
+            tableName: orders
+            expectedRows: 0
       changes:
         - loadData:
             tableName: orders
