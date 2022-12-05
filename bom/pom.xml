@@ -68,6 +68,7 @@
         <lombokMapstructBindingVersion>0.2.0</lombokMapstructBindingVersion>
         <liquibaseSlf4jVersion>4.1.0</liquibaseSlf4jVersion>
         <springDocOpenApiStarterWebMvcUiVersion>2.0.0</springDocOpenApiStarterWebMvcUiVersion>
+        <guavaVersion>31.1-jre</guavaVersion>
     </properties>
 
     <dependencyManagement>
@@ -199,6 +200,13 @@
                 <groupId>org.springdoc</groupId>
                 <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
                 <version>${springDocOpenApiStarterWebMvcUiVersion}</version>
+            </dependency>
+
+            <!-- Convert camel case to snake case and vice versa -->
+            <dependency>
+                <groupId>com.google.guava</groupId>
+                <artifactId>guava</artifactId>
+                <version>${guavaVersion}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
