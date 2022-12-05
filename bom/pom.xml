@@ -69,6 +69,7 @@
         <liquibaseSlf4jVersion>4.1.0</liquibaseSlf4jVersion>
         <springDocOpenApiStarterWebMvcUiVersion>2.0.0</springDocOpenApiStarterWebMvcUiVersion>
         <guavaVersion>31.1-jre</guavaVersion>
+        <hibernateTypeVersion>2.20.0</hibernateTypeVersion>
     </properties>
 
     <dependencyManagement>
@@ -208,6 +209,14 @@
                 <artifactId>guava</artifactId>
                 <version>${guavaVersion}</version>
             </dependency>
+
+            <!-- TODO Not sure this dependency is needed. Review it later. -->
+            <dependency>
+                <groupId>com.vladmihalcea</groupId>
+                <artifactId>hibernate-types-60</artifactId>
+                <version>${hibernateTypeVersion}</version>
+            </dependency>
+
         </dependencies>
     </dependencyManagement>
 
