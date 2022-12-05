@@ -1,0 +1,83 @@
+databaseChangeLog:
+  - changeSet:
+      id: createTableOrders
+      author: emeraldhieu
+      preConditions:
+        - onFail: MARK_RAN
+          not:
+            tableExists:
+              tableName: orders
+      changes:
+        - createTable:
+            tableName: orders
+            columns:
+              - column:
+                  name: id
+                  type: bigint
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: user_id
+                  type: bigint
+                  constraints:
+                    nullable: false
+              - column:
+                  name: products
+                  type: json
+                  constraints:
+                    nullable: false
+              - column:
+                  name: created_by
+                  type: bigint
+                  constraints:
+                    nullable: false
+              - column:
+                  name: created_at
+                  type: timestamp
+                  constraints:
+                    nullable: false
+              - column:
+                  name: updated_by
+                  type: bigint
+                  constraints:
+                    nullable: false
+              - column:
+                  name: updated_at
+                  type: timestamp
+                  constraints:
+                    nullable: false
+  - changeSet:
+      id: initialOrders
+      author: emeraldhieu
+      changes:
+        - loadData:
+            tableName: orders
+            columns:
+              - column:
+                  header:  User ID
+                  name:  user_id
+                  type:  numeric
+              - column:
+                  header:  Products
+                  name:  products
+                  type:  other
+              - column:
+                  header:  Created by
+                  name:  created_by
+                  type:  bigint
+              - column:
+                  header:  Created at
+                  name:  created_at
+                  type:  timestamp
+              - column:
+                  header:  Updated by
+                  name:  updated_by
+                  type:  bigint
+              - column:
+                  header:  Updated at
+                  name:  updated_at
+                  type:  timestamp
+            encoding:  UTF-8
+            file:  liquibase/data/order.csv
