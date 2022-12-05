@@ -17,4 +17,5 @@ logging:
     # Enable Liquibase logs for development
     liquibase.database: DEBUG
     liquibase.changelog: DEBUG
-
+    # Log to see liquibase's SQL
+    liquibase.executor.jvm.[JdbcExecutor$ExecuteStatementCallback]: DEBUG
