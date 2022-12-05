@@ -16,13 +16,31 @@ paths:
       summary: Get a list of orders
       description: Get a list of orders
       operationId: listOrders
+      parameters:
+        - name: offset
+          in: query
+          schema:
+            type: integer
+            default: 0
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            default: 10
+        - name: sortOrders
+          in: query
+          schema:
+            type: array
+            items:
+              type: string
+            example: ["userId,asc", "createdAt,desc"]
       responses:
         '200':
           description: Order listed
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/OrderResponse'
+                $ref: '#/components/schemas/OrderResponseList'
     post:
       tags:
         - Orders
@@ -163,3 +181,7 @@ components:
           type: string
           format: date-time
           example: '2022-11-28T04:05:06Z'
+    OrderResponseList:
+      type: array
+      items:
+        $ref: '#/components/schemas/OrderResponse'
