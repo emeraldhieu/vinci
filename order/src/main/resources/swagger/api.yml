@@ -168,15 +168,17 @@ components:
             type: string
           example: [ "pizza", "burger", "spaghetti" ]
         createdBy:
-          type: string
-          example: 'John'
+          type: integer
+          format: int64
+          example: 42
         createdAt:
           type: string
           format: date-time
           example: '2022-11-27T01:02:03Z'
         updatedBy:
-          type: string
-          example: 'Jane'
+          type: integer
+          format: int64
+          example: 42
         updatedAt:
           type: string
           format: date-time
