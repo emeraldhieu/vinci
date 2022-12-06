@@ -7,6 +7,7 @@ import jakarta.persistence.EntityListeners;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.PrePersist;
 import jakarta.persistence.Table;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -59,4 +60,26 @@ public class Order {
     @Column(nullable = false)
     @LastModifiedDate
     private LocalDateTime updatedAt;
+
+    /**
+     * Set default value before persisting.
+     * See https://stackoverflow.com/questions/197045/setting-default-values-for-columns-in-jpa#13432234
+     */
+    @PrePersist
+    void preInsert() {
+        if (createdBy == null) {
+            // TODO Set this value to the user who inserts the order.
+            createdBy = 1L;
+        }
+        if (createdAt == null) {
+            createdAt = LocalDateTime.now();
+        }
+        if (updatedBy == null) {
+            // TODO Set this value to the user who updates the order.
+            updatedBy = 1L;
+        }
+        if (updatedAt == null) {
+            updatedAt = LocalDateTime.now();
+        }
+    }
 }
