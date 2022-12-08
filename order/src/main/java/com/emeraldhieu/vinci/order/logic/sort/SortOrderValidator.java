@@ -12,14 +12,13 @@ import java.util.stream.Collectors;
 public class SortOrderValidator {
 
     public void validate(List<String> sortOrders) {
-        if (sortOrders == null) {
-            return;
-        }
         sortOrders.forEach(sortOrder -> {
             String[] tokens = sortOrder.split(",");
+            if (tokens.length != 2) {
+                throw new InvalidSortOrderException("Invalid sort order");
+            }
             String property = tokens[0];
             String direction = tokens[1];
-
             List<String> allowedPropertyNames = Arrays.stream(Order.class.getDeclaredFields())
                 .map(field -> field.getName())
                 .collect(Collectors.toList());
