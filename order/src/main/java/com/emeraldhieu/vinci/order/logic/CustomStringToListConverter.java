@@ -1,9 +1,11 @@
 package com.emeraldhieu.vinci.order.logic;
 
+import io.micrometer.common.util.StringUtils;
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.stereotype.Component;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -20,6 +22,9 @@ public class CustomStringToListConverter implements Converter<String, List<Strin
 
     @Override
     public List<String> convert(String str) {
+        if (StringUtils.isEmpty(str)) {
+            return Collections.emptyList();
+        }
         return Arrays.asList(str.split("\\|")).stream()
             .collect(Collectors.toList());
     }
