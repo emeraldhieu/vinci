@@ -84,4 +84,4 @@ databaseChangeLog:
                   name:  updated_at
                   type:  timestamp
             encoding:  UTF-8
-            file:  liquibase/data/order.csv
+            file:  liquibase/data/orders.csv
