@@ -67,7 +67,6 @@ public class DefaultOrderService implements OrderService {
     @Override
     @Transactional(readOnly = true)
     public OrderResponse get(Long id) {
-        log.debug("Request to get Order : {}", id);
         return orderRepository.findById(id)
             .map(orderResponseMapper::toDto)
             .orElseThrow(() -> new NotFoundException("Order %s not found".formatted(id)));
@@ -75,8 +74,8 @@ public class DefaultOrderService implements OrderService {
 
     @Override
     public void delete(Long id) {
-        log.debug("Request to delete Order : {}", id);
-        orderRepository.deleteById(id);
+        orderRepository.findById(id)
+            .ifPresent(order -> orderRepository.deleteById(id));
     }
 
     @Override
