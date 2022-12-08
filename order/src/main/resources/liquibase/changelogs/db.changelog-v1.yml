@@ -49,7 +49,7 @@ databaseChangeLog:
                   constraints:
                     nullable: false
   - changeSet:
-      id: initialOrders
+      id: initializeOrders
       author: emeraldhieu
       preConditions:
         - rowCount:
