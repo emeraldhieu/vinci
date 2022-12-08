@@ -1,0 +1,190 @@
+openapi: 3.0.3
+info:
+  title: Payment - OpenAPI 3.0
+  description: Payment API that manages payment.
+  version: 1.0.11
+servers:
+  - url: http://localhost:8081
+tags:
+  - name: Payments
+    description: Everything about payments
+paths:
+  /payments:
+    get:
+      tags:
+        - Payments
+      summary: Get a list of payments
+      description: Get a list of payments
+      operationId: listPayments
+      parameters:
+        - name: offset
+          in: query
+          schema:
+            type: integer
+            default: 0
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            default: 10
+        - name: sortOrders
+          in: query
+          schema:
+            type: array
+            items:
+              type: string
+            default: []
+            example: ["userId,asc", "createdAt,desc"]
+      responses:
+        '200':
+          description: Payment listed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaymentResponseList'
+    post:
+      tags:
+        - Payments
+      summary: Create a new payment
+      description: POST /payments
+      operationId: createPayment
+      requestBody:
+        description: Create a new payment
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PaymentRequest'
+        required: true
+      responses:
+        '201':
+          description: Payment created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaymentResponse'
+  /payments/{id}:
+    patch:
+      tags:
+        - Payments
+      summary: Update an existing payment
+      description: Update an existing payment by ID
+      operationId: updatePayment
+      parameters:
+        - name: id
+          in: path
+          description: Payment ID to update
+          required: true
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        description: Update an existent payment
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PaymentRequest'
+        required: true
+      responses:
+        '200':
+          description: Payment updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaymentResponse'
+        '404':
+          description: Payment not found
+    get:
+      tags:
+        - Payments
+      summary: Get an existing payment
+      description: Get an existing ppy
+      operationId: getPayment
+      parameters:
+        - name: id
+          in: path
+          description: Payment ID
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: Payment retrieved
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaymentResponse'
+        '404':
+          description: Payment not found
+    delete:
+      tags:
+        - Payments
+      summary: Delete a payment
+      description: Delete a payment
+      operationId: deletePayment
+      parameters:
+        - name: id
+          in: path
+          description: Payment ID to delete
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '204':
+          description: Deletion succeeded
+        '404':
+          description: Payment not found
+components:
+  schemas:
+    PaymentRequest:
+      type: object
+      required:
+        - userId
+        - products
+      properties:
+        userId:
+          type: integer
+          format: int64
+          example: 42
+        products:
+          type: array
+          items:
+            type: string
+          example: [ "pizza", "burger", "spaghetti" ]
+    PaymentResponse:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+          example: 42
+        userId:
+          type: integer
+          format: int64
+          example: 42
+        products:
+          type: array
+          items:
+            type: string
+          example: [ "pizza", "burger", "spaghetti" ]
+        createdBy:
+          type: integer
+          format: int64
+          example: 42
+        createdAt:
+          type: string
+          format: date-time
+          example: '2022-11-27T01:02:03Z'
+        updatedBy:
+          type: integer
+          format: int64
+          example: 42
+        updatedAt:
+          type: string
+          format: date-time
+          example: '2022-11-28T04:05:06Z'
+    PaymentResponseList:
+      type: array
+      items:
+        $ref: '#/components/schemas/PaymentResponse'

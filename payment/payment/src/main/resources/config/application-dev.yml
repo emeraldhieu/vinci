@@ -1,0 +1,21 @@
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/payment
+    username: postgres
+    password: postgres
+  jpa:
+    show-sql: true
+    database: postgresql
+  liquibase:
+    # Drop the existing to repopulate the whole database
+    # drop-first: true
+    # Used for development to update the changelogs continuously
+    clear-checksums: true
+
+logging:
+  level:
+    # Enable Liquibase logs for development
+    liquibase.database: DEBUG
+    liquibase.changelog: DEBUG
+    # Log to see liquibase's SQL
+    liquibase.executor.jvm.[JdbcExecutor$ExecuteStatementCallback]: DEBUG

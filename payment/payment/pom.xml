@@ -4,6 +4,13 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
+    <parent>
+        <groupId>com.emeraldhieu.vinci</groupId>
+        <artifactId>bom</artifactId>
+        <version>1.0-SNAPSHOT</version>
+        <relativePath/> <!-- lookup parent from repository -->
+    </parent>
+
     <groupId>com.emeraldhieu.vinci</groupId>
     <artifactId>payment</artifactId>
     <name>Payment</name>
@@ -14,5 +21,192 @@
         <maven.compiler.target>19</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
+
+    <dependencies>
+
+        <!-- Use embedded Tomcat servlet container -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web</artifactId>
+        </dependency>
+
+        <!-- for testing -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+        <!-- Use OpenFeign -->
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-openfeign</artifactId>
+        </dependency>
+
+        <!-- Remove boilerplate code -->
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <optional>true</optional>
+        </dependency>
+
+        <!-- Hot-reload classes -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-devtools</artifactId>
+        </dependency>
+
+        <!--
+            Remove the warning "Can not find io.netty.resolver.dns.macos.MacOSDnsServerAddressStreamProvider in the classpath..."
+            See https://github.com/netty/netty/issues/11020#issuecomment-781511365
+        -->
+        <dependency>
+            <groupId>io.netty</groupId>
+            <artifactId>netty-resolver-dns-native-macos</artifactId>
+        </dependency>
+
+        <!--
+            Spring Retry.
+            See https://github.com/spring-projects/spring-retry
+        -->
+        <dependency>
+            <groupId>org.springframework.retry</groupId>
+            <artifactId>spring-retry</artifactId>
+        </dependency>
+
+        <!-- JPA, javax.persistence -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-data-jpa</artifactId>
+        </dependency>
+
+        <!-- Create mappers -->
+        <dependency>
+            <groupId>org.mapstruct</groupId>
+            <artifactId>mapstruct</artifactId>
+        </dependency>
+
+        <!-- Open API and Swagger UI -->
+        <dependency>
+            <groupId>org.springdoc</groupId>
+            <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
+        </dependency>
+
+        <!-- Postgres driver -->
+        <dependency>
+            <groupId>org.postgresql</groupId>
+            <artifactId>postgresql</artifactId>
+            <scope>runtime</scope>
+        </dependency>
+
+        <!--
+            Use Mustache template.
+            See https://www.baeldung.com/mustache
+        -->
+        <dependency>
+            <groupId>com.github.spullara.mustache.java</groupId>
+            <artifactId>compiler</artifactId>
+        </dependency>
+
+        <!-- Use Liquibase for database migration -->
+        <dependency>
+            <groupId>org.liquibase</groupId>
+            <artifactId>liquibase-core</artifactId>
+        </dependency>
+
+        <!--
+            Log Liquibase
+            See https://stackoverflow.com/questions/20880783/how-to-get-liquibase-to-log-using-slf4j#20880784
+        -->
+        <dependency>
+            <groupId>com.mattbertolini</groupId>
+            <artifactId>liquibase-slf4j</artifactId>
+        </dependency>
+
+        <!--
+            Provide Hibernate Validator implementation
+            See https://repo1.maven.org/maven2/org/springframework/boot/spring-boot-starter-validation/3.0.0/spring-boot-starter-validation-3.0.0.pom
+        -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-validation</artifactId>
+        </dependency>
+
+        <!-- Actuator endpoints -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-actuator</artifactId>
+        </dependency>
+
+        <!-- Convert camel case to snake case and vice versa -->
+        <dependency>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
+        </dependency>
+
+        <!-- TODO Not sure this dependency is needed. Review it later. -->
+        <dependency>
+            <groupId>com.vladmihalcea</groupId>
+            <artifactId>hibernate-types-60</artifactId>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <!--
+                        Provide API-first development using openapi-generator-cli to
+                        generate Spring-MVC endpoint stubs at compile time from an OpenAPI definition file
+                    -->
+                    <groupId>org.openapitools</groupId>
+                    <artifactId>openapi-generator-maven-plugin</artifactId>
+                    <executions>
+                        <execution>
+                            <configuration>
+                                <inputSpec>${project.basedir}/src/main/resources/swagger/api.yml</inputSpec>
+                                <generatorName>spring</generatorName>
+                                <apiPackage>com.emeraldhieu.vinci.payment.logic</apiPackage>
+                                <modelPackage>com.emeraldhieu.vinci.payment.logic</modelPackage>
+                                <!-- Replace types in Open API file with the desired types -->
+                                <typeMappings>
+                                    <typeMapping>string+date-time=LocalDateTime</typeMapping>
+                                </typeMappings>
+                                <!-- Replace imports in Open API file with the desired imports -->
+                                <importMappings>
+                                    <importMapping>LocalDateTime=java.time.LocalDateTime</importMapping>
+                                </importMappings>
+                                <!---
+                                    Override generated code templates.
+                                    See https://www.youtube.com/watch?v=Jp2y15Xgk9g
+                                -->
+                                <templateDirectory>${project.basedir}/src/main/resources/templates</templateDirectory>
+                                <configOptions>
+                                    <!-- Skip generating API controller class -->
+                                    <interfaceOnly>true</interfaceOnly>
+                                    <!--- Skip generating default methods in API interface -->
+                                    <skipDefaultInterface>true</skipDefaultInterface>
+                                    <!-- Use OAS's tags for @Tag -->
+                                    <useTags>true</useTags>
+
+                                    <!-- Use Spring Boot 3 with Jakarta EE9 -->
+                                    <useSpringBoot3>true</useSpringBoot3>
+
+                                    <!-- Do not allow updating data with nulls -->
+                                    <openApiNullable>false</openApiNullable>
+                                </configOptions>
+                            </configuration>
+                        </execution>
+                    </executions>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+        <plugins>
+            <plugin>
+                <groupId>org.openapitools</groupId>
+                <artifactId>openapi-generator-maven-plugin</artifactId>
+            </plugin>
+        </plugins>
+    </build>
 
 </project>
