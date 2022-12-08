@@ -12,6 +12,9 @@ import java.util.stream.Collectors;
 public class SortOrderValidator {
 
     public void validate(List<String> sortOrders) {
+        if (sortOrders == null) {
+            return;
+        }
         sortOrders.forEach(sortOrder -> {
             String[] tokens = sortOrder.split(",");
             String property = tokens[0];
