@@ -210,7 +210,10 @@
                 <version>${guavaVersion}</version>
             </dependency>
 
-            <!-- TODO Not sure this dependency is needed. Review it later. -->
+            <!--
+                Use @JsonType
+                See https://github.com/vladmihalcea/hibernate-types#hibernate-6
+             -->
             <dependency>
                 <groupId>com.vladmihalcea</groupId>
                 <artifactId>hibernate-types-60</artifactId>
