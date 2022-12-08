@@ -33,6 +33,7 @@ paths:
             type: array
             items:
               type: string
+            default: []
             example: ["userId,asc", "createdAt,desc"]
       responses:
         '200':
