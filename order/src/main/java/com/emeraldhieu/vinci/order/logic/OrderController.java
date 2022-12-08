@@ -19,7 +19,7 @@ public class OrderController implements OrdersApi {
 
     @Override
     public ResponseEntity<OrderResponse> createOrder(OrderRequest orderRequest) {
-        OrderResponse createdOrder = orderService.save(orderRequest);
+        OrderResponse createdOrder = orderService.create(orderRequest);
         return ResponseEntity.created(URI.create(String.format("/orders/%s", createdOrder.getId())))
             .body(createdOrder);
     }

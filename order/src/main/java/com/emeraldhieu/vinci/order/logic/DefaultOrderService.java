@@ -26,7 +26,7 @@ public class DefaultOrderService implements OrderService {
     private final SortOrderValidator sortOrderValidator;
 
     @Override
-    public OrderResponse save(OrderRequest orderRequest) {
+    public OrderResponse create(OrderRequest orderRequest) {
         Order orderToSave = orderRequestMapper.toEntity(orderRequest);
         Order savedOrder = orderRepository.save(orderToSave);
         return orderResponseMapper.toDto(savedOrder);

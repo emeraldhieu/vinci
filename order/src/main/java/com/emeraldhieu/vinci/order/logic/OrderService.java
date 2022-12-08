@@ -7,7 +7,7 @@ import java.util.List;
 
 public interface OrderService {
 
-    OrderResponse save(OrderRequest orderRequest);
+    OrderResponse create(OrderRequest orderRequest);
 
     OrderResponse update(Long id, OrderRequest orderRequest);
 
