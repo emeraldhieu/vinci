@@ -23,6 +23,7 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.UUID;
 
 @Entity
 @Table(name = "orders")
@@ -37,6 +38,9 @@ public class Order {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column
     private Long id;
+
+    @Column(nullable = false)
+    private String externalId;
 
     @Column(nullable = false)
     private Long userId;
@@ -67,6 +71,9 @@ public class Order {
      */
     @PrePersist
     void preInsert() {
+        if (externalId == null) {
+            externalId = UUID.randomUUID().toString().replace("-", "");
+        }
         if (createdBy == null) {
             // TODO Set this value to the user who inserts the order.
             createdBy = 1L;
