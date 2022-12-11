@@ -1,9 +1,11 @@
 package com.emeraldhieu.vinci.order.logic;
 
 import com.emeraldhieu.vinci.order.exception.NotFoundException;
+import com.emeraldhieu.vinci.order.logic.event.OrderCreatedEvent;
 import com.emeraldhieu.vinci.order.logic.sort.SortOrderValidator;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -24,18 +26,25 @@ public class DefaultOrderService implements OrderService {
     private final OrderRequestMapper orderRequestMapper;
     private final OrderResponseMapper orderResponseMapper;
     private final SortOrderValidator sortOrderValidator;
+    private final ApplicationEventPublisher applicationEventPublisher;
 
     @Override
     public OrderResponse create(OrderRequest orderRequest) {
         Order orderToSave = orderRequestMapper.toEntity(orderRequest);
         Order savedOrder = orderRepository.save(orderToSave);
+        sendEvent(savedOrder);
         return orderResponseMapper.toDto(savedOrder);
+    }
+
+    public void sendEvent(Order order) {
+        log.info("Sending %s...".formatted(OrderCreatedEvent.class.getSimpleName()));
+        OrderCreatedEvent event = new OrderCreatedEvent(order.getExternalId());
+        applicationEventPublisher.publishEvent(event);
     }
 
     @Override
     public OrderResponse update(Long id, OrderRequest orderRequest) {
-        Order orderToUpdate = orderRepository
-            .findById(id)
+        Order orderToUpdate = orderRepository.findById(id)
             .map(currentOrder -> {
                 orderRequestMapper.partialUpdate(currentOrder, orderRequest);
                 return currentOrder;
@@ -82,7 +91,6 @@ public class DefaultOrderService implements OrderService {
     @Transactional(readOnly = true)
     public Page<OrderResponse> search(String query, Pageable pageable) {
         log.debug("Request to search for a page of Orders for query {}", query);
-        //return orderRepository.search(query, pageable).map(orderMapper::toDto);
         throw new UnsupportedOperationException("Not implemented yet.");
     }
 }
