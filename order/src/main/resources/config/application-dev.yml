@@ -11,7 +11,11 @@ spring:
     # drop-first: true
     # Used for development to update the changelogs continuously
     clear-checksums: true
-
+  kafka:
+    producer:
+      bootstrap-servers: "localhost:9092"
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
 logging:
   level:
     # Enable Liquibase logs for development
@@ -19,3 +23,12 @@ logging:
     liquibase.changelog: DEBUG
     # Log to see liquibase's SQL
     liquibase.executor.jvm.[JdbcExecutor$ExecuteStatementCallback]: DEBUG
+    # Log Kafka
+    org.springframework.kafka.listener: DEBUG
+    org.springframework.kafka.listener.adapter: INFO
+application:
+  kafka:
+    topic: orders
+    partitions: 2
+    replicationFactor: 2
+    groupId: awesomeGroup
