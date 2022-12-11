@@ -152,6 +152,12 @@
             <groupId>com.vladmihalcea</groupId>
             <artifactId>hibernate-types-60</artifactId>
         </dependency>
+
+        <!-- Use KafkaTemplate -->
+        <dependency>
+            <groupId>org.springframework.kafka</groupId>
+            <artifactId>spring-kafka</artifactId>
+        </dependency>
     </dependencies>
 
     <build>
