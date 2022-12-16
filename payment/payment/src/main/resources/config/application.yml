@@ -11,6 +11,15 @@ spring:
     open-in-view: false
   liquibase:
     change-log: classpath:liquibase/master.yml
+  kafka:
+    consumer:
+      key-deserializer: io.confluent.kafka.serializers.KafkaAvroDeserializer
+      value-deserializer: io.confluent.kafka.serializers.KafkaAvroDeserializer
+    group-id: awesomeGroup
+    properties:
+      schema.registry.url: http://localhost:8081
+      # Deserialize to the generated Avro class rather than a GenericRecord type
+      specific.avro.reader: true
 server:
   port: 50002
   tomcat:

@@ -11,7 +11,9 @@ spring:
     # drop-first: true
     # Used for development to update the changelogs continuously
     clear-checksums: true
-
+  kafka:
+    producer:
+      bootstrap-servers: "localhost:9092"
 logging:
   level:
     # Enable Liquibase logs for development
@@ -19,3 +21,9 @@ logging:
     liquibase.changelog: DEBUG
     # Log to see liquibase's SQL
     liquibase.executor.jvm.[JdbcExecutor$ExecuteStatementCallback]: DEBUG
+application:
+  kafka:
+    topic: orders
+    partitions: 2
+    replicationFactor: 2
+    groupId: awesomeGroup
