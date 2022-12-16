@@ -19,13 +19,13 @@ databaseChangeLog:
                     primaryKey: true
                     nullable: false
               - column:
-                  name: user_id
-                  type: bigint
+                  name: order_id
+                  type: varchar(50)
                   constraints:
                     nullable: false
               - column:
-                  name: products
-                  type: json
+                  name: payment_method
+                  type: varchar(50)
                   constraints:
                     nullable: false
               - column:
@@ -60,13 +60,13 @@ databaseChangeLog:
             tableName: payments
             columns:
               - column:
-                  header:  User ID
-                  name:  user_id
-                  type:  numeric
+                  header:  Order ID
+                  name:  order_id
+                  type:  string
               - column:
-                  header:  Products
-                  name:  products
-                  type:  other
+                  header:  Payment method
+                  name:  payment_method
+                  type:  string
               - column:
                   header:  Created by
                   name:  created_by

@@ -34,7 +34,7 @@ paths:
             items:
               type: string
             default: []
-            example: ["userId,asc", "createdAt,desc"]
+            example: ["updatedAt,asc", "createdAt,desc"]
       responses:
         '200':
           description: Payment listed
@@ -140,18 +140,15 @@ components:
     PaymentRequest:
       type: object
       required:
-        - userId
-        - products
+        - orderId
+        - paymentMethod
       properties:
-        userId:
-          type: integer
-          format: int64
-          example: 42
-        products:
-          type: array
-          items:
-            type: string
-          example: [ "pizza", "burger", "spaghetti" ]
+        orderId:
+          type: string
+          example: [ "c611d780541541f69c1e1e80b966527a"]
+        paymentMethod:
+          type: string
+          enum: ["debit", "credit"]
     PaymentResponse:
       type: object
       properties:
@@ -159,15 +156,12 @@ components:
           type: integer
           format: int64
           example: 42
-        userId:
-          type: integer
-          format: int64
-          example: 42
-        products:
-          type: array
-          items:
-            type: string
-          example: [ "pizza", "burger", "spaghetti" ]
+        orderId:
+          type: string
+          example: [ "c611d780541541f69c1e1e80b966527a"]
+        paymentMethod:
+          type: string
+          enum: ["debit", "credit"]
         createdBy:
           type: integer
           format: int64
