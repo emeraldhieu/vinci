@@ -34,7 +34,7 @@ paths:
             items:
               type: string
             default: []
-            example: ["userId,asc", "createdAt,desc"]
+            example: ["updatedAt,asc", "createdAt,desc"]
       responses:
         '200':
           description: Order listed
@@ -140,13 +140,8 @@ components:
     OrderRequest:
       type: object
       required:
-        - userId
         - products
       properties:
-        userId:
-          type: integer
-          format: int64
-          example: 42
         products:
           type: array
           items:
@@ -156,10 +151,6 @@ components:
       type: object
       properties:
         id:
-          type: integer
-          format: int64
-          example: 42
-        userId:
           type: integer
           format: int64
           example: 42

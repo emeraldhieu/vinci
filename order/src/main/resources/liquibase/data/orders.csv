@@ -1,4 +1,4 @@
-User ID,External ID,Products,Created by,Created at,Updated by,Updated at
-1,c611d780541541f69c1e1e80b966527a,"[""pizza"", ""burger"", ""pasta""]",1,2022-11-23,2,2022-11-24
-1,850829b025704efe995d29661a3a1220,"[""apple"", ""orange"", ""avocado""]",3,2022-11-25,4,2022-11-26
-1,0a5eb04756f54776ac7752d3c8fae45b,"[""car"", ""bike"", ""house""]",5,2022-11-27,6,2022-11-28
+External ID,Products,Created by,Created at,Updated by,Updated at
+c611d780541541f69c1e1e80b966527a,"[""pizza"", ""burger"", ""pasta""]",1,2022-11-23,2,2022-11-24
+850829b025704efe995d29661a3a1220,"[""apple"", ""orange"", ""avocado""]",3,2022-11-25,4,2022-11-26
+0a5eb04756f54776ac7752d3c8fae45b,"[""car"", ""bike"", ""house""]",5,2022-11-27,6,2022-11-28

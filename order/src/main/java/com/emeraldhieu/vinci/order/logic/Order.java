@@ -42,9 +42,6 @@ public class Order {
     @Column(nullable = false)
     private String externalId;
 
-    @Column(nullable = false)
-    private Long userId;
-
     @Type(JsonType.class)
     @Column(nullable = false)
     private List<String> products;

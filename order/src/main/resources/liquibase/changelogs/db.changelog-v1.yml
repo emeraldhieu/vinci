@@ -24,11 +24,6 @@ databaseChangeLog:
                   constraints:
                     nullable: false
               - column:
-                  name: user_id
-                  type: bigint
-                  constraints:
-                    nullable: false
-              - column:
                   name: products
                   type: json
                   constraints:
@@ -68,10 +63,6 @@ databaseChangeLog:
                   header: External ID
                   name: external_id
                   type: string
-              - column:
-                  header:  User ID
-                  name:  user_id
-                  type:  numeric
               - column:
                   header:  Products
                   name:  products
