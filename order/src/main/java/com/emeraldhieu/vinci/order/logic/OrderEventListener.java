@@ -2,8 +2,7 @@ package com.emeraldhieu.vinci.order.logic;
 
 import com.emeraldhieu.vinci.order.config.KafkaProperties;
 import com.emeraldhieu.vinci.order.logic.event.OrderCreatedEvent;
-import com.emeraldhieu.vinci.order.logic.event.OrderDeletedEvent;
-import com.emeraldhieu.vinci.order.logic.event.OrderUpdatedEvent;
+import com.emeraldhieu.vinci.payment.OrderMessage;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.event.EventListener;
@@ -19,32 +18,20 @@ import java.util.concurrent.CompletableFuture;
 public class OrderEventListener {
 
     private final KafkaProperties kafkaProperties;
-    private final KafkaTemplate<String, String> kafkaTemplate;
+    private final KafkaTemplate<String, OrderMessage> kafkaTemplate;
 
     @EventListener
     public void handleOrderCreated(OrderCreatedEvent event) {
-        log.info(event.externalId());
-        CompletableFuture<SendResult<String, String>> future =
-            kafkaTemplate.send(kafkaProperties.getTopic(), event.externalId());
+        OrderMessage orderMessage = OrderMessage.newBuilder()
+            .setOrderId(event.externalId())
+            .build();
+        CompletableFuture<SendResult<String, OrderMessage>> future =
+            kafkaTemplate.send(kafkaProperties.getTopic(), orderMessage);
         future.whenComplete((result, throwable) -> {
-            System.out.println("Sent message=[" + event.externalId() + "] with offset=[" + result.getRecordMetadata().offset() + "]");
+            log.info("Sent message=" + result.getProducerRecord().value() + " with offset=[" + result.getRecordMetadata().offset() + "]");
             if (throwable != null) {
-                System.out.println("Unable to send message=[" + event.externalId() + "] due to : " + throwable.getMessage());
+                log.info("Unable to send message=" + result.getProducerRecord().value() + " due to : " + throwable.getMessage());
             }
         });
-    }
-
-    @EventListener
-    public void handleOrderUpdated(OrderUpdatedEvent event) {
-        log.info(event.externalId());
-        CompletableFuture<SendResult<String, String>> future =
-            kafkaTemplate.send(kafkaProperties.getTopic(), event.externalId());
-    }
-
-    @EventListener
-    public void handleOrderDeleted(OrderDeletedEvent event) {
-        log.info(event.externalId());
-        CompletableFuture<SendResult<String, String>> future =
-            kafkaTemplate.send(kafkaProperties.getTopic(), event.externalId());
     }
 }

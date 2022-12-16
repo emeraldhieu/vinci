@@ -8,14 +8,12 @@ spring:
     database: postgresql
   liquibase:
     # Drop the existing to repopulate the whole database
-    # drop-first: true
+    drop-first: true
     # Used for development to update the changelogs continuously
     clear-checksums: true
   kafka:
     producer:
       bootstrap-servers: "localhost:9092"
-      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
-      value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
 logging:
   level:
     # Enable Liquibase logs for development

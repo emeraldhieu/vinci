@@ -1,5 +1,6 @@
 package com.emeraldhieu.vinci.order.config;
 
+import com.emeraldhieu.vinci.payment.OrderMessage;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.clients.admin.NewTopic;
@@ -38,16 +39,16 @@ public class KafkaProducerConfiguration {
     }
 
     @Bean
-    public KafkaTemplate<String, String> kafkaTemplate(ProducerFactory producerFactory) {
-        KafkaTemplate<String, String> kafkaTemplate = new KafkaTemplate<>(producerFactory);
+    public KafkaTemplate<String, OrderMessage> kafkaTemplate(ProducerFactory producerFactory) {
+        KafkaTemplate<String, OrderMessage> kafkaTemplate = new KafkaTemplate<>(producerFactory);
         kafkaTemplate.setProducerListener(new ProducerListener<>() {
             @Override
-            public void onSuccess(ProducerRecord<String, String> producerRecord, RecordMetadata recordMetadata) {
+            public void onSuccess(ProducerRecord<String, OrderMessage> producerRecord, RecordMetadata recordMetadata) {
                 log.info("Sent a record");
             }
 
             @Override
-            public void onError(ProducerRecord<String, String> producerRecord, RecordMetadata recordMetadata, Exception exception) {
+            public void onError(ProducerRecord<String, OrderMessage> producerRecord, RecordMetadata recordMetadata, Exception exception) {
                 log.info("Fail to send a record");
             }
         });

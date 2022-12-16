@@ -1,0 +1,12 @@
+{
+    "type": "record",
+    "name": "OrderMessage",
+    "namespace": "com.emeraldhieu.vinci.payment",
+    "fields":
+    [
+        {
+            "name": "orderId",
+            "type": "string"
+        }
+    ]
+}
