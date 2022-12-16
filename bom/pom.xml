@@ -70,6 +70,8 @@
         <springDocOpenApiStarterWebMvcUiVersion>2.0.0</springDocOpenApiStarterWebMvcUiVersion>
         <guavaVersion>31.1-jre</guavaVersion>
         <hibernateTypeVersion>2.20.0</hibernateTypeVersion>
+        <kafkaAvroSerializerVersion>4.0.0</kafkaAvroSerializerVersion>
+        <avroMavenPluginVersion>1.11.1</avroMavenPluginVersion>
     </properties>
 
     <dependencyManagement>
@@ -220,6 +222,12 @@
                 <version>${hibernateTypeVersion}</version>
             </dependency>
 
+            <!-- Use "org.apache.avro.specific" and "org.apache.avro.message". -->
+            <dependency>
+                <groupId>io.confluent</groupId>
+                <artifactId>kafka-avro-serializer</artifactId>
+                <version>${kafkaAvroSerializerVersion}</version>
+            </dependency>
         </dependencies>
     </dependencyManagement>
 
@@ -377,6 +385,13 @@
                         </execution>
                     </executions>
                 </plugin>
+
+                <!-- Generate Avro's message models based on template files. -->
+                <plugin>
+                    <groupId>org.apache.avro</groupId>
+                    <artifactId>avro-maven-plugin</artifactId>
+                    <version>${avroMavenPluginVersion}</version>
+                </plugin>
             </plugins>
         </pluginManagement>
 
@@ -406,6 +421,11 @@
         <repository>
             <id>spring-milestones</id>
             <url>https://repo.spring.io/milestone</url>
+        </repository>
+        <!-- Apache Avro for versioning message schema -->
+        <repository>
+            <id>confluent</id>
+            <url>https://packages.confluent.io/maven/</url>
         </repository>
     </repositories>
 
