@@ -12,6 +12,7 @@ spring:
   liquibase:
     change-log: classpath:liquibase/master.yml
 server:
+  port: 50002
   tomcat:
     # Allow pipe character in URL to support passing commas such as "userId,asc"
     relaxed-query-chars: "|"
