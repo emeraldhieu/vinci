@@ -97,6 +97,21 @@ services:
     depends_on:
       - zookeeper
 
+  schema-registry:
+      image: confluentinc/cp-schema-registry:7.3.0
+      hostname: schema-registry
+      container_name: schema-registry
+      depends_on:
+          - zookeeper
+          - kafka1
+          - kafka2
+      ports:
+          - "8081:8081"
+      environment:
+          SCHEMA_REGISTRY_HOST_NAME: schema-registry
+          SCHEMA_REGISTRY_KAFKASTORE_BOOTSTRAP_SERVERS: "kafka1:29092,kafka2:29093"
+          SCHEMA_REGISTRY_LISTENERS: http://0.0.0.0:8081      
+
 networks:
   postgres:
     driver: bridge
