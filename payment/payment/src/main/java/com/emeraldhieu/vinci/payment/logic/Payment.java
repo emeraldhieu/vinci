@@ -1,7 +1,7 @@
 package com.emeraldhieu.vinci.payment.logic;
 
-import com.vladmihalcea.hibernate.type.json.JsonType;
 import jakarta.persistence.Column;
+import jakarta.persistence.Convert;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EntityListeners;
 import jakarta.persistence.GeneratedValue;
@@ -14,7 +14,6 @@ import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
-import org.hibernate.annotations.Type;
 import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedBy;
@@ -22,10 +21,9 @@ import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.LocalDateTime;
-import java.util.List;
 
 @Entity
-@Table(name = "orders")
+@Table(name = "payments")
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 @Getter
 @Setter
@@ -39,11 +37,11 @@ public class Payment {
     private Long id;
 
     @Column(nullable = false)
-    private Long userId;
+    private String orderId;
 
-    @Type(JsonType.class)
+    @Convert(converter = PaymentMethodConverter.class)
     @Column(nullable = false)
-    private List<String> products;
+    private PaymentMethod paymentMethod;
 
     @Column(nullable = false)
     @CreatedBy
@@ -67,6 +65,9 @@ public class Payment {
      */
     @PrePersist
     void preInsert() {
+        if (paymentMethod == null) {
+            paymentMethod = PaymentMethod.DEBIT;
+        }
         if (createdBy == null) {
             // TODO Set this value to the user who inserts the order.
             createdBy = 1L;
