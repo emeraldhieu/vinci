@@ -50,12 +50,6 @@
             <optional>true</optional>
         </dependency>
 
-        <!-- Hot-reload classes -->
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-devtools</artifactId>
-        </dependency>
-
         <!--
             Remove the warning "Can not find io.netty.resolver.dns.macos.MacOSDnsServerAddressStreamProvider in the classpath..."
             See https://github.com/netty/netty/issues/11020#issuecomment-781511365
