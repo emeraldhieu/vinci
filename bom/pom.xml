@@ -70,7 +70,7 @@
         <springDocOpenApiStarterWebMvcUiVersion>2.0.0</springDocOpenApiStarterWebMvcUiVersion>
         <guavaVersion>31.1-jre</guavaVersion>
         <hibernateTypeVersion>2.20.0</hibernateTypeVersion>
-        <kafkaAvroSerializerVersion>4.0.0</kafkaAvroSerializerVersion>
+        <kafkaAvroSerializerVersion>7.3.0</kafkaAvroSerializerVersion>
         <avroMavenPluginVersion>1.11.1</avroMavenPluginVersion>
     </properties>
 
