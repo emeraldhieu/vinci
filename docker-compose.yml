@@ -28,7 +28,6 @@ services:
   #     PGADMIN_CONFIG_SERVER_MODE: 'False'
   #   volumes:
   #      - pgadmin:/var/lib/pgadmin
-
   #   ports:
   #     - "${PGADMIN_PORT:-5050}:80"
   #   networks:
@@ -42,6 +41,9 @@ services:
     #platform: linux/x86_64
     ports:
       - "2181:2181"
+    volumes:
+      - zookeeper-data:/var/lib/zookeeper/data
+      - zookeeper-transaction-logs:/var/lib/zookeeper/log
     environment:
       ZOOKEEPER_CLIENT_PORT: 2181
       ZOOKEEPER_SERVER_ID: 1
@@ -55,6 +57,8 @@ services:
     #platform: linux/x86_64
     ports:
       - "9092:9092"
+    volumes:
+      - kafka1-data:/var/lib/kafka/data
     environment:
       KAFKA_ADVERTISED_LISTENERS: INSIDE://kafka1:29092,OUTSIDE://localhost:9092
       KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: INSIDE:PLAINTEXT,OUTSIDE:PLAINTEXT
@@ -80,6 +84,8 @@ services:
     #platform: linux/x86_64
     ports:
       - "9093:9093"
+    volumes:
+      - kafka2-data:/var/lib/kafka/data
     environment:
       KAFKA_ADVERTISED_LISTENERS: INSIDE://kafka2:29093,OUTSIDE://localhost:9093
       KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: INSIDE:PLAINTEXT,OUTSIDE:PLAINTEXT
@@ -123,3 +129,7 @@ networks:
 volumes:
     postgres:
     # pgadmin:
+    zookeeper-data:
+    zookeeper-transaction-logs:
+    kafka1-data:
+    kafka2-data:
