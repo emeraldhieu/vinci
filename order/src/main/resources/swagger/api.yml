@@ -147,6 +147,7 @@ components:
           items:
             type: string
           example: [ "pizza", "burger", "spaghetti" ]
+          x-field-extra-annotation: "@NotNull"
     OrderResponse:
       type: object
       properties:
