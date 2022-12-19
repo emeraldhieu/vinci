@@ -1,6 +1,7 @@
 package com.emeraldhieu.vinci.order.exception;
 
 import com.emeraldhieu.vinci.order.logic.sort.InvalidSortOrderException;
+import com.fasterxml.jackson.databind.JsonMappingException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.MessageSource;
@@ -11,6 +12,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ProblemDetail;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -34,11 +36,12 @@ import java.util.stream.Collectors;
 public class RestExceptionHandler extends ResponseEntityExceptionHandler {
 
     private final MessageSource messageSource;
+    private final URI typeUri = URI.create("http://localhost:50001/vinci/types");
 
     @Override
     protected ResponseEntity<Object> handleNoHandlerFoundException(NoHandlerFoundException exception, HttpHeaders headers, HttpStatusCode status, WebRequest request) {
         ProblemDetail problemDetail = ProblemDetail.forStatus(status);
-        problemDetail.setType(URI.create("http://localhost:50001/vinci/types"));
+        problemDetail.setType(typeUri);
         problemDetail.setDetail(exception.getMessage());
         return new ResponseEntity<>(problemDetail, status);
     }
@@ -49,8 +52,8 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
                                                                   WebRequest request) {
         BindingResult bindingResult = exception.getBindingResult();
         ProblemDetail problemDetail = ProblemDetail.forStatus(status);
-        problemDetail.setType(URI.create("http://localhost:50001/vinci/types"));
-        problemDetail.setDetail(messageSource.getMessage("invalidBodyArgument", null, null));
+        problemDetail.setType(typeUri);
+        problemDetail.setDetail(messageSource.getMessage("invalidRequestBodyArgument", null, null));
         problemDetail.setProperty("fieldErrors", getFieldErrors(bindingResult.getFieldErrors()));
         return new ResponseEntity<>(problemDetail, status);
     }
@@ -69,8 +72,28 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
     @ExceptionHandler(InvalidSortOrderException.class)
     protected ResponseEntity<Object> handleNoHandlerFoundException() {
         ProblemDetail problemDetail = ProblemDetail.forStatus(HttpStatus.UNPROCESSABLE_ENTITY);
-        problemDetail.setType(URI.create("http://localhost:50001/vinci/types"));
+        problemDetail.setType(typeUri);
         problemDetail.setDetail(messageSource.getMessage("invalidSortOrder", null, null));
-        return new ResponseEntity<>(problemDetail, HttpStatus.UNPROCESSABLE_ENTITY);
+        return new ResponseEntity<>(problemDetail, HttpStatus.valueOf(problemDetail.getStatus()));
+    }
+
+    @Override
+    protected ResponseEntity<Object> handleHttpMessageNotReadable(HttpMessageNotReadableException exception,
+                                                                  HttpHeaders headers, HttpStatusCode status,
+                                                                  WebRequest request) {
+
+        ProblemDetail problemDetail = ProblemDetail.forStatus(status);
+        problemDetail.setType(typeUri);
+        String detailMessage = getInvalidArgumentDetailMessage(exception);
+        problemDetail.setDetail(detailMessage);
+        return new ResponseEntity<>(problemDetail, status);
+    }
+
+    private String getInvalidArgumentDetailMessage(HttpMessageNotReadableException exception) {
+        if (exception.getCause() instanceof JsonMappingException jsonMappingException) {
+            String fieldName = jsonMappingException.getPath().get(0).getFieldName();
+            return messageSource.getMessage("invalidField", new Object[]{fieldName}, null);
+        }
+        return messageSource.getMessage("invalidJson", null, null);
     }
 }
