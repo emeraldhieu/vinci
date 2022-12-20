@@ -33,8 +33,8 @@ paths:
             type: array
             items:
               type: string
-            default: []
-            example: ["updatedAt,asc", "createdAt,desc"]
+            default: ["updatedAt,desc"]
+            example: ["createdAt,asc", "updatedAt,desc"]
       responses:
         '200':
           description: Order listed
@@ -75,8 +75,7 @@ paths:
           description: Order ID to update
           required: true
           schema:
-            type: integer
-            format: int64
+            type: string
       requestBody:
         description: Update an existent order
         content:
@@ -105,8 +104,7 @@ paths:
           description: Order ID
           required: true
           schema:
-            type: integer
-            format: int64
+            type: string
       responses:
         '200':
           description: Order retrieved
@@ -128,8 +126,7 @@ paths:
           description: Order ID to delete
           required: true
           schema:
-            type: integer
-            format: int64
+            type: string
       responses:
         '204':
           description: Deletion succeeded
@@ -147,13 +144,13 @@ components:
           items:
             type: string
           example: [ "pizza", "burger", "spaghetti" ]
+          x-field-extra-annotation: "@NotNull"
     OrderResponse:
       type: object
       properties:
         id:
-          type: integer
-          format: int64
-          example: 42
+          type: string
+          example: ["c611d780541541f69c1e1e80b966527a"]
         products:
           type: array
           items:

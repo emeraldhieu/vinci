@@ -1,7 +1,9 @@
 package com.emeraldhieu.vinci.order.logic;
 
-import com.emeraldhieu.vinci.order.exception.NotFoundException;
 import com.emeraldhieu.vinci.order.logic.event.OrderCreatedEvent;
+import com.emeraldhieu.vinci.order.logic.exception.OrderNotFoundException;
+import com.emeraldhieu.vinci.order.logic.mapping.OrderRequestMapper;
+import com.emeraldhieu.vinci.order.logic.mapping.OrderResponseMapper;
 import com.emeraldhieu.vinci.order.logic.sort.SortOrderValidator;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -43,13 +45,13 @@ public class DefaultOrderService implements OrderService {
     }
 
     @Override
-    public OrderResponse update(Long id, OrderRequest orderRequest) {
-        Order orderToUpdate = orderRepository.findById(id)
+    public OrderResponse update(String id, OrderRequest orderRequest) {
+        Order orderToUpdate = orderRepository.findByExternalId(id)
             .map(currentOrder -> {
                 orderRequestMapper.partialUpdate(currentOrder, orderRequest);
                 return currentOrder;
             })
-            .orElseThrow(() -> new NotFoundException("Order %s not found".formatted(id)));
+            .orElseThrow(() -> new OrderNotFoundException(id));
         Order updatedOrder = orderRepository.save(orderToUpdate);
         return orderResponseMapper.toDto(updatedOrder);
     }
@@ -75,16 +77,16 @@ public class DefaultOrderService implements OrderService {
 
     @Override
     @Transactional(readOnly = true)
-    public OrderResponse get(Long id) {
-        return orderRepository.findById(id)
+    public OrderResponse get(String id) {
+        return orderRepository.findByExternalId(id)
             .map(orderResponseMapper::toDto)
-            .orElseThrow(() -> new NotFoundException("Order %s not found".formatted(id)));
+            .orElseThrow(() -> new OrderNotFoundException(id));
     }
 
     @Override
-    public void delete(Long id) {
-        orderRepository.findById(id)
-            .ifPresent(order -> orderRepository.deleteById(id));
+    public void delete(String id) {
+        orderRepository.findByExternalId(id)
+            .ifPresent(order -> orderRepository.deleteByExternalId(id));
     }
 
     @Override

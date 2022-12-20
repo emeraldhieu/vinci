@@ -21,6 +21,7 @@ import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 @Entity
 @Table(name = "payments")
@@ -35,6 +36,9 @@ public class Payment {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column
     private Long id;
+
+    @Column(nullable = false)
+    private String externalId;
 
     @Column(nullable = false)
     private String orderId;
@@ -65,18 +69,21 @@ public class Payment {
      */
     @PrePersist
     void preInsert() {
+        if (externalId == null) {
+            externalId = UUID.randomUUID().toString().replace("-", "");
+        }
         if (paymentMethod == null) {
             paymentMethod = PaymentMethod.DEBIT;
         }
         if (createdBy == null) {
-            // TODO Set this value to the user who inserts the order.
+            // TODO Set this value to the user who creates the payment.
             createdBy = 1L;
         }
         if (createdAt == null) {
             createdAt = LocalDateTime.now();
         }
         if (updatedBy == null) {
-            // TODO Set this value to the user who updates the order.
+            // TODO Set this value to the user who updates the payment.
             updatedBy = 1L;
         }
         if (updatedAt == null) {

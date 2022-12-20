@@ -137,3 +137,9 @@ curl --location --request POST 'http://localhost:50001/orders' \
     "updatedAt": "2022-12-17T15:22:29.540621"
 }
 ```
+
+## TODOs
+
++ Implement OAuth2
++ Improve database modeling
++ Improve field validation

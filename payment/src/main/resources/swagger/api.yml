@@ -33,8 +33,8 @@ paths:
             type: array
             items:
               type: string
-            default: []
-            example: ["updatedAt,asc", "createdAt,desc"]
+            default: ["updatedAt,desc"]
+            example: ["createdAt,asc", "updatedAt,desc"]
       responses:
         '200':
           description: Payment listed
@@ -75,8 +75,7 @@ paths:
           description: Payment ID to update
           required: true
           schema:
-            type: integer
-            format: int64
+            type: string
       requestBody:
         description: Update an existent payment
         content:
@@ -105,8 +104,7 @@ paths:
           description: Payment ID
           required: true
           schema:
-            type: integer
-            format: int64
+            type: string
       responses:
         '200':
           description: Payment retrieved
@@ -128,8 +126,7 @@ paths:
           description: Payment ID to delete
           required: true
           schema:
-            type: integer
-            format: int64
+            type: string
       responses:
         '204':
           description: Deletion succeeded
@@ -153,9 +150,8 @@ components:
       type: object
       properties:
         id:
-          type: integer
-          format: int64
-          example: 42
+          type: string
+          example: ["a2bc2dfa1df5495ebb1ce1902cbcb94a"]
         orderId:
           type: string
           example: [ "c611d780541541f69c1e1e80b966527a"]

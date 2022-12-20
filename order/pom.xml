@@ -203,6 +203,15 @@
 
                                     <!-- Do not allow updating data with nulls -->
                                     <openApiNullable>false</openApiNullable>
+
+                                    <!-- Add Lombok on top of the model class -->
+                                    <additionalModelTypeAnnotations>
+                                        @lombok.Builder
+                                        @lombok.Getter
+                                        @lombok.extern.jackson.Jacksonized
+                                        @lombok.EqualsAndHashCode
+                                        @lombok.RequiredArgsConstructor(access = lombok.AccessLevel.PRIVATE)
+                                    </additionalModelTypeAnnotations>
                                 </configOptions>
                             </configuration>
                         </execution>
