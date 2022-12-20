@@ -9,13 +9,13 @@ public interface OrderService {
 
     OrderResponse create(OrderRequest orderRequest);
 
-    OrderResponse update(Long id, OrderRequest orderRequest);
+    OrderResponse update(String id, OrderRequest orderRequest);
 
     Page<OrderResponse> list(int offset, int limit, List<String> sortOrders);
 
-    OrderResponse get(Long id);
+    OrderResponse get(String id);
 
-    void delete(Long id);
+    void delete(String id);
 
     Page<OrderResponse> search(String query, Pageable pageable);
 }

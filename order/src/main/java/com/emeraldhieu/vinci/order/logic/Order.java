@@ -72,7 +72,7 @@ public class Order {
             externalId = UUID.randomUUID().toString().replace("-", "");
         }
         if (createdBy == null) {
-            // TODO Set this value to the user who inserts the order.
+            // TODO Set this value to the user who creates the order.
             createdBy = 1L;
         }
         if (createdAt == null) {

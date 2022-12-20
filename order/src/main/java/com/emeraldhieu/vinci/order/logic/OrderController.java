@@ -25,13 +25,13 @@ public class OrderController implements OrdersApi {
     }
 
     @Override
-    public ResponseEntity<Void> deleteOrder(Long id) {
+    public ResponseEntity<Void> deleteOrder(String id) {
         orderService.delete(id);
         return ResponseEntity.noContent().build();
     }
 
     @Override
-    public ResponseEntity<OrderResponse> getOrder(Long id) {
+    public ResponseEntity<OrderResponse> getOrder(String id) {
         OrderResponse retrievedOrder = orderService.get(id);
         return ResponseEntity.ok(retrievedOrder);
     }
@@ -45,7 +45,7 @@ public class OrderController implements OrdersApi {
     }
 
     @Override
-    public ResponseEntity<OrderResponse> updateOrder(Long id, OrderRequest orderRequest) {
+    public ResponseEntity<OrderResponse> updateOrder(String id, OrderRequest orderRequest) {
         OrderResponse updatedOrder = orderService.update(id, orderRequest);
         return ResponseEntity.ok(updatedOrder);
     }
