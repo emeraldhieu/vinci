@@ -4,7 +4,7 @@ Vinci is a microservice shopping webapp. The name is inspired by my favourite ar
 
 ## API-first approach
 
-Vinci chooses API First approach using [Open API 3.0](https://swagger.io/specification/) and [Open API Maven Generator](https://github.com/OpenAPITools/openapi-generator/tree/master/modules/openapi-generator-maven-plugin) to boost API development and allow foreseeing how the product looks like. There are also [some other advatanges](https://swagger.io/resources/articles/adopting-an-api-first-approach/).
+Vinci chooses [API First approach](https://swagger.io/resources/articles/adopting-an-api-first-approach/) using [Open API 3.0](https://swagger.io/specification/) and [Open API Maven Generator](https://github.com/OpenAPITools/openapi-generator/tree/master/modules/openapi-generator-maven-plugin) to boost API development and allow foreseeing how the product looks like. The generated code can be overriden via [Mustache templates](https://mustache.github.io/mustache.5.html) such as [data transfer object](https://github.com/emeraldhieu/vinci/blob/master/order/src/main/resources/templates/pojo.mustache).
 
 ## Message queue
 
@@ -16,7 +16,11 @@ As Order's Kafka messages tend to evolve by development's needs, [Confluent Avro
 
 ## Database schema change management
 
-[Liquibase](https://docs.liquibase.com/home.html) supports revisioning, deploying and rolling back database changes. Generally, it makes it easier to work with database.
+[Liquibase](https://docs.liquibase.com/home.html) supports revisioning, deploying and rolling back database changes. On top of that, it allows [initializing data from CSV](https://docs.liquibase.com/change-types/load-data.html) for demonstrative purpose.
+
+## Problem Details RFC-7807
+
+Vinci uses [Spring 6's Problem Details](https://docs.spring.io/spring-framework/docs/6.0.0-RC1/reference/html/web.html#mvc-ann-rest-exceptions) to keep error responses consistent across microservices.
 
 ## Order API
 
