@@ -1,4 +1,4 @@
-package com.emeraldhieu.vinci.order.exception;
+package com.emeraldhieu.vinci.order.logic.exception;
 
 import com.emeraldhieu.vinci.order.logic.sort.InvalidSortOrderException;
 import com.fasterxml.jackson.databind.JsonMappingException;
@@ -68,7 +68,6 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
             .collect(Collectors.toList());
     }
 
-
     @ExceptionHandler(InvalidSortOrderException.class)
     protected ResponseEntity<Object> handleNoHandlerFoundException() {
         ProblemDetail problemDetail = ProblemDetail.forStatus(HttpStatus.UNPROCESSABLE_ENTITY);
@@ -81,7 +80,6 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
     protected ResponseEntity<Object> handleHttpMessageNotReadable(HttpMessageNotReadableException exception,
                                                                   HttpHeaders headers, HttpStatusCode status,
                                                                   WebRequest request) {
-
         ProblemDetail problemDetail = ProblemDetail.forStatus(status);
         problemDetail.setType(typeUri);
         String detailMessage = getInvalidArgumentDetailMessage(exception);
@@ -95,5 +93,13 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
             return messageSource.getMessage("invalidField", new Object[]{fieldName}, null);
         }
         return messageSource.getMessage("invalidJson", null, null);
+    }
+
+    @ExceptionHandler
+    protected ResponseEntity<Object> handleOrderNotFound(OrderNotFoundException exception) {
+        ProblemDetail problemDetail = ProblemDetail.forStatus(HttpStatus.NOT_FOUND);
+        problemDetail.setType(typeUri);
+        problemDetail.setDetail(messageSource.getMessage("orderNotFound", new Object[]{exception.getOrderId()}, null));
+        return new ResponseEntity<>(problemDetail, HttpStatus.valueOf(problemDetail.getStatus()));
     }
 }
