@@ -9,13 +9,13 @@ public interface PaymentService {
 
     PaymentResponse save(PaymentRequest paymentRequest);
 
-    PaymentResponse update(Long id, PaymentRequest paymentRequest);
+    PaymentResponse update(String id, PaymentRequest paymentRequest);
 
     Page<PaymentResponse> list(int offset, int limit, List<String> sortPayments);
 
-    PaymentResponse get(Long id);
+    PaymentResponse get(String id);
 
-    void delete(Long id);
+    void delete(String id);
 
     Page<PaymentResponse> search(String query, Pageable pageable);
 }

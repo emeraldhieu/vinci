@@ -1,6 +1,8 @@
 package com.emeraldhieu.vinci.payment.logic;
 
-import com.emeraldhieu.vinci.payment.exception.NotFoundException;
+import com.emeraldhieu.vinci.payment.logic.exception.PaymentNotFoundException;
+import com.emeraldhieu.vinci.payment.logic.mapping.PaymentRequestMapper;
+import com.emeraldhieu.vinci.payment.logic.mapping.PaymentResponseMapper;
 import com.emeraldhieu.vinci.payment.logic.sort.SortOrderValidator;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -33,14 +35,14 @@ public class DefaultPaymentService implements PaymentService {
     }
 
     @Override
-    public PaymentResponse update(Long id, PaymentRequest paymentRequest) {
+    public PaymentResponse update(String id, PaymentRequest paymentRequest) {
         Payment paymentToUpdate = paymentRepository
-            .findById(id)
+            .findByExternalId(id)
             .map(currentPayment -> {
                 paymentRequestMapper.partialUpdate(currentPayment, paymentRequest);
                 return currentPayment;
             })
-            .orElseThrow(() -> new NotFoundException("Payment %s not found".formatted(id)));
+            .orElseThrow(() -> new PaymentNotFoundException((id)));
         Payment updatedPayment = paymentRepository.save(paymentToUpdate);
         return paymentResponseMapper.toDto(updatedPayment);
     }
@@ -66,16 +68,16 @@ public class DefaultPaymentService implements PaymentService {
 
     @Override
     @Transactional(readOnly = true)
-    public PaymentResponse get(Long id) {
-        return paymentRepository.findById(id)
+    public PaymentResponse get(String id) {
+        return paymentRepository.findByExternalId(id)
             .map(paymentResponseMapper::toDto)
-            .orElseThrow(() -> new NotFoundException("Payment %s not found".formatted(id)));
+            .orElseThrow(() -> new PaymentNotFoundException(id));
     }
 
     @Override
-    public void delete(Long id) {
-        paymentRepository.findById(id)
-            .ifPresent(payment -> paymentRepository.deleteById(id));
+    public void delete(String id) {
+        paymentRepository.findByExternalId(id)
+            .ifPresent(payment -> paymentRepository.deleteByExternalId(id));
     }
 
     @Override

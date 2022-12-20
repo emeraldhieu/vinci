@@ -25,13 +25,13 @@ public class PaymentController implements PaymentsApi {
     }
 
     @Override
-    public ResponseEntity<Void> deletePayment(Long id) {
+    public ResponseEntity<Void> deletePayment(String id) {
         paymentService.delete(id);
         return ResponseEntity.noContent().build();
     }
 
     @Override
-    public ResponseEntity<PaymentResponse> getPayment(Long id) {
+    public ResponseEntity<PaymentResponse> getPayment(String id) {
         PaymentResponse retrievedPayment = paymentService.get(id);
         return ResponseEntity.ok(retrievedPayment);
     }
@@ -45,7 +45,7 @@ public class PaymentController implements PaymentsApi {
     }
 
     @Override
-    public ResponseEntity<PaymentResponse> updatePayment(Long id, PaymentRequest paymentRequest) {
+    public ResponseEntity<PaymentResponse> updatePayment(String id, PaymentRequest paymentRequest) {
         PaymentResponse updatedPayment = paymentService.update(id, paymentRequest);
         return ResponseEntity.ok(updatedPayment);
     }

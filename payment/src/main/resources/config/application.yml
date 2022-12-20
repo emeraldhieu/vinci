@@ -1,6 +1,21 @@
 spring:
   profiles:
     active: dev # Activate "dev" profile by default
+  jackson:
+    default-property-inclusion: non_null
+  messages:
+    basename: i18n/messages
+  mvc:
+    # Throw NoHandlerFoundException
+    # See https://stackoverflow.com/questions/36733254/spring-boot-rest-how-to-configure-404-resource-not-found#36734193
+    throw-exception-if-no-handler-found: true
+    problemdetails:
+      enabled: true
+  web:
+    resources:
+      # Throw NoHandlerFoundException
+      # See https://stackoverflow.com/questions/36733254/spring-boot-rest-how-to-configure-404-resource-not-found#36734193
+      add-mappings: false
   datasource:
     type: com.zaxxer.hikari.HikariDataSource
     hikari:
