@@ -46,6 +46,10 @@ Vinci uses [Spring 6's Problem Details](https://docs.spring.io/spring-framework/
 }
 ```
 
+## Java beans mappings
+
+Like Lombok, [Mapstruct](https://github.com/mapstruct/mapstruct) is a code generator library that supports mapping between entities and DTOs without writing boilerplate code. A significant benefit is that mappers don't need unit tests because there's no code to test!
+
 ## Order API
 
 ### 1) List orders
