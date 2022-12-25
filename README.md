@@ -58,7 +58,7 @@ GET /orders
 
 | Parameters    | Description  | Format                                     |
 |---------------|--------------|--------------------------------------------|
-| `sortOrders`  | Sort orders  | `column1,direction&#124;column2,direction` |
+| `sortOrders`  | Sort orders  | column1,direction&#124;column2,direction   |
 
 Some examples of `sortOrders`:
 + `createdAt,desc`
