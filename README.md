@@ -12,7 +12,21 @@ Whenever an order is placed, a corresponding payment record is asynchronouly cre
 
 ## Schema registry
 
-As Order's Kafka messages tend to evolve by development's needs, [Confluent Avro](https://docs.confluent.io/2.0.0/schema-registry/docs/intro.html) is used to version schemas of Kafka messages. Schemas are stored in Kafka's log files and indices are stored in Avro's in-memory storage.
+As Order's Kafka messages tend to evolve by development's needs, [Confluent Avro](https://docs.confluent.io/2.0.0/schema-registry/docs/intro.html) is used to version schemas of Kafka messages. Schemas are stored in Kafka's log files and indices are stored in Avro's in-memory storage. For example, OrderMessage's schema:
+```
+{
+    "type": "record",
+    "name": "OrderMessage",
+    "namespace": "com.emeraldhieu.vinci.payment",
+    "fields":
+    [
+        {
+            "name": "orderId",
+            "type": "string"
+        }
+    ]
+}
+```
 
 ## Database schema change management
 
@@ -21,6 +35,16 @@ As Order's Kafka messages tend to evolve by development's needs, [Confluent Avro
 ## Problem Details RFC-7807
 
 Vinci uses [Spring 6's Problem Details](https://docs.spring.io/spring-framework/docs/6.0.0-RC1/reference/html/web.html#mvc-ann-rest-exceptions) to keep error responses consistent across microservices.
+
+```
+{
+    "type": "http://localhost:50001/vinci/types",
+    "title": "Unprocessable Entity",
+    "status": 422,
+    "detail": "Invalid sort order",
+    "instance": "/orders"
+}
+```
 
 ## Order API
 
@@ -32,9 +56,9 @@ GET /orders
 
 #### Request parameters (optional)
 
-| Parameters    | Description  | Format                                |
-|---------------|--------------|-------------------------------------- |
-| `sortOrders`  | Sort orders  | `column1,direction|column2,direction` |
+| Parameters    | Description  | Format                                     |
+|---------------|--------------|--------------------------------------------|
+| `sortOrders`  | Sort orders  | `column1,direction&#124;column2,direction` |
 
 Some examples of `sortOrders`:
 + `createdAt,desc`
@@ -128,17 +152,17 @@ curl --location --request POST 'http://localhost:50001/orders' \
 
 ```json
 {
-    "id": "9383630cc2844b08a568fe50fb0c0e90",
-    "products":
-    [
-        "coke",
-        "juice",
-        "cider"
-    ],
-    "createdBy": 1,
-    "createdAt": "2022-12-20T17:17:12.918707",
-    "updatedBy": 1,
-    "updatedAt": "2022-12-20T17:17:12.918707"
+  "id": "9383630cc2844b08a568fe50fb0c0e90",
+  "products":
+  [
+    "coke",
+    "juice",
+    "cider"
+  ],
+  "createdBy": 1,
+  "createdAt": "2022-12-20T17:17:12.918707",
+  "updatedBy": 1,
+  "updatedAt": "2022-12-20T17:17:12.918707"
 }
 ```
 
