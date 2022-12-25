@@ -170,9 +170,20 @@ curl --location --request POST 'http://localhost:50001/orders' \
 }
 ```
 
+## Quickstart
+
+At project directory, run this command to set up external services.
+
+```sh
+docker compose up -d
+```
+
+In IntelliJ, start `OrderApp` and `PaymentApp`.
+
 ## TODOs
 
 + Implement OAuth2
 + Improve database modeling
 + Improve field validation
-+ Update REAME.d for other endpoints
++ Implement shipping service
++ Update README.md for other endpoints
