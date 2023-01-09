@@ -9,10 +9,15 @@ services:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
       PGDATA: /data/postgres
-    volumes:
-       - postgres:/data/postgres
+      POSTGRES_MULTIPLE_DATABASES: "order,payment,sonar"
     ports:
       - "5432:5432"
+    volumes:
+      - postgres:/data/postgres
+      # Create multiple databases with users upon starting
+      # See https://github.com/mrts/docker-postgresql-multiple-databases#using-multiple-databases-with-the-official-postgresql-docker-image
+      # Remember to grant execution to your script: "chmod +x <yourScript>"
+      - ./postgres-scripts:/docker-entrypoint-initdb.d
     networks:
       postgres:
         # Set static IP for PgAdmin to connect to a specific IP
