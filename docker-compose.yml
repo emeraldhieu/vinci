@@ -144,6 +144,19 @@ services:
       CONFLUENT_METRICS_TOPIC_REPLICATION: 1
       PORT: 9021
 
+  jenkins:
+    image: jenkins/jenkins:jdk11
+    container_name: jenkins
+    privileged: true
+    user: root
+    ports:
+      - "8082:8080"
+      - "50000:50000"
+    volumes:
+      - jenkins-home:/var/jenkins_home
+      - /var/run/docker.sock:/var/run/docker.sock
+      - /usr/local/bin/docker:/usr/local/bin/docker
+
 networks:
   postgres:
     driver: bridge
@@ -159,3 +172,4 @@ volumes:
   zookeeper-transaction-logs:
   kafka1-data:
   kafka2-data:
+  jenkins-home:
