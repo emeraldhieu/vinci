@@ -1,0 +1,38 @@
+pipeline {
+    agent any
+
+    tools {
+        maven '3.8.7'
+    }
+
+    environment {
+        PROJECT_NAME = "vinci"
+        GIT_COMMIT_ABBREV = "${env.GIT_COMMIT.take(7)}"
+        GIT_AUTHOR        = sh (script: 'git show -s --pretty=%an',
+                                returnStdout: true).trim()
+        GIT_AUTHOR_EMAIL  = sh (script: 'git show -s --pretty=%ae',
+                                returnStdout: true).trim()
+    }
+
+    options {
+        disableConcurrentBuilds()
+        buildDiscarder(logRotator(numToKeepStr: '10'))
+        timestamps()
+    }
+
+    stages {
+        stage('Check out') {
+            steps {
+                checkout scm
+            }
+        }
+
+        stage('Clean install') {
+            steps {
+                dir('bom') {
+                    sh "mvn clean install"
+                }
+            }
+        }
+    }
+}
