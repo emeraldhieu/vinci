@@ -180,6 +180,42 @@ docker compose up -d
 
 In IntelliJ, start `OrderApp` and `PaymentApp`.
 
+---
+
+## Deploy microservices to Kubernetes
+
+[Minikube](https://minikube.sigs.k8s.io/) is used for development only.
+
+Assuming you've had minikube [installed and started](https://minikube.sigs.k8s.io/docs/start/).
+
+### Follow these steps
+
+Since minikube actually creates a VM and run containers on it, you have to mount the host machine's directory to the VM's directory
+
+```
+minikube mount <yourLocalPathTo>/vinci/postgres-scripts:/home/docker/postgres-scripts
+```
+
+Create k8s resources
+```
+kubectl apply -f deployment.yaml
+```
+
+Listen on port 5432, forward data to a pod selected by the service
+```
+kubectl port-forward svc/postgres 5432
+```
+
+Connect to postgres from the host machine. Enter password "postgres".
+```
+psql -h 127.0.0.1 -d postgres -U postgres -W
+```
+
+List databases. If you see databases `order` and `payment`, the setup is working.
+```
+postgres=# \l
+```
+
 ## TODOs
 
 + Implement OAuth2
