@@ -1,0 +1,116 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: postgres-cm
+  labels:
+    app: postgres
+data:
+  POSTGRES_USER: postgres
+  POSTGRES_PASSWORD: postgres
+  PGDATA: /data/postgres
+  POSTGRES_MULTIPLE_DATABASES: "order,payment"
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: postgres-data-pv
+  labels:
+    type: local
+spec:
+  storageClassName: postgres-data-sc
+  capacity:
+    storage: 2Gi
+  accessModes:
+    - ReadWriteOnce
+  # hostPath volume is used for development and testing on a single node only. It's not used for production.
+  hostPath:
+    path: "/home/docker/postgres-data"
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: postgres-data-pvc
+spec:
+  storageClassName: postgres-data-sc
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 2Gi
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: postgres-script-pv
+  labels:
+    type: local
+spec:
+  storageClassName: postgres-script-sc
+  capacity:
+    storage: 1Gi
+  accessModes:
+    - ReadWriteOnce
+  # hostPath volume is used for development and testing on a single node only. It's not used for production.
+  hostPath:
+    path: "/home/docker/postgres-scripts"
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: postgres-script-pvc
+spec:
+  storageClassName: postgres-script-sc
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 1Gi
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: postgres
+  labels:
+    app: postgres
+spec:
+  type: NodePort
+  ports:
+    - port: 5432
+  selector:
+    app: postgres
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: postgres
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: postgres
+  template:
+    metadata:
+      labels:
+        app: postgres
+    spec:
+      containers:
+        - name: postgres
+          image: postgres:15.1-alpine
+          imagePullPolicy: "IfNotPresent"
+          ports:
+            - containerPort: 5432
+          envFrom:
+            - configMapRef:
+                name: postgres-cm
+          volumeMounts:
+            - mountPath: /data/postgres
+              name: postgres-data
+            - mountPath: /docker-entrypoint-initdb.d
+              name: postgres-script
+      volumes:
+        - name: postgres-data
+          persistentVolumeClaim:
+            claimName: postgres-data-pvc
+        - name: postgres-script
+          persistentVolumeClaim:
+            claimName: postgres-script-pvc
