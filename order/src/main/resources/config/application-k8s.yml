@@ -1,0 +1,33 @@
+spring:
+  datasource:
+    url: jdbc:postgresql://${application.db.host}:${application.db.port}/${application.db.name}
+    username: ${application.db.user}
+    password: ${application.db.password}
+  jpa:
+    show-sql: true
+    database: postgresql
+  liquibase:
+    # Drop the existing to repopulate the whole database
+    # drop-first: true
+    # Used for development to update the changelogs continuously
+    clear-checksums: true
+  kafka:
+    producer:
+      bootstrap-servers: "localhost:9092"
+logging:
+  level:
+    # Enable Liquibase logs for development
+    liquibase.database: DEBUG
+    liquibase.changelog: DEBUG
+    # Log to see liquibase's SQL
+    liquibase.executor.jvm.[JdbcExecutor$ExecuteStatementCallback]: DEBUG
+    # Log Kafka
+    org.springframework.kafka.listener: DEBUG
+    org.springframework.kafka.listener.adapter: INFO
+application:
+  db:
+    host: ${DB_HOST}
+    port: ${DB_PORT}
+    name: ${DB_NAME}
+    user: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
