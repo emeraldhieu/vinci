@@ -1,0 +1,8 @@
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/shipping
+    username: shipping
+    password: shipping
+  jpa:
+    show-sql: true
+    database: postgresql

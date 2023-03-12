@@ -72,6 +72,8 @@
         <hibernateTypeVersion>2.20.0</hibernateTypeVersion>
         <kafkaAvroSerializerVersion>7.3.0</kafkaAvroSerializerVersion>
         <avroMavenPluginVersion>1.11.1</avroMavenPluginVersion>
+        <flywayCoreVersion>9.15.2</flywayCoreVersion>
+        <flywayMavenPlugin>9.15.2</flywayMavenPlugin>
     </properties>
 
     <dependencyManagement>
@@ -227,6 +229,13 @@
                 <groupId>io.confluent</groupId>
                 <artifactId>kafka-avro-serializer</artifactId>
                 <version>${kafkaAvroSerializerVersion}</version>
+            </dependency>
+
+            <!-- Use Flyway for database migration -->
+            <dependency>
+                <groupId>org.flywaydb</groupId>
+                <artifactId>flyway-core</artifactId>
+                <version>${flywayCoreVersion}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
@@ -391,6 +400,15 @@
                     <groupId>org.apache.avro</groupId>
                     <artifactId>avro-maven-plugin</artifactId>
                     <version>${avroMavenPluginVersion}</version>
+                </plugin>
+
+                <!--
+                    Use Flyway for database migration.
+                -->
+                <plugin>
+                    <groupId>org.flywaydb</groupId>
+                    <artifactId>flyway-maven-plugin</artifactId>
+                    <version>${flywayMavenPlugin}</version>
                 </plugin>
             </plugins>
         </pluginManagement>

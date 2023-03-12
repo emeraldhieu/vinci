@@ -9,7 +9,7 @@ services:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
       PGDATA: /data/postgres
-      POSTGRES_MULTIPLE_DATABASES: "order,payment,sonar"
+      POSTGRES_MULTIPLE_DATABASES: "order,payment,shipping"
     ports:
       - "5432:5432"
     volumes:
