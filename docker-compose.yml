@@ -9,7 +9,7 @@ services:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
       PGDATA: /data/postgres
-      POSTGRES_MULTIPLE_DATABASES: "order,payment,sonar"
+      POSTGRES_MULTIPLE_DATABASES: "order,payment,shipping"
     ports:
       - "5432:5432"
     volumes:
@@ -82,32 +82,33 @@ services:
     depends_on:
       - zookeeper
 
-  kafka2:
-    image: confluentinc/cp-kafka:7.1.1
-    container_name: kafka2
-    hostname: kafka2
-    # Enable this in Mac Book Pro M1
-    #platform: linux/x86_64
-    ports:
-      - "9093:9093"
-    volumes:
-      - kafka2-data:/var/lib/kafka/data
-    environment:
-      KAFKA_ADVERTISED_LISTENERS: INSIDE://kafka2:29093,OUTSIDE://localhost:9093
-      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: INSIDE:PLAINTEXT,OUTSIDE:PLAINTEXT
-      KAFKA_INTER_BROKER_LISTENER_NAME: INSIDE
-      KAFKA_ZOOKEEPER_CONNECT: "zookeeper:2181"
-      KAFKA_BROKER_ID: 2
-      KAFKA_LOG4J_LOGGERS: "kafka.controller=INFO,kafka.producer.async.DefaultEventHandler=INFO,state.change.logger=INFO"
-      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
-      KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
-      KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
-      KAFKA_JMX_PORT: 9999
-      KAFKA_JMX_HOSTNAME: ${DOCKER_HOST_IP:-127.0.0.1}
-      KAFKA_AUTHORIZER_CLASS_NAME: kafka.security.authorizer.AclAuthorizer
-      KAFKA_ALLOW_EVERYONE_IF_NO_ACL_FOUND: "true"
-    depends_on:
-      - zookeeper
+# Temporarily disable to reduce memory consumption
+#  kafka2:
+#    image: confluentinc/cp-kafka:7.1.1
+#    container_name: kafka2
+#    hostname: kafka2
+#    # Enable this in Mac Book Pro M1
+#    #platform: linux/x86_64
+#    ports:
+#      - "9093:9093"
+#    volumes:
+#      - kafka2-data:/var/lib/kafka/data
+#    environment:
+#      KAFKA_ADVERTISED_LISTENERS: INSIDE://kafka2:29093,OUTSIDE://localhost:9093
+#      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: INSIDE:PLAINTEXT,OUTSIDE:PLAINTEXT
+#      KAFKA_INTER_BROKER_LISTENER_NAME: INSIDE
+#      KAFKA_ZOOKEEPER_CONNECT: "zookeeper:2181"
+#      KAFKA_BROKER_ID: 2
+#      KAFKA_LOG4J_LOGGERS: "kafka.controller=INFO,kafka.producer.async.DefaultEventHandler=INFO,state.change.logger=INFO"
+#      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+#      KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
+#      KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
+#      KAFKA_JMX_PORT: 9999
+#      KAFKA_JMX_HOSTNAME: ${DOCKER_HOST_IP:-127.0.0.1}
+#      KAFKA_AUTHORIZER_CLASS_NAME: kafka.security.authorizer.AclAuthorizer
+#      KAFKA_ALLOW_EVERYONE_IF_NO_ACL_FOUND: "true"
+#    depends_on:
+#      - zookeeper
 
   schema-registry:
     image: confluentinc/cp-schema-registry:7.3.0
@@ -116,7 +117,7 @@ services:
     depends_on:
       - zookeeper
       - kafka1
-      - kafka2
+#      - kafka2
     ports:
       - "8081:8081"
     environment:
@@ -131,7 +132,7 @@ services:
     hostname: control-center
     depends_on:
       - kafka1
-      - kafka2
+#      - kafka2
       - schema-registry
     ports:
       - "9021:9021"

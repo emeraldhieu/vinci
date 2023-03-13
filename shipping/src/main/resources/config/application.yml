@@ -1,0 +1,31 @@
+spring:
+  profiles:
+    active: dev # Activate "dev" profile by default
+  jackson:
+    default-property-inclusion: non_null
+  messages:
+    basename: i18n/messages
+  mvc:
+    # Throw NoHandlerFoundException
+    # See https://stackoverflow.com/questions/36733254/spring-boot-rest-how-to-configure-404-resource-not-found#36734193
+    throw-exception-if-no-handler-found: true
+    problemdetails:
+      enabled: true
+  web:
+    resources:
+      # Throw NoHandlerFoundException
+      # See https://stackoverflow.com/questions/36733254/spring-boot-rest-how-to-configure-404-resource-not-found#36734193
+      add-mappings: false
+  datasource:
+    type: com.zaxxer.hikari.HikariDataSource
+    hikari:
+      poolName: Hikari
+      auto-commit: false
+  jpa:
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+    open-in-view: false
+server:
+  port: 50001
+  tomcat:
+    # Allow pipe character in URL to support passing commas such as "createdAt,asc"
+    relaxed-query-chars: "|"
