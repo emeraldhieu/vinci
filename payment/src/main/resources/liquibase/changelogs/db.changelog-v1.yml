@@ -1,15 +1,15 @@
 databaseChangeLog:
   - changeSet:
-      id: createTablePayments
+      id: createPaymentTable
       author: emeraldhieu
       preConditions:
         - onFail: MARK_RAN
           not:
             tableExists:
-              tableName: payments
+              tableName: payment
       changes:
         - createTable:
-            tableName: payments
+            tableName: payment
             columns:
               - column:
                   name: id
@@ -54,15 +54,15 @@ databaseChangeLog:
                   constraints:
                     nullable: false
   - changeSet:
-      id: initializePayments
+      id: initializePaymentTable
       author: emeraldhieu
       preConditions:
         - rowCount:
-            tableName: payments
+            tableName: payment
             expectedRows: 0
       changes:
         - loadData:
-            tableName: payments
+            tableName: payment
             columns:
               - column:
                   header: External ID
