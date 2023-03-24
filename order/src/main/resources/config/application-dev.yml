@@ -29,4 +29,3 @@ application:
     topic: orders
     partitions: 2
     replicationFactor: 1
-    groupId: awesomeGroup

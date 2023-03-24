@@ -10,5 +10,4 @@ public class KafkaProperties {
     private String topic;
     private int partitions;
     private int replicationFactor;
-    private String groupId;
 }
