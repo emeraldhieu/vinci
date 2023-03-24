@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>com.emeraldhieu.vinci</groupId>
+        <artifactId>bom</artifactId>
+        <version>1.0-SNAPSHOT</version>
+        <relativePath/>
+    </parent>
+
+    <!--
+        The purpose of this module is to decouple gRPC interfaces (proto files) from client and server.
+        Both client and server can use the generated class files here.
+        See https://yidongnan.github.io/grpc-spring-boot-starter/en/client/getting-started.html#project-setup
+    -->
+    <groupId>com.emeraldhieu.vinci</groupId>
+    <artifactId>grpc-interface</artifactId>
+    <name>GRPC Interface</name>
+    <version>1.0-SNAPSHOT</version>
+
+    <properties>
+        <javaxAnnotationApiVersion>1.3.2</javaxAnnotationApiVersion>
+    </properties>
+
+    <dependencies>
+        <dependency>
+            <groupId>io.grpc</groupId>
+            <artifactId>grpc-stub</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.grpc</groupId>
+            <artifactId>grpc-protobuf</artifactId>
+        </dependency>
+
+        <!--
+            Fix issue "cannot find symbol javax.annotation.Generated".
+            See https://stackoverflow.com/questions/60968250/i-use-grpc-to-generate-java-code-javax-annotation-generated-and-it-reports-e#60975792
+            Not sure why it happens. Maybe some conflict between Spring Boot 3 and protobuf-maven-plugin?
+            TODO Investigate the root cause
+            DO NOT MOVE THIS TO BOM. Last time I did it and got some strange errors.
+        -->
+        <dependency>
+            <groupId>javax.annotation</groupId>
+            <artifactId>javax.annotation-api</artifactId>
+            <version>${javaxAnnotationApiVersion}</version>
+        </dependency>
+
+        <!--
+            Override older "protobuf-java" and "protobuf-java-util" used in "protoc-gen-grpc-java".
+            See https://github.com/protocolbuffers/protobuf/issues/9236#issuecomment-977718615
+        -->
+        <dependency>
+            <groupId>com.google.protobuf</groupId>
+            <artifactId>protobuf-java</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.google.protobuf</groupId>
+            <artifactId>protobuf-java-util</artifactId>
+            <scope>runtime</scope>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <plugins>
+            <!--
+                Use Protobuf Code Generator.
+                See https://yidongnan.github.io/grpc-spring-boot-starter/en/server/getting-started.html#maven-interface
+            -->
+            <plugin>
+                <groupId>org.xolstice.maven.plugins</groupId>
+                <artifactId>protobuf-maven-plugin</artifactId>
+                <configuration>
+                    <protocArtifact>com.google.protobuf:protoc:${protobufVersion}:exe:${os.detected.classifier}</protocArtifact>
+                    <pluginId>grpc-java</pluginId>
+                    <pluginArtifact>io.grpc:protoc-gen-grpc-java:${grpcVersion}:exe:${os.detected.classifier}</pluginArtifact>
+                </configuration>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>compile</goal>
+                            <goal>compile-custom</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <!---
+                Skip finding main class upon "spring-boot-maven-plugin:repackage".
+                Otherwise, error "Unable to find main class" occurs.
+                See https://stackoverflow.com/questions/32368328/unable-to-find-a-suitable-main-class-please-add-a-mainclass-property-spring#51066763
+            -->
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+                <configuration>
+                    <skip>true</skip>
+                </configuration>
+            </plugin>
+        </plugins>
+
+        <extensions>
+            <!--
+                Used for Spring Boot gRPC.
+                See https://yidongnan.github.io/grpc-spring-boot-starter/en/server/getting-started.html#maven-interface
+            -->
+            <extension>
+                <groupId>kr.motd.maven</groupId>
+                <artifactId>os-maven-plugin</artifactId>
+            </extension>
+        </extensions>
+    </build>
+
+</project>

@@ -1,15 +1,15 @@
 databaseChangeLog:
   - changeSet:
-      id: createTableOrders
+      id: createOrderTable
       author: emeraldhieu
       preConditions:
         - onFail: MARK_RAN
           not:
             tableExists:
-              tableName: orders
+              tableName: order
       changes:
         - createTable:
-            tableName: orders
+            tableName: order
             columns:
               - column:
                   name: id
@@ -49,15 +49,15 @@ databaseChangeLog:
                   constraints:
                     nullable: false
   - changeSet:
-      id: initializeOrders
+      id: initializeOrderTable
       author: emeraldhieu
       preConditions:
         - rowCount:
-            tableName: orders
+            tableName: order
             expectedRows: 0
       changes:
         - loadData:
-            tableName: orders
+            tableName: order
             columns:
               - column:
                   header: External ID

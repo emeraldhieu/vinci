@@ -1,0 +1,40 @@
+syntax = "proto3";
+package com.emeraldhieu.vinci.shipping.grpc;
+
+import "google/protobuf/timestamp.proto";
+
+option java_multiple_files = true;
+option java_package = "com.emeraldhieu.vinci.shipping.grpc";
+option java_outer_classname = "ShippingProto";
+
+service ShippingService {
+  rpc GetShipping (ShippingRequest) returns (ShippingResponse) {
+  }
+  rpc SaveShipping (ShippingRequest) returns (ShippingResponse) {
+  }
+}
+
+enum StatusEnum {
+  IN_PROGRESS = 0;
+  DONE = 1;
+  PENDING = 2;
+}
+
+message ShippingRequest {
+  string id = 1;
+  string orderId = 2;
+  double amount = 3;
+  StatusEnum status = 4;
+  google.protobuf.Timestamp shippingDate = 5;
+  int32 offset = 10;
+  int32 limit = 11;
+}
+
+message ShippingResponse {
+  string id = 1;
+  string orderId = 2;
+  double amount = 3;
+  StatusEnum status = 4;
+  google.protobuf.Timestamp shippingDate = 5;
+}
+

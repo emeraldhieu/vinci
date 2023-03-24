@@ -24,8 +24,20 @@ spring:
   jpa:
     database-platform: org.hibernate.dialect.PostgreSQLDialect
     open-in-view: false
+  kafka:
+    consumer:
+      key-deserializer: io.confluent.kafka.serializers.KafkaAvroDeserializer
+      value-deserializer: io.confluent.kafka.serializers.KafkaAvroDeserializer
+    group-id: awesomeGroup
+    properties:
+      schema.registry.url: http://localhost:8081
+      # Deserialize to the generated Avro class rather than a GenericRecord type
+      specific.avro.reader: true
 server:
-  port: 50001
+  port: 50003
   tomcat:
     # Allow pipe character in URL to support passing commas such as "createdAt,asc"
     relaxed-query-chars: "|"
+grpc:
+  server:
+    port: 50013

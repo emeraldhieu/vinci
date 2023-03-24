@@ -1,7 +1,6 @@
-package com.emeraldhieu.vinci.payment.logic;
+package com.emeraldhieu.vinci.shipping.logic;
 
 import jakarta.persistence.Column;
-import jakarta.persistence.Convert;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EntityListeners;
 import jakarta.persistence.GeneratedValue;
@@ -24,13 +23,13 @@ import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Entity
-@Table(name = "payment")
+@Table(name = "shipping")
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 @Getter
 @Setter
 @EqualsAndHashCode
 @EntityListeners(AuditingEntityListener.class)
-public class Payment {
+public class Shipping {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -43,9 +42,15 @@ public class Payment {
     @Column(nullable = false)
     private String orderId;
 
-    @Convert(converter = PaymentMethodConverter.class)
     @Column(nullable = false)
-    private PaymentMethod paymentMethod;
+    private Double amount;
+
+    @Column(nullable = false)
+    private Status status;
+
+    @Column(nullable = false)
+    @CreatedDate
+    private LocalDateTime shippingDate;
 
     @Column(nullable = false)
     @CreatedBy
@@ -72,18 +77,15 @@ public class Payment {
         if (externalId == null) {
             externalId = UUID.randomUUID().toString().replace("-", "");
         }
-        if (paymentMethod == null) {
-            paymentMethod = PaymentMethod.DEBIT;
-        }
         if (createdBy == null) {
-            // TODO Set this value to the user who creates the payment.
+            // TODO Set this value to the user who creates the order.
             createdBy = 1L;
         }
         if (createdAt == null) {
             createdAt = LocalDateTime.now();
         }
         if (updatedBy == null) {
-            // TODO Set this value to the user who updates the payment.
+            // TODO Set this value to the user who updates the order.
             updatedBy = 1L;
         }
         if (updatedAt == null) {

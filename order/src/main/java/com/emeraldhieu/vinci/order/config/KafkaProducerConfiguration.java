@@ -1,6 +1,6 @@
 package com.emeraldhieu.vinci.order.config;
 
-import com.emeraldhieu.vinci.payment.OrderMessage;
+import com.emeraldhieu.vinci.order.OrderMessage;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.clients.admin.NewTopic;

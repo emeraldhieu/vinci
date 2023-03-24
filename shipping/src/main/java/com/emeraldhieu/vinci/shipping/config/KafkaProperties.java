@@ -1,4 +1,4 @@
-package com.emeraldhieu.vinci.order.config;
+package com.emeraldhieu.vinci.shipping.config;
 
 import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
@@ -10,4 +10,5 @@ public class KafkaProperties {
     private String topic;
     private int partitions;
     private int replicationFactor;
+    private String groupId;
 }

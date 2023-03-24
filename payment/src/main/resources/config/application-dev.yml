@@ -25,5 +25,5 @@ application:
   kafka:
     topic: orders
     partitions: 2
-    replicationFactor: 2
-    groupId: awesomeGroup
+    replicationFactor: 1
+    groupId: payment
