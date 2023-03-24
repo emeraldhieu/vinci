@@ -6,3 +6,12 @@ spring:
   jpa:
     show-sql: true
     database: postgresql
+  kafka:
+    producer:
+      bootstrap-servers: "localhost:9092"
+application:
+  kafka:
+    topic: orders
+    partitions: 2
+    replicationFactor: 1
+    groupId: awesomeGroup

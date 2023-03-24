@@ -1,6 +1,5 @@
-package com.emeraldhieu.vinci.order.logic;
+package com.emeraldhieu.vinci.shipping.logic;
 
-import com.vladmihalcea.hibernate.type.json.JsonType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EntityListeners;
@@ -14,7 +13,6 @@ import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
-import org.hibernate.annotations.Type;
 import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedBy;
@@ -22,17 +20,16 @@ import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.LocalDateTime;
-import java.util.List;
 import java.util.UUID;
 
 @Entity
-@Table(name = "`order`")
+@Table(name = "shipping")
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 @Getter
 @Setter
 @EqualsAndHashCode
 @EntityListeners(AuditingEntityListener.class)
-public class Order {
+public class Shipping {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -42,9 +39,18 @@ public class Order {
     @Column(nullable = false)
     private String externalId;
 
-    @Type(JsonType.class)
     @Column(nullable = false)
-    private List<String> products;
+    private String orderId;
+
+    @Column(nullable = false)
+    private Double amount;
+
+    @Column(nullable = false)
+    private Status status;
+
+    @Column(nullable = false)
+    @CreatedDate
+    private LocalDateTime shippingDate;
 
     @Column(nullable = false)
     @CreatedBy

@@ -2,7 +2,7 @@ package com.emeraldhieu.vinci.order.logic;
 
 import com.emeraldhieu.vinci.order.config.KafkaProperties;
 import com.emeraldhieu.vinci.order.logic.event.OrderCreatedEvent;
-import com.emeraldhieu.vinci.payment.OrderMessage;
+import com.emeraldhieu.vinci.order.OrderMessage;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.event.EventListener;

@@ -1,6 +1,6 @@
 package com.emeraldhieu.vinci.payment.logic;
 
-import com.emeraldhieu.vinci.payment.OrderMessage;
+import com.emeraldhieu.vinci.order.OrderMessage;
 import com.emeraldhieu.vinci.payment.config.KafkaProperties;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
