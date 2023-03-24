@@ -73,7 +73,13 @@
         <kafkaAvroSerializerVersion>7.3.0</kafkaAvroSerializerVersion>
         <avroMavenPluginVersion>1.11.1</avroMavenPluginVersion>
         <flywayCoreVersion>9.15.2</flywayCoreVersion>
-        <flywayMavenPlugin>9.15.2</flywayMavenPlugin>
+        <flywayMavenPluginVersion>9.15.2</flywayMavenPluginVersion>
+        <protobufVersion>3.17.2</protobufVersion>
+        <protobufMavenPluginVersion>0.6.1</protobufMavenPluginVersion>
+        <grpcVersion>1.40.1</grpcVersion>
+        <osMavenPluginVersion>1.7.0</osMavenPluginVersion>
+        <grpcSpringBootStarterVersion>2.14.0.RELEASE</grpcSpringBootStarterVersion>
+        <protobufJavaVersion>3.22.2</protobufJavaVersion>
     </properties>
 
     <dependencyManagement>
@@ -236,6 +242,64 @@
                 <groupId>org.flywaydb</groupId>
                 <artifactId>flyway-core</artifactId>
                 <version>${flywayCoreVersion}</version>
+            </dependency>
+
+            <!--
+                Use Spring Boot gRPC interfaces.
+                See https://yidongnan.github.io/grpc-spring-boot-starter/en/server/getting-started.html#maven-interface
+            -->
+            <dependency>
+                <groupId>io.grpc</groupId>
+                <artifactId>grpc-stub</artifactId>
+                <version>${grpcVersion}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.grpc</groupId>
+                <artifactId>grpc-protobuf</artifactId>
+                <version>${grpcVersion}</version>
+            </dependency>
+
+            <!--
+                Use Spring Boot gRPC Server.
+                See https://yidongnan.github.io/grpc-spring-boot-starter/en/server/getting-started.html#maven-server
+            -->
+            <dependency>
+                <groupId>net.devh</groupId>
+                <artifactId>grpc-server-spring-boot-starter</artifactId>
+                <version>${grpcSpringBootStarterVersion}</version>
+            </dependency>
+
+            <!--
+                Use Spring Boot gRPC Client.
+                See https://yidongnan.github.io/grpc-spring-boot-starter/en/client/getting-started.html#maven-client
+            -->
+            <dependency>
+                <groupId>net.devh</groupId>
+                <artifactId>grpc-client-spring-boot-starter</artifactId>
+                <version>${grpcSpringBootStarterVersion}</version>
+            </dependency>
+
+            <!-- Use Spring Boot gRPC autoconfigure -->
+            <dependency>
+                <groupId>net.devh</groupId>
+                <artifactId>grpc-client-spring-boot-autoconfigure</artifactId>
+                <version>${grpcSpringBootStarterVersion}</version>
+            </dependency>
+
+            <!--
+                Override older "protobuf-java" and "protobuf-java-util" used in "protoc-gen-grpc-java".
+                See https://github.com/protocolbuffers/protobuf/issues/9236#issuecomment-977718615
+            -->
+            <dependency>
+                <groupId>com.google.protobuf</groupId>
+                <artifactId>protobuf-java</artifactId>
+                <version>${protobufJavaVersion}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.google.protobuf</groupId>
+                <artifactId>protobuf-java-util</artifactId>
+                <version>${protobufJavaVersion}</version>
+                <scope>runtime</scope>
             </dependency>
         </dependencies>
     </dependencyManagement>
@@ -408,7 +472,30 @@
                 <plugin>
                     <groupId>org.flywaydb</groupId>
                     <artifactId>flyway-maven-plugin</artifactId>
-                    <version>${flywayMavenPlugin}</version>
+                    <version>${flywayMavenPluginVersion}</version>
+                </plugin>
+
+                <!--
+                    Use Protobuf Code Generator.
+                    See https://yidongnan.github.io/grpc-spring-boot-starter/en/server/getting-started.html#maven-interface
+                -->
+                <plugin>
+                    <groupId>org.xolstice.maven.plugins</groupId>
+                    <artifactId>protobuf-maven-plugin</artifactId>
+                    <version>${protobufMavenPluginVersion}</version>
+                    <configuration>
+                        <protocArtifact>com.google.protobuf:protoc:${protobufVersion}:exe:${os.detected.classifier}</protocArtifact>
+                        <pluginId>grpc-java</pluginId>
+                        <pluginArtifact>io.grpc:protoc-gen-grpc-java:${grpcVersion}:exe:${os.detected.classifier}</pluginArtifact>
+                    </configuration>
+                    <executions>
+                        <execution>
+                            <goals>
+                                <goal>compile</goal>
+                                <goal>compile-custom</goal>
+                            </goals>
+                        </execution>
+                    </executions>
                 </plugin>
             </plugins>
         </pluginManagement>
@@ -424,12 +511,22 @@
             </plugin>
         </plugins>
 
-        <!-- Extension for private S3 Maven repository. -->
         <extensions>
+            <!-- Extension for private S3 Maven repository. -->
             <extension>
                 <groupId>com.github.seahen</groupId>
                 <artifactId>maven-s3-wagon</artifactId>
                 <version>${mavenS3WagonVersion}</version>
+            </extension>
+
+            <!--
+                Used for Spring Boot gRPC.
+                See https://yidongnan.github.io/grpc-spring-boot-starter/en/server/getting-started.html#maven-interface
+            -->
+            <extension>
+                <groupId>kr.motd.maven</groupId>
+                <artifactId>os-maven-plugin</artifactId>
+                <version>${osMavenPluginVersion}</version>
             </extension>
         </extensions>
     </build>
