@@ -67,7 +67,9 @@
         <plugins>
             <!--
                 Use Protobuf Code Generator.
-                See https://yidongnan.github.io/grpc-spring-boot-starter/en/server/getting-started.html#maven-interface
+                See https://github.com/yidongnan/grpc-spring-boot-starter
+                Why segregate a separate module?
+                See https://yidongnan.github.io/grpc-spring-boot-starter/en/server/getting-started.html#project-setup
             -->
             <plugin>
                 <groupId>org.xolstice.maven.plugins</groupId>

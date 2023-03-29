@@ -30,7 +30,19 @@ As Order's Kafka messages tend to evolve by development's needs, [Confluent Avro
 
 ## Database schema change management
 
-[Liquibase](https://docs.liquibase.com/home.html) supports revisioning, deploying and rolling back database changes. On top of that, it allows [initializing data from CSV](https://docs.liquibase.com/change-types/load-data.html) for demonstrative purpose.
+[Liquibase](https://docs.liquibase.com/tools-integrations/springboot/springboot.html) supports revisioning, deploying and rolling back database changes. On top of that, it allows [initializing data from CSV](https://docs.liquibase.com/change-types/load-data.html) for demonstrative purpose.
+
+[Flyway](https://flywaydb.org/documentation/usage/plugins/springboot) is similar. It's used to define database structure, bootstrap initial data via SQL statements, and manage database migrations.
+
+## gRPC
+
+[gRPC is said to be faster and more secured than traditional REST API](https://stackoverflow.com/questions/44877606/is-grpchttp-2-faster-than-rest-with-http-2#44937371) because it transmits binary data instead of JSON.
+
+Module `grpc-interface` contains [protobuf3](https://protobuf.dev/programming-guides/proto3/)
+files to define services, request, and response messages then use [protobuf-maven-plugin](https://github.com/xolstice/protobuf-maven-plugin)
+to generate Java service stubs.
+
+gRPC server `shipping` implements those stubs to follow the contracts defined in protobuf files.
 
 ## Problem Details RFC-7807
 
@@ -132,9 +144,9 @@ POST /orders
 
 Required parameters
 
-| Parameters           | Type     | Description          |
-| -------------------- | -------- | -------------------- |
-| `products`           | List     | List of products     |
+| Parameters | Type | Description      |
+|------------|------|------------------|
+| `products` | List | List of products |
 
 #### Example
 
@@ -178,7 +190,7 @@ At project directory, run this command to set up external services.
 docker compose up -d
 ```
 
-In IntelliJ, start `OrderApp` and `PaymentApp`.
+In IntelliJ, start `OrderApp`, `PaymentApp`, and `ShippingApp`.
 
 ---
 
@@ -221,5 +233,4 @@ postgres=# \l
 + Implement OAuth2
 + Improve database modeling
 + Improve field validation
-+ Implement shipping service
 + Update README.md for other endpoints
