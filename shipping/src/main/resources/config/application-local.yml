@@ -9,6 +9,11 @@ spring:
   kafka:
     producer:
       bootstrap-servers: "localhost:9092"
+logging:
+  level:
+    # Log Kafka
+    org.springframework.kafka.listener: DEBUG
+    org.springframework.kafka.listener.adapter: INFO
 application:
   kafka:
     topic: orders
