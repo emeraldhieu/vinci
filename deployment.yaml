@@ -5,10 +5,17 @@ metadata:
   labels:
     app: postgres
 data:
-  POSTGRES_USER: postgres
-  POSTGRES_PASSWORD: postgres
   PGDATA: /data/postgres
-  POSTGRES_MULTIPLE_DATABASES: "order,payment"
+  POSTGRES_MULTIPLE_DATABASES: "order,payment,shipping"
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: postgres-s
+type: Opaque
+data:
+  POSTGRES_USER: cG9zdGdyZXM=
+  POSTGRES_PASSWORD: cG9zdGdyZXM=
 ---
 apiVersion: v1
 kind: PersistentVolume
@@ -102,6 +109,8 @@ spec:
           envFrom:
             - configMapRef:
                 name: postgres-cm
+            - secretRef:
+                name: postgres-s
           volumeMounts:
             - mountPath: /data/postgres
               name: postgres-data
