@@ -245,8 +245,8 @@ Error: failed to start container "postgres": Error response from daemon: error w
 the steps to fix are:
 
 + Stop the terminal mounting the `postgres-scripts`
-+ Delete the configuration `kubectl apply -f deployment.yaml`
-+ Apply the configuration again
++ Delete the configuration `kubectl delete -f deployment.yaml`
++ Apply the configuration `kubectl apply -f deployment.yaml`
 
 ## TODOs
 
