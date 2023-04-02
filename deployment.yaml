@@ -333,3 +333,187 @@ spec:
         - name: kafka-data
           persistentVolumeClaim:
             claimName: kafka-data-pvc
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: order-cm
+  labels:
+    app: order
+data:
+  SPRING_PROFILES_ACTIVE: k8s
+  APPLICATION_DB_HOST: postgres
+  APPLICATION_DB_PORT: "5432"
+  APPLICATION_DB_NAME: order
+  APPLICATION_DB_USER: order
+  APPLICATION_DB_PASSWORD: order
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: order-s
+type: Opaque
+data:
+  DB_USERNAME: b3JkZXIK
+  DB_PASSWORD: b3JkZXIK
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: order
+  labels:
+    app: order
+spec:
+  type: NodePort
+  ports:
+    - port: 8080
+  selector:
+    app: order
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: order
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: order
+  template:
+    metadata:
+      labels:
+        app: order
+    spec:
+      containers:
+        - name: order
+          image: order:1.0-SNAPSHOT
+          ports:
+            - containerPort: 8080
+          envFrom:
+            - configMapRef:
+                name: order-cm
+            - secretRef:
+                name: order-s
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: payment-cm
+  labels:
+    app: payment
+data:
+  SPRING_PROFILES_ACTIVE: k8s
+  APPLICATION_DB_HOST: postgres
+  APPLICATION_DB_PORT: "5432"
+  APPLICATION_DB_NAME: payment
+  APPLICATION_DB_USER: payment
+  APPLICATION_DB_PASSWORD: payment
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: payment-s
+type: Opaque
+data:
+  DB_USERNAME: cGF5bWVudAo=
+  DB_PASSWORD: cGF5bWVudAo=
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: payment
+  labels:
+    app: payment
+spec:
+  type: NodePort
+  ports:
+    - port: 8080
+  selector:
+    app: payment
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: payment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: payment
+  template:
+    metadata:
+      labels:
+        app: payment
+    spec:
+      containers:
+        - name: payment
+          image: payment:1.0-SNAPSHOT
+          ports:
+            - containerPort: 8080
+          envFrom:
+            - configMapRef:
+                name: payment-cm
+            - secretRef:
+                name: payment-s
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: shipping-cm
+  labels:
+    app: shipping
+data:
+  SPRING_PROFILES_ACTIVE: k8s
+  APPLICATION_DB_HOST: postgres
+  APPLICATION_DB_PORT: "5432"
+  APPLICATION_DB_NAME: shipping
+  APPLICATION_DB_USER: shipping
+  APPLICATION_DB_PASSWORD: shipping
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: shipping-s
+type: Opaque
+data:
+  DB_USERNAME: c2hpcHBpbmcK
+  DB_PASSWORD: c2hpcHBpbmcK
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: shipping
+  labels:
+    app: shipping
+spec:
+  type: NodePort
+  ports:
+    - port: 8080
+  selector:
+    app: shipping
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: shipping
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: shipping
+  template:
+    metadata:
+      labels:
+        app: shipping
+    spec:
+      containers:
+        - name: shipping
+          image: shipping:1.0-SNAPSHOT
+          ports:
+            - containerPort: 8080
+          envFrom:
+            - configMapRef:
+                name: shipping-cm
+            - secretRef:
+                name: shipping-s
+---
