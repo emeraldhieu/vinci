@@ -5,10 +5,17 @@ metadata:
   labels:
     app: postgres
 data:
-  POSTGRES_USER: postgres
-  POSTGRES_PASSWORD: postgres
   PGDATA: /data/postgres
-  POSTGRES_MULTIPLE_DATABASES: "order,payment"
+  POSTGRES_MULTIPLE_DATABASES: "order,payment,shipping"
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: postgres-s
+type: Opaque
+data:
+  POSTGRES_USER: cG9zdGdyZXM=
+  POSTGRES_PASSWORD: cG9zdGdyZXM=
 ---
 apiVersion: v1
 kind: PersistentVolume
@@ -102,6 +109,8 @@ spec:
           envFrom:
             - configMapRef:
                 name: postgres-cm
+            - secretRef:
+                name: postgres-s
           volumeMounts:
             - mountPath: /data/postgres
               name: postgres-data
@@ -114,3 +123,212 @@ spec:
         - name: postgres-script
           persistentVolumeClaim:
             claimName: postgres-script-pvc
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: zookeeper-data-pv
+  labels:
+    type: local
+spec:
+  storageClassName: zookeeper-data-sc
+  capacity:
+    storage: 1Gi
+  accessModes:
+    - ReadWriteOnce
+  # hostPath volume is used for development and testing on a single node only. It's not used for production.
+  hostPath:
+    path: "/home/docker/zookeeper-data"
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: zookeeper-data-pvc
+spec:
+  storageClassName: zookeeper-data-sc
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 1Gi
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: zookeeper-log-pv
+  labels:
+    type: local
+spec:
+  storageClassName: zookeeper-log-sc
+  capacity:
+    storage: 1Gi
+  accessModes:
+    - ReadWriteOnce
+  # hostPath volume is used for development and testing on a single node only. It's not used for production.
+  hostPath:
+    path: "/home/docker/zookeeper-log"
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: zookeeper-log-pvc
+spec:
+  storageClassName: zookeeper-log-sc
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 1Gi
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: zookeeper
+  labels:
+    app: zookeeper
+spec:
+  type: NodePort
+  ports:
+    - port: 2181
+  selector:
+    app: zookeeper
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: zookeeper
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: zookeeper
+  template:
+    metadata:
+      labels:
+        app: zookeeper
+    spec:
+      containers:
+        - name: zookeeper
+          image: confluentinc/cp-zookeeper:7.1.1
+          imagePullPolicy: "IfNotPresent"
+          securityContext:
+            runAsUser: 0
+          ports:
+            - containerPort: 2181
+          env:
+            - name: ZOOKEEPER_CLIENT_PORT
+              value: "2181"
+            - name: ZOOKEEPER_SERVER_ID
+              value: "1"
+            - name: ZOOKEEPER_SERVERS
+              value: "zookeeper:2888:3888"
+          volumeMounts:
+            - mountPath: /var/lib/zookeeper/data
+              name: zookeeper-data
+            - mountPath: /var/lib/zookeeper/log
+              name: zookeeper-log
+      volumes:
+        - name: zookeeper-data
+          persistentVolumeClaim:
+            claimName: zookeeper-data-pvc
+        - name: zookeeper-log
+          persistentVolumeClaim:
+            claimName: zookeeper-log-pvc
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: kafka-data-pv
+  labels:
+    type: local
+spec:
+  storageClassName: kafka-data-sc
+  capacity:
+    storage: 1Gi
+  accessModes:
+    - ReadWriteOnce
+  # hostPath volume is used for development and testing on a single node only. It's not used for production.
+  hostPath:
+    path: "/home/docker/kafka-data"
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: kafka-data-pvc
+spec:
+  storageClassName: kafka-data-sc
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 1Gi
+---
+apiVersion: v1
+kind: Service
+metadata:
+  # Rename to "kafka-svc" to fix "port is deprecated. Please use KAFKA_ADVERTISED_LISTENERS instead."
+  # See https://github.com/confluentinc/schema-registry/issues/689#issuecomment-354485274
+  name: kafka-svc
+  labels:
+    app: kafka
+spec:
+  type: NodePort
+  ports:
+    - name: internal
+      port: 29092
+      targetPort: 29092
+    - name: external
+      port: 9092
+      targetPort: 9092
+  selector:
+    app: kafka
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: kafka
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: kafka
+  template:
+    metadata:
+      labels:
+        app: kafka
+    spec:
+      containers:
+        # Rename to "kafka1" to fix "port is deprecated. Please use KAFKA_ADVERTISED_LISTENERS instead."
+        # See https://github.com/confluentinc/schema-registry/issues/689#issuecomment-354485274
+        - name: kafka1
+          image: confluentinc/cp-kafka:7.1.1
+          imagePullPolicy: "IfNotPresent"
+          securityContext:
+            runAsUser: 0
+          ports:
+            - containerPort: 9092
+            - containerPort: 29092
+          env:
+            - name: KAFKA_ADVERTISED_LISTENERS
+              value: "INSIDE://kafka-svc:29092,OUTSIDE://kafka-svc:9092"
+            - name: KAFKA_LISTENERS
+              value: "INSIDE://:29092,OUTSIDE://:9092"
+            - name: KAFKA_LISTENER_SECURITY_PROTOCOL_MAP
+              value: "INSIDE:PLAINTEXT,OUTSIDE:PLAINTEXT"
+            - name: KAFKA_INTER_BROKER_LISTENER_NAME
+              value: "INSIDE"
+            - name: KAFKA_ZOOKEEPER_CONNECT
+              value: "zookeeper:2181"
+            - name: KAFKA_BROKER_ID
+              value: "1"
+            - name: KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR
+              value: "1"
+            - name: KAFKA_AUTO_CREATE_TOPICS_ENABLE
+              value: "true"
+          volumeMounts:
+            - mountPath: /var/lib/kafka/data
+              name: kafka-data
+      volumes:
+        - name: kafka-data
+          persistentVolumeClaim:
+            claimName: kafka-data-pvc

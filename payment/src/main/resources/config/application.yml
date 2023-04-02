@@ -1,6 +1,6 @@
 spring:
   profiles:
-    active: dev # Activate "dev" profile by default
+    active: local # Activate "local" profile by default
   jackson:
     default-property-inclusion: non_null
   messages:
@@ -40,3 +40,10 @@ server:
   tomcat:
     # Allow pipe character in URL to support passing commas such as "userId,asc"
     relaxed-query-chars: "|"
+application:
+  db:
+    host: ${DB_HOST}
+    port: ${DB_PORT}
+    name: ${DB_NAME}
+    user: ${DB_USERNAME}
+    password: ${DB_PASSWORD}

@@ -1,8 +1,8 @@
 spring:
   datasource:
-    url: jdbc:postgresql://localhost:5432/order
-    username: order
-    password: order
+    url: jdbc:postgresql://${application.db.host}:${application.db.port}/${application.db.name}
+    username: ${application.db.user}
+    password: ${application.db.password}
   jpa:
     show-sql: true
     database: postgresql
@@ -21,11 +21,15 @@ logging:
     liquibase.changelog: DEBUG
     # Log to see liquibase's SQL
     liquibase.executor.jvm.[JdbcExecutor$ExecuteStatementCallback]: DEBUG
-    # Log Kafka
-    org.springframework.kafka.listener: DEBUG
-    org.springframework.kafka.listener.adapter: INFO
 application:
   kafka:
     topic: orders
     partitions: 2
     replicationFactor: 1
+    groupId: payment
+  db:
+    host: localhost
+    port: 5432
+    name: payment
+    user: payment
+    password: payment

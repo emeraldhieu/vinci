@@ -208,7 +208,7 @@ Since minikube actually creates a VM and run containers on it, you have to mount
 minikube mount <yourLocalPathTo>/vinci/postgres-scripts:/home/docker/postgres-scripts
 ```
 
-Create k8s resources
+Open another terminal, create k8s resources
 ```
 kubectl apply -f deployment.yaml
 ```
@@ -223,10 +223,30 @@ Connect to postgres from the host machine. Enter password "postgres".
 psql -h 127.0.0.1 -d postgres -U postgres -W
 ```
 
-List databases. If you see databases `order` and `payment`, the setup is working.
+List databases. If you see databases `order`, `payment`, and `shipping`, the setup is working.
 ```
 postgres=# \l
 ```
+
+## Troubleshooting
+
+### 1) postgres-scripts: file exists
+
+After applying `deployment.yml`, check if Postgres is running correctly
+```
+kubectl describe po <postgresPodId>
+```
+
+If you see this error
+```
+Error: failed to start container "postgres": Error response from daemon: error while creating mount source path '/home/docker/postgres-scripts': mkdir /home/docker/postgres-scripts: file exists
+```
+
+the steps to fix are:
+
++ Stop the terminal mounting the `postgres-scripts`
++ Delete the configuration `kubectl apply -f deployment.yaml`
++ Apply the configuration again
 
 ## TODOs
 
