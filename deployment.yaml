@@ -305,10 +305,12 @@ spec:
           securityContext:
             runAsUser: 0
           ports:
-            - containerPort: 9092
             - containerPort: 29092
+            - containerPort: 9092
           env:
             - name: KAFKA_ADVERTISED_LISTENERS
+              # Expose *service* "kafka" with possible ports to clients.
+              # Clients are whatever connects to this Kafka service.
               value: "INSIDE://kafka:29092,OUTSIDE://kafka:9092"
             - name: KAFKA_LISTENERS
               value: "INSIDE://:29092,OUTSIDE://:9092"
