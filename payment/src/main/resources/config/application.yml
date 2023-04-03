@@ -30,20 +30,16 @@ spring:
     consumer:
       key-deserializer: io.confluent.kafka.serializers.KafkaAvroDeserializer
       value-deserializer: io.confluent.kafka.serializers.KafkaAvroDeserializer
-    group-id: awesomeGroup
     properties:
-      schema.registry.url: http://localhost:8081
       # Deserialize to the generated Avro class rather than a GenericRecord type
       specific.avro.reader: true
 server:
-  port: 50002
   tomcat:
     # Allow pipe character in URL to support passing commas such as "userId,asc"
     relaxed-query-chars: "|"
 application:
-  db:
-    host: ${DB_HOST}
-    port: ${DB_PORT}
-    name: ${DB_NAME}
-    user: ${DB_USERNAME}
-    password: ${DB_PASSWORD}
+  kafka:
+    topic: orders
+    partitions: 2
+    replicationFactor: 1
+    groupId: payment

@@ -266,9 +266,7 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  # Rename to "kafka-svc" to fix "port is deprecated. Please use KAFKA_ADVERTISED_LISTENERS instead."
-  # See https://github.com/confluentinc/schema-registry/issues/689#issuecomment-354485274
-  name: kafka-svc
+  name: kafka
   labels:
     app: kafka
 spec:
@@ -297,20 +295,23 @@ spec:
       labels:
         app: kafka
     spec:
+      #  Fix "port is deprecated. Please use KAFKA_ADVERTISED_LISTENERS instead."
+      # See https://github.com/confluentinc/schema-registry/issues/689#issuecomment-827716674
+      enableServiceLinks: false
       containers:
-        # Rename to "kafka1" to fix "port is deprecated. Please use KAFKA_ADVERTISED_LISTENERS instead."
-        # See https://github.com/confluentinc/schema-registry/issues/689#issuecomment-354485274
-        - name: kafka1
+        - name: kafka
           image: confluentinc/cp-kafka:7.1.1
           imagePullPolicy: "IfNotPresent"
           securityContext:
             runAsUser: 0
           ports:
-            - containerPort: 9092
             - containerPort: 29092
+            - containerPort: 9092
           env:
             - name: KAFKA_ADVERTISED_LISTENERS
-              value: "INSIDE://kafka-svc:29092,OUTSIDE://kafka-svc:9092"
+              # Expose *service* "kafka" with possible ports to clients.
+              # Clients are whatever connects to this Kafka service.
+              value: "INSIDE://kafka:29092,OUTSIDE://kafka:9092"
             - name: KAFKA_LISTENERS
               value: "INSIDE://:29092,OUTSIDE://:9092"
             - name: KAFKA_LISTENER_SECURITY_PROTOCOL_MAP
@@ -332,3 +333,233 @@ spec:
         - name: kafka-data
           persistentVolumeClaim:
             claimName: kafka-data-pvc
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: schema-registry
+  labels:
+    app: schema-registry
+spec:
+  type: NodePort
+  ports:
+    - name: external
+      port: 8081
+      targetPort: 8081
+  selector:
+    app: schema-registry
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: schema-registry
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: schema-registry
+  template:
+    metadata:
+      labels:
+        app: schema-registry
+    spec:
+      #  Fix "port is deprecated. Please use KAFKA_ADVERTISED_LISTENERS instead."
+      # See https://github.com/confluentinc/schema-registry/issues/689#issuecomment-827716674
+      enableServiceLinks: false
+      containers:
+        - name: schema-registry
+          image: confluentinc/cp-schema-registry:7.3.0
+          imagePullPolicy: "IfNotPresent"
+          ports:
+            - containerPort: 8081
+          env:
+            - name: SCHEMA_REGISTRY_HOST_NAME
+              value: "schema-registry"
+            - name: SCHEMA_REGISTRY_KAFKASTORE_BOOTSTRAP_SERVERS
+              value: "kafka:29092"
+            - name: SCHEMA_REGISTRY_LISTENERS
+              value: "http://0.0.0.0:8081"
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: order-cm
+  labels:
+    app: order
+data:
+  SPRING_PROFILES_ACTIVE: k8s
+  APPLICATION_DB_HOST: postgres
+  APPLICATION_DB_PORT: "5432"
+  APPLICATION_DB_NAME: order
+  APPLICATION_DB_USER: order
+  APPLICATION_DB_PASSWORD: order
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: order-s
+type: Opaque
+data:
+  DB_USERNAME: b3JkZXIK
+  DB_PASSWORD: b3JkZXIK
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: order
+  labels:
+    app: order
+spec:
+  type: NodePort
+  ports:
+    - port: 8080
+  selector:
+    app: order
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: order
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: order
+  template:
+    metadata:
+      labels:
+        app: order
+    spec:
+      containers:
+        - name: order
+          image: order:1.0-SNAPSHOT
+          ports:
+            - containerPort: 8080
+          envFrom:
+            - configMapRef:
+                name: order-cm
+            - secretRef:
+                name: order-s
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: payment-cm
+  labels:
+    app: payment
+data:
+  SPRING_PROFILES_ACTIVE: k8s
+  APPLICATION_DB_HOST: postgres
+  APPLICATION_DB_PORT: "5432"
+  APPLICATION_DB_NAME: payment
+  APPLICATION_DB_USER: payment
+  APPLICATION_DB_PASSWORD: payment
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: payment-s
+type: Opaque
+data:
+  DB_USERNAME: cGF5bWVudAo=
+  DB_PASSWORD: cGF5bWVudAo=
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: payment
+  labels:
+    app: payment
+spec:
+  type: NodePort
+  ports:
+    - port: 8080
+  selector:
+    app: payment
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: payment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: payment
+  template:
+    metadata:
+      labels:
+        app: payment
+    spec:
+      containers:
+        - name: payment
+          image: payment:1.0-SNAPSHOT
+          ports:
+            - containerPort: 8080
+          envFrom:
+            - configMapRef:
+                name: payment-cm
+            - secretRef:
+                name: payment-s
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: shipping-cm
+  labels:
+    app: shipping
+data:
+  SPRING_PROFILES_ACTIVE: k8s
+  APPLICATION_DB_HOST: postgres
+  APPLICATION_DB_PORT: "5432"
+  APPLICATION_DB_NAME: shipping
+  APPLICATION_DB_USER: shipping
+  APPLICATION_DB_PASSWORD: shipping
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: shipping-s
+type: Opaque
+data:
+  DB_USERNAME: c2hpcHBpbmcK
+  DB_PASSWORD: c2hpcHBpbmcK
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: shipping
+  labels:
+    app: shipping
+spec:
+  type: NodePort
+  ports:
+    - port: 8080
+  selector:
+    app: shipping
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: shipping
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: shipping
+  template:
+    metadata:
+      labels:
+        app: shipping
+    spec:
+      containers:
+        - name: shipping
+          image: shipping:1.0-SNAPSHOT
+          ports:
+            - containerPort: 8080
+          envFrom:
+            - configMapRef:
+                name: shipping-cm
+            - secretRef:
+                name: shipping-s
+---

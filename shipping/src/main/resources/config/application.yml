@@ -1,6 +1,6 @@
 spring:
   profiles:
-    active: dev # Activate "dev" profile by default
+    active: local # Activate "local" profile by default
   jackson:
     default-property-inclusion: non_null
   messages:
@@ -28,16 +28,16 @@ spring:
     consumer:
       key-deserializer: io.confluent.kafka.serializers.KafkaAvroDeserializer
       value-deserializer: io.confluent.kafka.serializers.KafkaAvroDeserializer
-    group-id: awesomeGroup
     properties:
-      schema.registry.url: http://localhost:8081
       # Deserialize to the generated Avro class rather than a GenericRecord type
       specific.avro.reader: true
 server:
-  port: 50003
   tomcat:
     # Allow pipe character in URL to support passing commas such as "createdAt,asc"
     relaxed-query-chars: "|"
-grpc:
-  server:
-    port: 50013
+application:
+  kafka:
+    topic: orders
+    partitions: 2
+    replicationFactor: 1
+    groupId: shipping

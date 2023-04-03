@@ -30,18 +30,12 @@ spring:
     producer:
       key-serializer: io.confluent.kafka.serializers.KafkaAvroSerializer
       value-serializer: io.confluent.kafka.serializers.KafkaAvroSerializer
-      schema.registry.url: http://localhost:8081
-    properties:
-      schema.registry.url: http://localhost:8081
 server:
-  port: 50001
   tomcat:
     # Allow pipe character in URL to support passing commas such as "createdAt,asc"
     relaxed-query-chars: "|"
 application:
-  db:
-    host: ${DB_HOST}
-    port: ${DB_PORT}
-    name: ${DB_NAME}
-    user: ${DB_USERNAME}
-    password: ${DB_PASSWORD}
+  kafka:
+    topic: orders
+    partitions: 2
+    replicationFactor: 1

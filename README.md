@@ -192,40 +192,90 @@ docker compose up -d
 
 In IntelliJ, start `OrderApp`, `PaymentApp`, and `ShippingApp`.
 
----
-
 ## Deploy microservices to Kubernetes
 
-[Minikube](https://minikube.sigs.k8s.io/) is used for development only.
-
-Assuming you've had minikube [installed and started](https://minikube.sigs.k8s.io/docs/start/).
+[Minikube](https://minikube.sigs.k8s.io) is a local Kubernetes that is used for development only. This guide assumes you've had minikube [installed and started](https://minikube.sigs.k8s.io/docs/start/).
 
 ### Follow these steps
 
-Since minikube actually creates a VM and run containers on it, you have to mount the host machine's directory to the VM's directory
+#### 1) Mount postgres script directory
 
-```
+Postgres needs [a script](https://github.com/emeraldhieu/vinci/blob/master/postgres-scripts/createMultipleDatabases.sh) to initialize databases and users.
+Since minikube creates a VM and runs containers in it, you have to mount the host machine's directory to the VM's directory.
+```shell
 minikube mount <yourLocalPathTo>/vinci/postgres-scripts:/home/docker/postgres-scripts
 ```
 
+#### 2) Apply configuration
+
 Open another terminal, create k8s resources
-```
+```shell
 kubectl apply -f deployment.yaml
 ```
 
-Listen on port 5432, forward data to a pod selected by the service
-```
+#### 3) Verify Postgres
+
+Listen on port 5432, forward data to a pod selected by the service "postgres"
+```shell
 kubectl port-forward svc/postgres 5432
 ```
 
 Connect to postgres from the host machine. Enter password "postgres".
-```
+```shell
 psql -h 127.0.0.1 -d postgres -U postgres -W
 ```
 
 List databases. If you see databases `order`, `payment`, and `shipping`, the setup is working.
-```
+```shell
 postgres=# \l
+```
+
+#### 4) Verify service "order"
+
+Listen on port 8080, forward data to a pod selected by the service "order"
+```shell
+kubectl port-forward svc/order 8080:8080
+```
+
+Create an order on your host machine
+```shell
+curl --location 'http://localhost:8080/orders' \
+--header 'Content-Type: application/json' \
+--data '{
+    "products": [
+        "coke",
+        "juice",
+        "cider"
+    ]
+}'
+```
+
+If it returns a JSON response with an ID, it's working.
+
+#### 5) Verify Schema Registry
+
+Instead of port-forwarding, another way to access services inside a k8s cluster is to use `minikube service`.
+
+Return a URL to "schema-registry" inside your k8s cluster
+```shell
+minikube service schema-registry --url
+```
+
+Response with a dynamic port
+```shell
+http://127.0.0.1:56616
+```
+
+Ask for the very first schema of "order"
+```shell
+curl http://127.0.0.1:56616/schemas/ids/1
+```
+
+Response
+```json
+{
+    "schema": "{\"type\":\"record\",\"name\":\"OrderMessage\",\"namespace\":\"com.emeraldhieu.vinci.order\",\"fields\":[{\"name\":\"orderId\",\"type\":\"string\"}]}"
+}
 ```
 
 ## Troubleshooting

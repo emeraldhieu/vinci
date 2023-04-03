@@ -12,9 +12,9 @@ spring:
     # Used for development to update the changelogs continuously
     clear-checksums: true
   kafka:
-    bootstrap-servers: "localhost:9092"
+    bootstrap-servers: "kafka:29092"
     properties:
-      schema.registry.url: http://localhost:8081
+      schema.registry.url: http://schema-registry:8081
 logging:
   level:
     # Enable Liquibase logs for development
@@ -25,12 +25,10 @@ logging:
     # Log Kafka
     org.springframework.kafka.listener: DEBUG
     org.springframework.kafka.listener.adapter: INFO
-server:
-  port: 50001
 application:
   db:
-    host: localhost
-    port: 5432
-    name: order
-    user: order
-    password: order
+    host: "Please set APPLICATION_DB_HOST in k8s config map"
+    port: "Please set APPLICATION_DB_PORT in k8s config map"
+    name: "Please set APPLICATION_DB_NAME in k8s config map"
+    user: "Please set APPLICATION_DB_USER in k8s config map"
+    password: "Please set APPLICATION_DB_PASSWORD in k8s config map"
