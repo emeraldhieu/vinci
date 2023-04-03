@@ -266,9 +266,7 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  # Rename to "kafka-svc" to fix "port is deprecated. Please use KAFKA_ADVERTISED_LISTENERS instead."
-  # See https://github.com/confluentinc/schema-registry/issues/689#issuecomment-354485274
-  name: kafka-svc
+  name: kafka
   labels:
     app: kafka
 spec:
@@ -297,10 +295,11 @@ spec:
       labels:
         app: kafka
     spec:
+      #  Fix "port is deprecated. Please use KAFKA_ADVERTISED_LISTENERS instead."
+      # See https://github.com/confluentinc/schema-registry/issues/689#issuecomment-827716674
+      enableServiceLinks: false
       containers:
-        # Rename to "kafka1" to fix "port is deprecated. Please use KAFKA_ADVERTISED_LISTENERS instead."
-        # See https://github.com/confluentinc/schema-registry/issues/689#issuecomment-354485274
-        - name: kafka1
+        - name: kafka
           image: confluentinc/cp-kafka:7.1.1
           imagePullPolicy: "IfNotPresent"
           securityContext:
@@ -310,7 +309,7 @@ spec:
             - containerPort: 29092
           env:
             - name: KAFKA_ADVERTISED_LISTENERS
-              value: "INSIDE://kafka-svc:29092,OUTSIDE://kafka-svc:9092"
+              value: "INSIDE://kafka:29092,OUTSIDE://kafka:9092"
             - name: KAFKA_LISTENERS
               value: "INSIDE://:29092,OUTSIDE://:9092"
             - name: KAFKA_LISTENER_SECURITY_PROTOCOL_MAP
