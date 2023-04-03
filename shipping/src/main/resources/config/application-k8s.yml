@@ -12,8 +12,9 @@ spring:
     # Used for development to update the changelogs continuously
     clear-checksums: true
   kafka:
-    producer:
-      bootstrap-servers: "localhost:9092"
+    bootstrap-servers: "kafka:29092"
+    properties:
+      schema.registry.url: http://schema-registry:8081
 logging:
   level:
     # Log Kafka
@@ -21,8 +22,9 @@ logging:
     org.springframework.kafka.listener.adapter: INFO
 application:
   db:
-    host: ${DB_HOST}
-    port: ${DB_PORT}
-    name: ${DB_NAME}
-    user: ${DB_USERNAME}
-    password: ${DB_PASSWORD}
+    host: "Please set APPLICATION_DB_HOST in k8s config map"
+    port: "Please set APPLICATION_DB_PORT in k8s config map"
+    name: "Please set APPLICATION_DB_NAME in k8s config map"
+    user: "Please set APPLICATION_DB_USER in k8s config map"
+    password: "Please set APPLICATION_DB_PASSWORD in k8s config map"
+

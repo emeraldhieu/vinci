@@ -7,19 +7,20 @@ spring:
     show-sql: true
     database: postgresql
   kafka:
-    producer:
-      bootstrap-servers: "localhost:9092"
+    bootstrap-servers: "localhost:9092"
+    properties:
+      schema.registry.url: http://localhost:8081
 logging:
   level:
     # Log Kafka
     org.springframework.kafka.listener: DEBUG
     org.springframework.kafka.listener.adapter: INFO
+server:
+  port: 50003
+grpc:
+  server:
+    port: 50013
 application:
-  kafka:
-    topic: orders
-    partitions: 2
-    replicationFactor: 1
-    groupId: shipping
   db:
     host: localhost
     port: 5432
