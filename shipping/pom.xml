@@ -158,6 +158,12 @@
             <artifactId>grpc-interface</artifactId>
             <version>${grpcInterfaceVersion}</version>
         </dependency>
+
+        <!-- GraphQL support for Spring Boot -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-graphql</artifactId>
+        </dependency>
     </dependencies>
 
     <build>
