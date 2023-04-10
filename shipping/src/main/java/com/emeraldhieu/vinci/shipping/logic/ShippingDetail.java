@@ -3,9 +3,12 @@ package com.emeraldhieu.vinci.shipping.logic;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EntityListeners;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.Table;
 import lombok.EqualsAndHashCode;
@@ -39,8 +42,9 @@ public class ShippingDetail {
     @Column(nullable = false)
     private String externalId;
 
-    @Column(nullable = false)
-    private Long shippingId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "shipping_id")
+    private Shipping shipping;
 
     @Column(nullable = false)
     private String itemName;
