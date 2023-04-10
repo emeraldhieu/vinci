@@ -143,6 +143,15 @@
         </dependency>
 
         <!--
+            Use Spring Boot gRPC Client.
+            See https://yidongnan.github.io/grpc-spring-boot-starter/en/client/getting-started.html#maven-client
+        -->
+        <dependency>
+            <groupId>net.devh</groupId>
+            <artifactId>grpc-client-spring-boot-starter</artifactId>
+        </dependency>
+
+        <!--
             Use "net.devh.boot.grpc.client.autoconfigure.xyz" to make gRPC work with Spring Boot 3
             See https://github.com/yidongnan/grpc-spring-boot-starter/pull/775#issuecomment-1329023335
             TODO Remove this when upgrading to grpc-spring-boot 2.15
