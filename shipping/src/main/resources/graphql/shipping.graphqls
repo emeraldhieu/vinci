@@ -1,0 +1,36 @@
+enum StatusEnum {
+  IN_PROGRESS
+  DONE
+  PENDING
+  UNRECOGNIZED
+}
+
+type ShippingResponse {
+    id: ID!
+    orderId: String!
+    amount: Float!
+    status: StatusEnum!
+    shippingDate: String!
+    createdBy: String!
+    createdAt: String!
+    updatedBy: String!
+    updatedAt: String!
+}
+
+type ShippingDetailResponse {
+    id: ID!
+    shipping: ShippingResponse!
+    itemName: String!
+    itemDescription: String!
+    quantity: Int!
+    amount: Float!
+    createdBy: String!
+    createdAt: String!
+    updatedBy: String!
+    updatedAt: String!
+}
+
+# The Root Query for the application
+type Query {
+    shippingDetails(offset: Int, limit: Int, sortOrders: [String!]!): [ShippingDetailResponse]!
+}
