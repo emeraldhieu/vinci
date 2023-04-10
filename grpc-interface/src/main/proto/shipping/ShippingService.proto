@@ -36,5 +36,34 @@ message ShippingResponse {
   double amount = 3;
   StatusEnum status = 4;
   google.protobuf.Timestamp shippingDate = 5;
+  string createdBy = 6;
+  google.protobuf.Timestamp createdAt = 7;
+  string updatedBy = 8;
+  google.protobuf.Timestamp updatedAt = 9;
 }
 
+message ShippingDetailRequest {
+  string id = 1;
+  string shippingId = 2;
+  string itemName = 3;
+  string itemDescription = 4;
+  int32 quantity = 5;
+  double amount = 6;
+  int32 offset = 7;
+  int32 limit = 8;
+}
+
+message ShippingDetailResponse {
+  string id = 1;
+  string shippingId = 2;
+  string itemName = 3;
+  string itemDescription = 4;
+  int32 quantity = 5;
+  double amount = 6;
+  int32 offset = 7;
+  int32 limit = 8;
+  string createdBy = 9;
+  google.protobuf.Timestamp createdAt = 10;
+  string updatedBy = 11;
+  google.protobuf.Timestamp updatedAt = 12;
+}
