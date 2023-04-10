@@ -20,6 +20,14 @@ server:
 grpc:
   server:
     port: 50013
+  client:
+    shipping:
+      # Choose gRPC target (or connect to a gRPC server)
+      # See https://yidongnan.github.io/grpc-spring-boot-starter/en/client/configuration.html#choosing-the-target
+      address: static://localhost:50013
+      # Disable TLS for development
+      # See https://yidongnan.github.io/grpc-spring-boot-starter/en/client/security.html#disable-transport-layer-security
+      negotiationType: plaintext
 application:
   db:
     host: localhost
