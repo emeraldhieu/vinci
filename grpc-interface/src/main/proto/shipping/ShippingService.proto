@@ -26,8 +26,8 @@ message ShippingRequest {
   double amount = 3;
   StatusEnum status = 4;
   google.protobuf.Timestamp shippingDate = 5;
-  int32 offset = 10;
-  int32 limit = 11;
+  int32 offset = 6;
+  int32 limit = 7;
 }
 
 message ShippingResponse {
