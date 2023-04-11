@@ -138,32 +138,6 @@ curl --location --request GET 'http://localhost:50001/orders?sortOrders=updatedA
     "createdAt": "2022-11-27T00:00:00",
     "updatedBy": 6,
     "updatedAt": "2022-11-28T00:00:00"
-  },
-  {
-    "id": "850829b025704efe995d29661a3a1220",
-    "products":
-    [
-      "apple",
-      "orange",
-      "avocado"
-    ],
-    "createdBy": 3,
-    "createdAt": "2022-11-25T00:00:00",
-    "updatedBy": 4,
-    "updatedAt": "2022-11-26T00:00:00"
-  },
-  {
-    "id": "c611d780541541f69c1e1e80b966527a",
-    "products":
-    [
-      "pizza",
-      "burger",
-      "pasta"
-    ],
-    "createdBy": 1,
-    "createdAt": "2022-11-23T00:00:00",
-    "updatedBy": 2,
-    "updatedAt": "2022-11-24T00:00:00"
   }
 ]
 ```
