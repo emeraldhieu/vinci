@@ -38,11 +38,46 @@ As Order's Kafka messages tend to evolve by development's needs, [Confluent Avro
 
 [gRPC is said to be faster and more secured than traditional REST API](https://stackoverflow.com/questions/44877606/is-grpchttp-2-faster-than-rest-with-http-2#44937371) because it transmits binary data instead of JSON.
 
-Module `grpc-interface` contains [protobuf3](https://protobuf.dev/programming-guides/proto3/)
-files to define services, request, and response messages then use [protobuf-maven-plugin](https://github.com/xolstice/protobuf-maven-plugin)
-to generate Java service stubs.
+Module `grpc-interface` contains [protobuf3](https://protobuf.dev/programming-guides/proto3/) files to define services, request, and response messages then use [protobuf-maven-plugin](https://github.com/xolstice/protobuf-maven-plugin) to generate Java service stubs.
 
 gRPC server `shipping` implements those stubs to follow the contracts defined in protobuf files.
+
+You can test the gRPC using [grpcurl](https://github.com/fullstorydev/grpcurl).
+```shell
+grpcurl --plaintext -d '{"id": "d707ada36e6644ddaec63a52e7a40d56"}' localhost:50013 com.emeraldhieu.vinci.shipping.grpc.ShippingService/GetShipping
+```
+
+## GraphQL
+
+[GraphQL](https://graphql.org/) is a query language that allows users to retrieve only necessary data in their own way in a single request. [GraphQL for Spring](https://docs.spring.io/spring-graphql/docs/current/reference/html) uses annotations to map handler methods to queries and fields in a GraphQL schema.
+
+Vinci incorporates gRPC into GraphQL. For example, GraphQL `ShippingDetailController#shipping` calls gRPC server to retrieve a `Shipping` in gRPC manner.
+
+This is a simple GraphQL to test.
+```shell
+curl --location 'http://localhost:50003/graphql' \
+--header 'Content-Type: application/json' \
+--data '{"query":"{\r\n    shippingDetails(offset: 0, limit: 10, sortOrders: []) {\r\n        id\r\n        amount\r\n        shipping {\r\n            id\r\n            status\r\n        }\r\n    }\r\n}","variables":{}}'
+```
+
+Response
+```json
+{
+    "data": {
+        "shippingDetails": [
+            {
+                "id": "ae61181973fd4896a99ecb4089005197",
+                "amount": 2.0,
+                "shipping": {
+                    "id": "d707ada36e6644ddaec63a52e7a40d56",
+                    "status": "IN_PROGRESS"
+                }
+            },
+            ...
+        ]
+    }
+}
+```
 
 ## Problem Details RFC-7807
 
@@ -200,20 +235,38 @@ In IntelliJ, start `OrderApp`, `PaymentApp`, and `ShippingApp`.
 
 #### 1) Mount postgres script directory
 
-Postgres needs [a script](https://github.com/emeraldhieu/vinci/blob/master/postgres-scripts/createMultipleDatabases.sh) to initialize databases and users.
-Since minikube creates a VM and runs containers in it, you have to mount the host machine's directory to the VM's directory.
+Postgres needs [a script](https://github.com/emeraldhieu/vinci/blob/master/postgres-scripts/createMultipleDatabases.sh) to initialize databases and users. Since minikube creates a VM and runs containers in it, you have to mount the host machine's directory to the VM's directory.
 ```shell
 minikube mount <yourLocalPathTo>/vinci/postgres-scripts:/home/docker/postgres-scripts
 ```
 
-#### 2) Apply configuration
+#### 2) Dockerize apps
+
+2.1) At directory `order`, build the app
+```shell
+mvn clean package
+```
+
+2.2) Reuse the Docker daemon inside the Minikube instance
+```shell
+eval $(minikube docker-env)
+```
+
+2.3) Create docker image `order`
+```shell
+docker build -t order:1.0-SNAPSHOT .
+```
+
+Do the steps 2.1 and 2.3 for `payment` and `shipping`.
+
+#### 3) Apply configuration
 
 Open another terminal, create k8s resources
 ```shell
 kubectl apply -f deployment.yaml
 ```
 
-#### 3) Verify Postgres
+#### 4) Verify Postgres
 
 Listen on port 5432, forward data to a pod selected by the service "postgres"
 ```shell
@@ -230,7 +283,7 @@ List databases. If you see databases `order`, `payment`, and `shipping`, the set
 postgres=# \l
 ```
 
-#### 4) Verify service "order"
+#### 5) Verify service "order"
 
 Listen on port 8080, forward data to a pod selected by the service "order"
 ```shell
@@ -252,7 +305,7 @@ curl --location 'http://localhost:8080/orders' \
 
 If it returns a JSON response with an ID, it's working.
 
-#### 5) Verify Schema Registry
+#### 6) Verify Schema Registry
 
 Instead of port-forwarding, another way to access services inside a k8s cluster is to use `minikube service`.
 
