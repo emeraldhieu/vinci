@@ -72,8 +72,7 @@ Response
                     "id": "d707ada36e6644ddaec63a52e7a40d56",
                     "status": "IN_PROGRESS"
                 }
-            },
-            ...
+            }
         ]
     }
 }
