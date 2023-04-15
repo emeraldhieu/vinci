@@ -202,16 +202,28 @@ In IntelliJ, start `OrderApp`, `PaymentApp`, and `ShippingApp`.
 
 ## Deploy microservices to Kubernetes
 
-[Minikube](https://minikube.sigs.k8s.io) is a local Kubernetes that is used for development only. This guide assumes you've had minikube [installed and started](https://minikube.sigs.k8s.io/docs/start/).
+### Use K3d
 
-### Follow these steps
+[K3d](https://k3d.io/) is a lightweight Kubernetes distribution. This guide assumes you've had k3d [installed](https://k3d.io/v5.4.4/#installation).
 
-#### 1) Mount postgres script directory
+#### 1) Setup k3d cluster
 
-Postgres needs [a script](https://github.com/emeraldhieu/vinci/blob/master/postgres-scripts/createMultipleDatabases.sh) to initialize databases and users. Since minikube creates a VM and runs containers in it, you have to mount the host machine's directory to the VM's directory.
+Install a local (registry)[https://hub.docker.com/_/registry]
 ```shell
-minikube mount <yourLocalPathTo>/vinci/postgres-scripts:/home/docker/postgres-scripts
+k3d registry create registry42 --port 5050
 ```
+
+At project directory, run this
+```shell
+k3d cluster create cluster42 -p "9900:80@loadbalancer" --registry-use k3d-registry42:5050 --registry-config registries.yaml -v <yourLocalPathTo>/vinci/postgres-scripts:/home/docker/postgres-scripts
+```
+
+What it does
+
++ Create a k8s cluster
++ Use an existing docker registry
++ Map host machine's port 9900 to [k3d's loadbalancer](https://k3d.io/v5.3.0/design/defaults/#k3d-loadbalancer)'s port 80
++ Mount the host machine's directory to the k8s cluster's directory
 
 #### 2) Dockerize apps
 
@@ -220,17 +232,17 @@ minikube mount <yourLocalPathTo>/vinci/postgres-scripts:/home/docker/postgres-sc
 mvn clean package
 ```
 
-2.2) Reuse the Docker daemon inside the Minikube instance
+2.2) Create docker image `order`
 ```shell
-eval $(minikube docker-env)
+docker build -t localhost:5050/order:1.0-SNAPSHOT .
 ```
 
-2.3) Create docker image `order`
-```shell
-docker build -t order:1.0-SNAPSHOT .
+2.3) Push image to the registry
+```
+docker push localhost:5050/order:1.0-SNAPSHOT
 ```
 
-Do the steps 2.1 and 2.3 for `payment` and `shipping`.
+Do all the steps again for `payment` and `shipping`.
 
 #### 3) Apply configuration
 
@@ -280,21 +292,14 @@ If it returns a JSON response with an ID, it's working.
 
 #### 6) Verify Schema Registry
 
-Instead of port-forwarding, another way to access services inside a k8s cluster is to use `minikube service`.
-
-Return a URL to "schema-registry" inside your k8s cluster
+Listen on port 8081, forward data to a pod selected by the service "schema-registry"
 ```shell
-minikube service schema-registry --url
-```
-
-Response with a dynamic port
-```shell
-http://127.0.0.1:56616
+kubectl port-forward svc/schema-registry 8081
 ```
 
 Ask for the very first schema of "order"
 ```shell
-curl http://127.0.0.1:56616/schemas/ids/1
+curl http://localhost:8081/schemas/ids/1
 ```
 
 Response
@@ -303,26 +308,6 @@ Response
     "schema": "{\"type\":\"record\",\"name\":\"OrderMessage\",\"namespace\":\"com.emeraldhieu.vinci.order\",\"fields\":[{\"name\":\"orderId\",\"type\":\"string\"}]}"
 }
 ```
-
-## Troubleshooting
-
-### 1) postgres-scripts: file exists
-
-After applying `deployment.yml`, check if Postgres is running correctly
-```
-kubectl describe po <postgresPodId>
-```
-
-If you see this error
-```
-Error: failed to start container "postgres": Error response from daemon: error while creating mount source path '/home/docker/postgres-scripts': mkdir /home/docker/postgres-scripts: file exists
-```
-
-the steps to fix are:
-
-+ Stop the terminal mounting the `postgres-scripts`
-+ Delete the configuration `kubectl delete -f deployment.yaml`
-+ Apply the configuration `kubectl apply -f deployment.yaml`
 
 ## TODOs
 

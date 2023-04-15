@@ -215,6 +215,13 @@ spec:
             runAsUser: 0
           ports:
             - containerPort: 2181
+          resources:
+            requests:
+              cpu: "250m"
+              memory: "64Mi"
+            limits:
+              cpu: "500m"
+              memory: "128Mi"
           env:
             - name: ZOOKEEPER_CLIENT_PORT
               value: "2181"
@@ -372,6 +379,13 @@ spec:
           imagePullPolicy: "IfNotPresent"
           ports:
             - containerPort: 8081
+          resources:
+            requests:
+              cpu: "250m"
+              memory: "128Mi"
+            limits:
+              cpu: "500m"
+              memory: "256Mi"
           env:
             - name: SCHEMA_REGISTRY_HOST_NAME
               value: "schema-registry"
@@ -432,9 +446,16 @@ spec:
     spec:
       containers:
         - name: order
-          image: order:1.0-SNAPSHOT
+          image: k3d-registry42:5050/order:1.0-SNAPSHOT
           ports:
             - containerPort: 8080
+          resources:
+            requests:
+              cpu: "250m"
+              memory: "256Mi"
+            limits:
+              cpu: "500m"
+              memory: "512Mi"
           envFrom:
             - configMapRef:
                 name: order-cm
@@ -493,9 +514,16 @@ spec:
     spec:
       containers:
         - name: payment
-          image: payment:1.0-SNAPSHOT
+          image: k3d-registry42:5050/payment:1.0-SNAPSHOT
           ports:
             - containerPort: 8080
+          resources:
+            requests:
+              cpu: "250m"
+              memory: "256Mi"
+            limits:
+              cpu: "500m"
+              memory: "512Mi"
           envFrom:
             - configMapRef:
                 name: payment-cm
@@ -554,9 +582,16 @@ spec:
     spec:
       containers:
         - name: shipping
-          image: shipping:1.0-SNAPSHOT
+          image: k3d-registry42:5050/shipping:1.0-SNAPSHOT
           ports:
             - containerPort: 8080
+          resources:
+            requests:
+              cpu: "250m"
+              memory: "256Mi"
+            limits:
+              cpu: "500m"
+              memory: "512Mi"
           envFrom:
             - configMapRef:
                 name: shipping-cm
