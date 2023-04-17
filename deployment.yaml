@@ -426,7 +426,7 @@ metadata:
 spec:
   type: NodePort
   ports:
-    - port: 8080
+    - port: 50001
   selector:
     app: order
 ---
@@ -494,7 +494,7 @@ metadata:
 spec:
   type: NodePort
   ports:
-    - port: 8080
+    - port: 50002
   selector:
     app: payment
 ---
@@ -562,7 +562,7 @@ metadata:
 spec:
   type: NodePort
   ports:
-    - port: 8080
+    - port: 50003
   selector:
     app: shipping
 ---
