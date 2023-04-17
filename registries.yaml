@@ -1,5 +1,4 @@
 mirrors:
-"localhost:5050":
+  "localhost:5050":
     endpoint:
       - http://k3d-registry42:5050
-
