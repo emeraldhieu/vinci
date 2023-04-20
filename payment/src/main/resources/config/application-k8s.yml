@@ -25,6 +25,13 @@ logging:
     # Log Kafka
     org.springframework.kafka.listener: DEBUG
     org.springframework.kafka.listener.adapter: INFO
+server:
+  servlet:
+    # Set context path for K8s ingress rules to match different services
+    # See https://kubernetes.io/docs/concepts/services-networking/ingress/#simple-fanout
+    # Otherwise, Ingress won't find services
+    # See https://stackoverflow.com/questions/76061215/route-different-paths-to-different-services
+    context-path: /payment
 application:
   db:
     host: "Please set APPLICATION_DB_HOST in k8s config map"

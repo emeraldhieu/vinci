@@ -424,9 +424,10 @@ metadata:
   labels:
     app: order
 spec:
-  type: NodePort
+  type: LoadBalancer
   ports:
-    - port: 8080
+    - port: 50001
+      targetPort: 8080
   selector:
     app: order
 ---
@@ -447,6 +448,7 @@ spec:
       containers:
         - name: order
           image: k3d-registry42:5050/order:1.0-SNAPSHOT
+          imagePullPolicy: "Always"
           ports:
             - containerPort: 8080
           resources:
@@ -492,9 +494,10 @@ metadata:
   labels:
     app: payment
 spec:
-  type: NodePort
+  type: LoadBalancer
   ports:
-    - port: 8080
+    - port: 50002
+      targetPort: 8080
   selector:
     app: payment
 ---
@@ -515,6 +518,7 @@ spec:
       containers:
         - name: payment
           image: k3d-registry42:5050/payment:1.0-SNAPSHOT
+          imagePullPolicy: "Always"
           ports:
             - containerPort: 8080
           resources:
@@ -560,9 +564,10 @@ metadata:
   labels:
     app: shipping
 spec:
-  type: NodePort
+  type: LoadBalancer
   ports:
-    - port: 8080
+    - port: 50003
+      targetPort: 8080
   selector:
     app: shipping
 ---
@@ -583,6 +588,7 @@ spec:
       containers:
         - name: shipping
           image: k3d-registry42:5050/shipping:1.0-SNAPSHOT
+          imagePullPolicy: "Always"
           ports:
             - containerPort: 8080
           resources:
@@ -598,3 +604,34 @@ spec:
             - secretRef:
                 name: shipping-s
 ---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: ingress-ing
+  annotations:
+    ingress.kubernetes.io/ssl-redirect: "false"
+spec:
+  rules:
+    - http:
+        paths:
+          - path: /order
+            pathType: Prefix
+            backend:
+              service:
+                name: order
+                port:
+                  number: 50001
+          - path: /payment
+            pathType: Prefix
+            backend:
+              service:
+                name: payment
+                port:
+                  number: 50002
+          - path: /shipping
+            pathType: Prefix
+            backend:
+              service:
+                name: shipping
+                port:
+                  number: 50003
