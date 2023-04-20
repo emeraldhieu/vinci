@@ -427,6 +427,7 @@ spec:
   type: NodePort
   ports:
     - port: 50001
+      targetPort: 8080
   selector:
     app: order
 ---
@@ -495,6 +496,7 @@ spec:
   type: NodePort
   ports:
     - port: 50002
+      targetPort: 8080
   selector:
     app: payment
 ---
@@ -563,6 +565,7 @@ spec:
   type: NodePort
   ports:
     - port: 50003
+      targetPort: 8080
   selector:
     app: shipping
 ---
