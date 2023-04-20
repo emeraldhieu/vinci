@@ -424,7 +424,7 @@ metadata:
   labels:
     app: order
 spec:
-  type: NodePort
+  type: LoadBalancer
   ports:
     - port: 50001
       targetPort: 8080
@@ -494,7 +494,7 @@ metadata:
   labels:
     app: payment
 spec:
-  type: NodePort
+  type: LoadBalancer
   ports:
     - port: 50002
       targetPort: 8080
@@ -564,7 +564,7 @@ metadata:
   labels:
     app: shipping
 spec:
-  type: NodePort
+  type: LoadBalancer
   ports:
     - port: 50003
       targetPort: 8080
