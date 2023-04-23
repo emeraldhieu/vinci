@@ -38,9 +38,7 @@ As Order's Kafka messages tend to evolve by development's needs, [Confluent Avro
 
 [gRPC is said to be faster and more secured than traditional REST API](https://stackoverflow.com/questions/44877606/is-grpchttp-2-faster-than-rest-with-http-2#44937371) because it transmits binary data instead of JSON.
 
-Module `grpc-interface` contains [protobuf3](https://protobuf.dev/programming-guides/proto3/) files to define services, request, and response messages then use [protobuf-maven-plugin](https://github.com/xolstice/protobuf-maven-plugin) to generate Java service stubs.
-
-gRPC server `shipping` implements those stubs to follow the contracts defined in protobuf files.
+Module `grpc-interface` contains [protobuf3](https://protobuf.dev/programming-guides/proto3/) files to define services, request, and response messages then use [protobuf-maven-plugin](https://github.com/xolstice/protobuf-maven-plugin) to generate Java service stubs. The gRPC server `shipping` implements those stubs to follow the contracts defined in protobuf files.
 
 You can test the gRPC using [grpcurl](https://github.com/fullstorydev/grpcurl).
 ```shell
@@ -95,6 +93,132 @@ Vinci uses [Spring 6's Problem Details](https://docs.spring.io/spring-framework/
 ## Java beans mappings
 
 Like Lombok, [Mapstruct](https://github.com/mapstruct/mapstruct) is a code generator library that supports mapping between entities and DTOs without writing boilerplate code. A significant benefit is that mappers don't need unit tests because there's no code to test!
+
+## Quickstart
+
+#### Spin up the stack
+
+At project directory, run this command to set up external services.
+
+```sh
+docker compose up -d
+```
+
+In IntelliJ, start `OrderApp`, `PaymentApp`, and `ShippingApp`.
+
+#### Verify an API
+
+```shell
+curl --location 'http://localhost:50001/orders?sortOrders=updatedAt%2Cdesc%7CcreatedBy%2Casc'
+```
+
+If it returns 200 with a JSON response, the app "order" is working. Check [Order API](#order-api) for other endpoints.
+
+## Deploy microservices to Kubernetes
+
+### Use K3d
+
+[K3d](https://k3d.io/) is a lightweight Kubernetes distribution. This guide assumes you've had k3d [installed](https://k3d.io/v5.4.4/#installation).
+
+#### 1) Setup k3d cluster
+
+Install a local (registry)[https://hub.docker.com/_/registry]
+```shell
+k3d registry create registry42 --port 5050
+```
+
+At project directory, run this
+```shell
+k3d cluster create cluster42 -p "9900:80@loadbalancer" --registry-use k3d-registry42:5050 --registry-config registries.yaml -v <yourLocalPathTo>/vinci/postgres-scripts:/home/docker/postgres-scripts
+```
+
+What it does
+
++ Create a k8s cluster
++ Use an existing docker registry
++ Map host machine's port 9900 to [k3d's loadbalancer](https://k3d.io/v5.3.0/design/defaults/#k3d-loadbalancer)'s port 80
++ Mount the host machine's directory to the k8s cluster's directory
+
+#### 2) Dockerize apps
+
+2.1) At directory `order`, build the app
+```shell
+mvn clean package
+```
+
+2.2) Create docker image `order`
+```shell
+docker build -t localhost:5050/order:1.0-SNAPSHOT .
+```
+
+2.3) Push image to the registry
+```
+docker push localhost:5050/order:1.0-SNAPSHOT
+```
+
+Do all the steps again for `payment` and `shipping`.
+
+#### 3) Apply configuration
+
+Open another terminal, create k8s resources
+```shell
+kubectl apply -f deployment.yaml
+```
+
+#### 4) Verify Postgres
+
+Listen on port 5432, forward data to a pod selected by the service "postgres"
+```shell
+kubectl port-forward svc/postgres 5432
+```
+
+Connect to postgres from the host machine. Enter password "postgres".
+```shell
+psql -h 127.0.0.1 -d postgres -U postgres -W
+```
+
+List databases. If you see databases `order`, `payment`, and `shipping`, the setup is working.
+```shell
+postgres=# \l
+```
+
+#### 5) Verify service "order"
+
+Since K3d Load balancer has routed requests to app services by K8s ingress rules, you won't need port-forwarding. Mind that the context paths `/order`, `/payment`, and `/shipping` are mandatory.
+
+Create an order on your host machine
+```shell
+curl --location 'http://localhost:8080/order/orders' \
+--header 'Content-Type: application/json' \
+--data '{
+    "products": [
+        "coke",
+        "juice",
+        "cider"
+    ]
+}'
+```
+
+If it returns a JSON response with an ID, it's working.
+
+#### 6) Verify Schema Registry
+
+Listen on port 8081, forward data to a pod selected by the service "schema-registry"
+```shell
+kubectl port-forward svc/schema-registry 8081
+```
+
+Ask for the very first schema of "order"
+```shell
+curl http://localhost:8081/schemas/ids/1
+```
+
+Response
+```json
+{
+    "schema": "{\"type\":\"record\",\"name\":\"OrderMessage\",\"namespace\":\"com.emeraldhieu.vinci.order\",\"fields\":[{\"name\":\"orderId\",\"type\":\"string\"}]}"
+}
+```
 
 ## Order API
 
@@ -190,127 +314,69 @@ curl --location --request POST 'http://localhost:50001/orders' \
 }
 ```
 
-## Quickstart
+### 3) Get an order
 
-At project directory, run this command to set up external services.
+```
+GET /orders/<id>
+```
+
+#### Path parameters
+
+| Parameters | Description | Type       |
+| ---------- |-------------| ---------- |
+| `id`       | Order ID    | String     |
+
+#### Example
+
+##### Get an order
 
 ```sh
-docker compose up -d
+curl --location 'http://localhost:50001/orders/0a5eb04756f54776ac7752d3c8fae45b'
 ```
 
-In IntelliJ, start `OrderApp`, `PaymentApp`, and `ShippingApp`.
+##### Response
 
-## Deploy microservices to Kubernetes
-
-### Use K3d
-
-[K3d](https://k3d.io/) is a lightweight Kubernetes distribution. This guide assumes you've had k3d [installed](https://k3d.io/v5.4.4/#installation).
-
-#### 1) Setup k3d cluster
-
-Install a local (registry)[https://hub.docker.com/_/registry]
-```shell
-k3d registry create registry42 --port 5050
-```
-
-At project directory, run this
-```shell
-k3d cluster create cluster42 -p "9900:80@loadbalancer" --registry-use k3d-registry42:5050 --registry-config registries.yaml -v <yourLocalPathTo>/vinci/postgres-scripts:/home/docker/postgres-scripts
-```
-
-What it does
-
-+ Create a k8s cluster
-+ Use an existing docker registry
-+ Map host machine's port 9900 to [k3d's loadbalancer](https://k3d.io/v5.3.0/design/defaults/#k3d-loadbalancer)'s port 80
-+ Mount the host machine's directory to the k8s cluster's directory
-
-#### 2) Dockerize apps
-
-2.1) At directory `order`, build the app
-```shell
-mvn clean package
-```
-
-2.2) Create docker image `order`
-```shell
-docker build -t localhost:5050/order:1.0-SNAPSHOT .
-```
-
-2.3) Push image to the registry
-```
-docker push localhost:5050/order:1.0-SNAPSHOT
-```
-
-Do all the steps again for `payment` and `shipping`.
-
-#### 3) Apply configuration
-
-Open another terminal, create k8s resources
-```shell
-kubectl apply -f deployment.yaml
-```
-
-#### 4) Verify Postgres
-
-Listen on port 5432, forward data to a pod selected by the service "postgres"
-```shell
-kubectl port-forward svc/postgres 5432
-```
-
-Connect to postgres from the host machine. Enter password "postgres".
-```shell
-psql -h 127.0.0.1 -d postgres -U postgres -W
-```
-
-List databases. If you see databases `order`, `payment`, and `shipping`, the setup is working.
-```shell
-postgres=# \l
-```
-
-#### 5) Verify service "order"
-
-Listen on port 8080, forward data to a pod selected by the service "order"
-```shell
-kubectl port-forward svc/order 8080:8080
-```
-
-Create an order on your host machine
-```shell
-curl --location 'http://localhost:8080/orders' \
---header 'Content-Type: application/json' \
---data '{
-    "products": [
-        "coke",
-        "juice",
-        "cider"
-    ]
-}'
-```
-
-If it returns a JSON response with an ID, it's working.
-
-#### 6) Verify Schema Registry
-
-Listen on port 8081, forward data to a pod selected by the service "schema-registry"
-```shell
-kubectl port-forward svc/schema-registry 8081
-```
-
-Ask for the very first schema of "order"
-```shell
-curl http://localhost:8081/schemas/ids/1
-```
-
-Response
 ```json
 {
-    "schema": "{\"type\":\"record\",\"name\":\"OrderMessage\",\"namespace\":\"com.emeraldhieu.vinci.order\",\"fields\":[{\"name\":\"orderId\",\"type\":\"string\"}]}"
+  "id": "0a5eb04756f54776ac7752d3c8fae45b",
+  "products": [
+    "car",
+    "bike",
+    "house"
+  ],
+  "createdBy": 5,
+  "createdAt": "2022-11-27T00:00:00",
+  "updatedBy": 6,
+  "updatedAt": "2022-11-28T00:00:00"
 }
 ```
 
+### 4) Delete an order
+
+```
+DELETE /orders/<id>
+```
+
+#### Path parameters
+
+| Parameters | Description | Type       |
+| ---------- |-------------| ---------- |
+| `id`       | Order ID    | String     |
+
+#### Example
+
+##### Delete an order
+
+```sh
+curl --location 'http://localhost:50001/orders/0a5eb04756f54776ac7752d3c8fae45b'
+```
+
+Response status is 204 with no content
+
 ## TODOs
 
++ ~~Deploy to K8s~~
++ ~~Scale app services by ingress and loadbalancer~~
 + Implement OAuth2
 + Improve database modeling
 + Improve field validation
