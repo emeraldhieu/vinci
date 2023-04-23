@@ -131,14 +131,14 @@ k3d registry create registry42 --port 5050
 
 At project directory, run this
 ```shell
-k3d cluster create cluster42 -p "9900:80@loadbalancer" --registry-use k3d-registry42:5050 --registry-config registries.yaml -v <yourLocalPathTo>/vinci/postgres-scripts:/home/docker/postgres-scripts
+k3d cluster create cluster42 -p "8080:50001@loadbalancer" --registry-use k3d-registry42:5050 --registry-config registries.yaml -v <yourLocalPathTo>/vinci/postgres-scripts:/home/docker/postgres-scripts
 ```
 
 What it does
 
 + Create a k8s cluster
 + Use an existing docker registry
-+ Map host machine's port 9900 to [k3d's loadbalancer](https://k3d.io/v5.3.0/design/defaults/#k3d-loadbalancer)'s port 80
++ Map host machine's port 8080 to [k3d's loadbalancer](https://k3d.io/v5.3.0/design/defaults/#k3d-loadbalancer)'s port 50001
 + Mount the host machine's directory to the k8s cluster's directory
 
 #### 2) Dockerize apps
@@ -186,7 +186,7 @@ postgres=# \l
 
 #### 5) Verify service "order"
 
-Since K3d Load balancer has routed requests to app services by K8s ingress rules, you won't need port-forwarding. Mind that the context paths `/order`, `/payment`, and `/shipping` are mandatory.
+Since K3d Load balancer has routed requests to app services by K8s ingress rules, you won't need port-forwarding. Mind that the context paths `/order` is mandatory.
 
 Create an order on your host machine
 ```shell
