@@ -116,6 +116,8 @@ If it returns 200 with a JSON response, the app "order" is working. Check [Order
 
 ## Deploy microservices to Kubernetes
 
+![](images/k8sArchitecture.png)
+
 ### Use K3d
 
 [K3d](https://k3d.io/) is a lightweight Kubernetes distribution. This guide assumes you've had k3d [installed](https://k3d.io/v5.4.4/#installation).
