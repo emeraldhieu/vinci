@@ -124,7 +124,7 @@ If it returns 200 with a JSON response, the app "order" is working. Check [Order
 
 #### 1) Setup k3d cluster
 
-Install a local (registry)[https://hub.docker.com/_/registry]
+Install a local [registry](https://hub.docker.com/_/registry)
 ```shell
 k3d registry create registry42 --port 5050
 ```
