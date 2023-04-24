@@ -27,6 +27,17 @@ server:
     # Otherwise, Ingress won't find services
     # See https://stackoverflow.com/questions/76061215/route-different-paths-to-different-services
     context-path: /shipping
+grpc:
+  server:
+    port: 50013
+  client:
+    shipping:
+      # Choose gRPC target (or connect to a gRPC server)
+      # See https://yidongnan.github.io/grpc-spring-boot-starter/en/client/configuration.html#choosing-the-target
+      address: static://shipping:50013
+      # Disable TLS for development
+      # See https://yidongnan.github.io/grpc-spring-boot-starter/en/client/security.html#disable-transport-layer-security
+      negotiationType: plaintext
 application:
   db:
     host: "Please set APPLICATION_DB_HOST in k8s config map"
