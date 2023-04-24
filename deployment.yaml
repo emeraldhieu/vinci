@@ -566,8 +566,12 @@ metadata:
 spec:
   type: LoadBalancer
   ports:
-    - port: 50003
+    - name: http
+      port: 50003
       targetPort: 8080
+    - name: grpc
+      port: 50013
+      targetPort: 50013
   selector:
     app: shipping
 ---
