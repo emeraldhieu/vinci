@@ -34,3 +34,5 @@ application:
     name: payment
     user: payment
     password: payment
+  host: localhost
+  port: ${server.port}

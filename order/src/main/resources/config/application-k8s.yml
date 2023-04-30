@@ -42,3 +42,4 @@ application:
     name: "Please set APPLICATION_DB_NAME in k8s config map"
     user: "Please set APPLICATION_DB_USER in k8s config map"
     password: "Please set APPLICATION_DB_PASSWORD in k8s config map"
+  host: vinci.com

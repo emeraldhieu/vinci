@@ -34,3 +34,5 @@ application:
     name: order
     user: order
     password: order
+  host: localhost
+  port: ${server.port}
