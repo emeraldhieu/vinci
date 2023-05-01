@@ -12,9 +12,9 @@ spring:
     # Used for development to update the changelogs continuously
     clear-checksums: true
   kafka:
-    bootstrap-servers: "kafka:29092"
+    bootstrap-servers: "local-kafka-0.local-kafka-headless.default.svc.cluster.local:9092"
     properties:
-      schema.registry.url: http://schema-registry:8081
+      schema.registry.url: "http://local-schema-registry.default.svc.cluster.local:8081"
 logging:
   level:
     # Enable Liquibase logs for development
@@ -39,3 +39,4 @@ application:
     name: "Please set APPLICATION_DB_NAME in k8s config map"
     user: "Please set APPLICATION_DB_USER in k8s config map"
     password: "Please set APPLICATION_DB_PASSWORD in k8s config map"
+  host: vinci.com

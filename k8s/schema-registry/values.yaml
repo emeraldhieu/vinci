@@ -1,0 +1,2 @@
+kafka:
+  replicaCount: 3

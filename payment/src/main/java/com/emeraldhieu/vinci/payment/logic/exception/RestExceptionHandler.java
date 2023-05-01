@@ -1,5 +1,6 @@
 package com.emeraldhieu.vinci.payment.logic.exception;
 
+import com.emeraldhieu.vinci.payment.config.ApplicationProperties;
 import com.emeraldhieu.vinci.payment.logic.sort.InvalidSortOrderException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import lombok.RequiredArgsConstructor;
@@ -24,26 +25,35 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 
 import java.net.URI;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 /**
  * Exception handler that uses {@link ProblemDetail}.
  */
 @Slf4j
-@ControllerAdvice // (annotations = RestController.class)
+@ControllerAdvice
 @RequiredArgsConstructor
 @Order(Ordered.HIGHEST_PRECEDENCE) // TODO Investigate why this is needed for NoHandlerFoundException
 public class RestExceptionHandler extends ResponseEntityExceptionHandler {
 
     private final MessageSource messageSource;
-    private final URI typeUri = URI.create("http://localhost:50001/vinci/types");
+    private final ApplicationProperties applicationProperties;
 
     @Override
     protected ResponseEntity<Object> handleNoHandlerFoundException(NoHandlerFoundException exception, HttpHeaders headers, HttpStatusCode status, WebRequest request) {
         ProblemDetail problemDetail = ProblemDetail.forStatus(status);
-        problemDetail.setType(typeUri);
+        problemDetail.setType(getTypeUri());
         problemDetail.setDetail(exception.getMessage());
         return new ResponseEntity<>(problemDetail, status);
+    }
+
+    private URI getTypeUri() {
+        String host = applicationProperties.getHost();
+        String port = Optional.ofNullable(applicationProperties.getPort())
+            .map(nonNullPort -> ":" + nonNullPort)
+            .orElse("");
+        return URI.create(String.format("http://%s%s/types", host, port));
     }
 
     @Override
@@ -52,7 +62,7 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
                                                                   WebRequest request) {
         BindingResult bindingResult = exception.getBindingResult();
         ProblemDetail problemDetail = ProblemDetail.forStatus(status);
-        problemDetail.setType(typeUri);
+        problemDetail.setType(getTypeUri());
         problemDetail.setDetail(messageSource.getMessage("invalidRequestBodyArgument", null, null));
         problemDetail.setProperty("fieldErrors", getFieldErrors(bindingResult.getFieldErrors()));
         return new ResponseEntity<>(problemDetail, status);
@@ -69,9 +79,9 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
     }
 
     @ExceptionHandler(InvalidSortOrderException.class)
-    protected ResponseEntity<Object> handleNoHandlerFoundException() {
+    protected ResponseEntity<Object> handleInvalidSortOrder() {
         ProblemDetail problemDetail = ProblemDetail.forStatus(HttpStatus.UNPROCESSABLE_ENTITY);
-        problemDetail.setType(typeUri);
+        problemDetail.setType(getTypeUri());
         problemDetail.setDetail(messageSource.getMessage("invalidSortOrder", null, null));
         return new ResponseEntity<>(problemDetail, HttpStatus.valueOf(problemDetail.getStatus()));
     }
@@ -81,7 +91,7 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
                                                                   HttpHeaders headers, HttpStatusCode status,
                                                                   WebRequest request) {
         ProblemDetail problemDetail = ProblemDetail.forStatus(status);
-        problemDetail.setType(typeUri);
+        problemDetail.setType(getTypeUri());
         String detailMessage = getInvalidArgumentDetailMessage(exception);
         problemDetail.setDetail(detailMessage);
         return new ResponseEntity<>(problemDetail, status);
@@ -98,7 +108,7 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
     @ExceptionHandler
     protected ResponseEntity<Object> handlePaymentNotFound(PaymentNotFoundException exception) {
         ProblemDetail problemDetail = ProblemDetail.forStatus(HttpStatus.NOT_FOUND);
-        problemDetail.setType(typeUri);
+        problemDetail.setType(getTypeUri());
         problemDetail.setDetail(messageSource.getMessage("paymentNotFound", new Object[]{exception.getPaymentId()}, null));
         return new ResponseEntity<>(problemDetail, HttpStatus.valueOf(problemDetail.getStatus()));
     }

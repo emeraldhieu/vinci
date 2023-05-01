@@ -14,10 +14,10 @@ spring:
   # Only "spring.kafka.bootstrap-servers" works.
   # If "spring.kafka.producer.bootstrap-servers" was used, there would be an error "Connection to node -1 (localhost/127.0.0.1:9092) could not be established"
   # It's worth to look into Kafka's autoconfiguration to see why.
-  kafka:
-    bootstrap-servers: "kafka:29092"
+  kafka: # local-schema-registry.default.svc.cluster.local
+    bootstrap-servers: "local-kafka-0.local-kafka-headless.default.svc.cluster.local:9092"
     properties:
-      schema.registry.url: http://schema-registry:8081
+      schema.registry.url: "http://local-schema-registry.default.svc.cluster.local:8081"
 logging:
   level:
     # Enable Liquibase logs for development
@@ -42,3 +42,4 @@ application:
     name: "Please set APPLICATION_DB_NAME in k8s config map"
     user: "Please set APPLICATION_DB_USER in k8s config map"
     password: "Please set APPLICATION_DB_PASSWORD in k8s config map"
+  host: vinci.com

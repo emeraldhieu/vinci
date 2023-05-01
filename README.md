@@ -4,7 +4,7 @@ Vinci is a microservice shopping webapp. The name is inspired by my favourite ar
 
 ## API-first approach
 
-Vinci chooses [API First approach](https://swagger.io/resources/articles/adopting-an-api-first-approach/) using [Open API 3.0](https://swagger.io/specification/) and [Open API Maven Generator](https://github.com/OpenAPITools/openapi-generator/tree/master/modules/openapi-generator-maven-plugin) to boost API development and allow foreseeing how the product looks like. The generated code can be overriden via [Mustache templates](https://mustache.github.io/mustache.5.html) such as [data transfer object](https://github.com/emeraldhieu/vinci/blob/master/order/src/main/resources/templates/pojo.mustache).
+Vinci chooses [API First approach](https://swagger.io/resources/articles/adopting-an-api-first-approach/) using [Open API 3.0](https://swagger.io/specification/) and [Open API Maven Generator](https://github.com/OpenAPITools/openapi-generator/tree/master/modules/openapi-generator-maven-plugin) to boost API development and allow foreseeing how the product looks like. The generated code can be overridden via [Mustache templates](https://mustache.github.io/mustache.5.html) such as [data transfer object](https://github.com/emeraldhieu/vinci/blob/master/order/src/main/resources/templates/pojo.mustache).
 
 ## Message queue
 
@@ -98,7 +98,7 @@ Like Lombok, [Mapstruct](https://github.com/mapstruct/mapstruct) is a code gener
 
 #### Spin up the stack
 
-At project directory, run this command to set up external services.
+At the project directory, run this command to set up external services.
 
 ```sh
 docker compose up -d
@@ -129,7 +129,7 @@ Install a local [registry](https://hub.docker.com/_/registry)
 k3d registry create registry42 --port 5050
 ```
 
-At project directory, run this
+At the project directory, run this
 ```shell
 k3d cluster create cluster42 -p "8080:50001@loadbalancer" --registry-use k3d-registry42:5050 --registry-config registries.yaml -v <yourLocalPathTo>/vinci/postgres-scripts:/home/docker/postgres-scripts
 ```
@@ -143,7 +143,7 @@ What it does
 
 #### 2) Dockerize apps
 
-2.1) At directory `order`, build the app
+2.1) At the directory `order`, build the app
 ```shell
 mvn clean package
 ```
@@ -242,7 +242,7 @@ Some examples of `sortOrders`:
 
 #### Example
 
-##### 1) List orders
+##### List orders
 
 ```sh
 curl --location --request GET 'http://localhost:50001/orders?sortOrders=updatedAt,desc|createdBy,asc'

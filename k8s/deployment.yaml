@@ -125,276 +125,6 @@ spec:
             claimName: postgres-script-pvc
 ---
 apiVersion: v1
-kind: PersistentVolume
-metadata:
-  name: zookeeper-data-pv
-  labels:
-    type: local
-spec:
-  storageClassName: zookeeper-data-sc
-  capacity:
-    storage: 1Gi
-  accessModes:
-    - ReadWriteOnce
-  # hostPath volume is used for development and testing on a single node only. It's not used for production.
-  hostPath:
-    path: "/home/docker/zookeeper-data"
----
-apiVersion: v1
-kind: PersistentVolumeClaim
-metadata:
-  name: zookeeper-data-pvc
-spec:
-  storageClassName: zookeeper-data-sc
-  accessModes:
-    - ReadWriteOnce
-  resources:
-    requests:
-      storage: 1Gi
----
-apiVersion: v1
-kind: PersistentVolume
-metadata:
-  name: zookeeper-log-pv
-  labels:
-    type: local
-spec:
-  storageClassName: zookeeper-log-sc
-  capacity:
-    storage: 1Gi
-  accessModes:
-    - ReadWriteOnce
-  # hostPath volume is used for development and testing on a single node only. It's not used for production.
-  hostPath:
-    path: "/home/docker/zookeeper-log"
----
-apiVersion: v1
-kind: PersistentVolumeClaim
-metadata:
-  name: zookeeper-log-pvc
-spec:
-  storageClassName: zookeeper-log-sc
-  accessModes:
-    - ReadWriteOnce
-  resources:
-    requests:
-      storage: 1Gi
----
-apiVersion: v1
-kind: Service
-metadata:
-  name: zookeeper
-  labels:
-    app: zookeeper
-spec:
-  type: NodePort
-  ports:
-    - port: 2181
-  selector:
-    app: zookeeper
----
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  name: zookeeper
-spec:
-  replicas: 1
-  selector:
-    matchLabels:
-      app: zookeeper
-  template:
-    metadata:
-      labels:
-        app: zookeeper
-    spec:
-      containers:
-        - name: zookeeper
-          image: confluentinc/cp-zookeeper:7.1.1
-          imagePullPolicy: "IfNotPresent"
-          securityContext:
-            runAsUser: 0
-          ports:
-            - containerPort: 2181
-          resources:
-            requests:
-              cpu: "250m"
-              memory: "64Mi"
-            limits:
-              cpu: "500m"
-              memory: "128Mi"
-          env:
-            - name: ZOOKEEPER_CLIENT_PORT
-              value: "2181"
-            - name: ZOOKEEPER_SERVER_ID
-              value: "1"
-            - name: ZOOKEEPER_SERVERS
-              value: "zookeeper:2888:3888"
-          volumeMounts:
-            - mountPath: /var/lib/zookeeper/data
-              name: zookeeper-data
-            - mountPath: /var/lib/zookeeper/log
-              name: zookeeper-log
-      volumes:
-        - name: zookeeper-data
-          persistentVolumeClaim:
-            claimName: zookeeper-data-pvc
-        - name: zookeeper-log
-          persistentVolumeClaim:
-            claimName: zookeeper-log-pvc
----
-apiVersion: v1
-kind: PersistentVolume
-metadata:
-  name: kafka-data-pv
-  labels:
-    type: local
-spec:
-  storageClassName: kafka-data-sc
-  capacity:
-    storage: 1Gi
-  accessModes:
-    - ReadWriteOnce
-  # hostPath volume is used for development and testing on a single node only. It's not used for production.
-  hostPath:
-    path: "/home/docker/kafka-data"
----
-apiVersion: v1
-kind: PersistentVolumeClaim
-metadata:
-  name: kafka-data-pvc
-spec:
-  storageClassName: kafka-data-sc
-  accessModes:
-    - ReadWriteOnce
-  resources:
-    requests:
-      storage: 1Gi
----
-apiVersion: v1
-kind: Service
-metadata:
-  name: kafka
-  labels:
-    app: kafka
-spec:
-  type: NodePort
-  ports:
-    - name: internal
-      port: 29092
-      targetPort: 29092
-    - name: external
-      port: 9092
-      targetPort: 9092
-  selector:
-    app: kafka
----
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  name: kafka
-spec:
-  replicas: 1
-  selector:
-    matchLabels:
-      app: kafka
-  template:
-    metadata:
-      labels:
-        app: kafka
-    spec:
-      #  Fix "port is deprecated. Please use KAFKA_ADVERTISED_LISTENERS instead."
-      # See https://github.com/confluentinc/schema-registry/issues/689#issuecomment-827716674
-      enableServiceLinks: false
-      containers:
-        - name: kafka
-          image: confluentinc/cp-kafka:7.1.1
-          imagePullPolicy: "IfNotPresent"
-          securityContext:
-            runAsUser: 0
-          ports:
-            - containerPort: 29092
-            - containerPort: 9092
-          env:
-            - name: KAFKA_ADVERTISED_LISTENERS
-              # Expose *service* "kafka" with possible ports to clients.
-              # Clients are whatever connects to this Kafka service.
-              value: "INSIDE://kafka:29092,OUTSIDE://kafka:9092"
-            - name: KAFKA_LISTENERS
-              value: "INSIDE://:29092,OUTSIDE://:9092"
-            - name: KAFKA_LISTENER_SECURITY_PROTOCOL_MAP
-              value: "INSIDE:PLAINTEXT,OUTSIDE:PLAINTEXT"
-            - name: KAFKA_INTER_BROKER_LISTENER_NAME
-              value: "INSIDE"
-            - name: KAFKA_ZOOKEEPER_CONNECT
-              value: "zookeeper:2181"
-            - name: KAFKA_BROKER_ID
-              value: "1"
-            - name: KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR
-              value: "1"
-            - name: KAFKA_AUTO_CREATE_TOPICS_ENABLE
-              value: "true"
-          volumeMounts:
-            - mountPath: /var/lib/kafka/data
-              name: kafka-data
-      volumes:
-        - name: kafka-data
-          persistentVolumeClaim:
-            claimName: kafka-data-pvc
----
-apiVersion: v1
-kind: Service
-metadata:
-  name: schema-registry
-  labels:
-    app: schema-registry
-spec:
-  type: NodePort
-  ports:
-    - name: external
-      port: 8081
-      targetPort: 8081
-  selector:
-    app: schema-registry
----
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  name: schema-registry
-spec:
-  replicas: 1
-  selector:
-    matchLabels:
-      app: schema-registry
-  template:
-    metadata:
-      labels:
-        app: schema-registry
-    spec:
-      #  Fix "port is deprecated. Please use KAFKA_ADVERTISED_LISTENERS instead."
-      # See https://github.com/confluentinc/schema-registry/issues/689#issuecomment-827716674
-      enableServiceLinks: false
-      containers:
-        - name: schema-registry
-          image: confluentinc/cp-schema-registry:7.3.0
-          imagePullPolicy: "IfNotPresent"
-          ports:
-            - containerPort: 8081
-          resources:
-            requests:
-              cpu: "250m"
-              memory: "128Mi"
-            limits:
-              cpu: "500m"
-              memory: "256Mi"
-          env:
-            - name: SCHEMA_REGISTRY_HOST_NAME
-              value: "schema-registry"
-            - name: SCHEMA_REGISTRY_KAFKASTORE_BOOTSTRAP_SERVERS
-              value: "kafka:29092"
-            - name: SCHEMA_REGISTRY_LISTENERS
-              value: "http://0.0.0.0:8081"
----
-apiVersion: v1
 kind: ConfigMap
 metadata:
   name: order-cm
@@ -424,9 +154,13 @@ metadata:
   labels:
     app: order
 spec:
+  # TODO Investigate why this type can't be ClusterIP
+  # See https://k3d.io/v5.0.1/usage/exposing_services/#1-via-ingress-recommended
   type: LoadBalancer
   ports:
-    - port: 50001
+    - name: tcp
+      protocol: TCP
+      port: 50001
       targetPort: 8080
   selector:
     app: order
@@ -494,9 +228,13 @@ metadata:
   labels:
     app: payment
 spec:
+  # TODO Investigate why this type can't be ClusterIP
+  # See https://k3d.io/v5.0.1/usage/exposing_services/#1-via-ingress-recommended
   type: LoadBalancer
   ports:
-    - port: 50002
+    - name: tcp
+      protocol: TCP
+      port: 50002
       targetPort: 8080
   selector:
     app: payment
@@ -564,12 +302,16 @@ metadata:
   labels:
     app: shipping
 spec:
+  # TODO Investigate why this type can't be ClusterIP
+  # See https://k3d.io/v5.0.1/usage/exposing_services/#1-via-ingress-recommended
   type: LoadBalancer
   ports:
     - name: http
+      protocol: TCP
       port: 50003
       targetPort: 8080
     - name: grpc
+      protocol: TCP
       port: 50013
       targetPort: 50013
   selector:
@@ -616,6 +358,7 @@ metadata:
     ingress.kubernetes.io/ssl-redirect: "false"
 spec:
   rules:
+    # This HTTP request goes internally from the ingress to internal services
     - http:
         paths:
           - path: /order
