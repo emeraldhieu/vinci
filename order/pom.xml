@@ -203,7 +203,7 @@
 
                                     <!-- Add Lombok on top of the model class -->
                                     <additionalModelTypeAnnotations>
-                                        @lombok.Builder
+                                        @lombok.Builder(toBuilder = true)
                                         @lombok.Getter
                                         @lombok.extern.jackson.Jacksonized
                                         @lombok.EqualsAndHashCode
@@ -241,6 +241,16 @@
             <plugin>
                 <groupId>org.apache.avro</groupId>
                 <artifactId>avro-maven-plugin</artifactId>
+            </plugin>
+            <!-- Configure unit tests. -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+            </plugin>
+            <!-- Configure integration tests -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-failsafe-plugin</artifactId>
             </plugin>
         </plugins>
     </build>

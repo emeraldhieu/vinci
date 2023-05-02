@@ -39,16 +39,18 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
 
     private final MessageSource messageSource;
     private final ApplicationProperties applicationProperties;
+    static final String FIELD_ERRORS = "fieldErrors";
 
     @Override
-    protected ResponseEntity<Object> handleNoHandlerFoundException(NoHandlerFoundException exception, HttpHeaders headers, HttpStatusCode status, WebRequest request) {
+    protected ResponseEntity<Object> handleNoHandlerFoundException(NoHandlerFoundException exception, HttpHeaders headers,
+                                                                   HttpStatusCode status, WebRequest request) {
         ProblemDetail problemDetail = ProblemDetail.forStatus(status);
         problemDetail.setType(getTypeUri());
         problemDetail.setDetail(exception.getMessage());
         return new ResponseEntity<>(problemDetail, status);
     }
 
-    private URI getTypeUri() {
+    URI getTypeUri() {
         String host = applicationProperties.getHost();
         String port = Optional.ofNullable(applicationProperties.getPort())
             .map(nonNullPort -> ":" + nonNullPort)
@@ -79,7 +81,7 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
     }
 
     @ExceptionHandler(InvalidSortOrderException.class)
-    protected ResponseEntity<Object> handleInvalidSortOrder() {
+    protected ResponseEntity<ProblemDetail> handleInvalidSortOrder() {
         ProblemDetail problemDetail = ProblemDetail.forStatus(HttpStatus.UNPROCESSABLE_ENTITY);
         problemDetail.setType(getTypeUri());
         problemDetail.setDetail(messageSource.getMessage("invalidSortOrder", null, null));
@@ -106,7 +108,7 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
     }
 
     @ExceptionHandler
-    protected ResponseEntity<Object> handleOrderNotFound(OrderNotFoundException exception) {
+    protected ResponseEntity<ProblemDetail> handleOrderNotFound(OrderNotFoundException exception) {
         ProblemDetail problemDetail = ProblemDetail.forStatus(HttpStatus.NOT_FOUND);
         problemDetail.setType(getTypeUri());
         problemDetail.setDetail(messageSource.getMessage("orderNotFound", new Object[]{exception.getOrderId()}, null));
