@@ -22,6 +22,7 @@ services:
       postgres:
         # Set static IP for PgAdmin to connect to a specific IP
         ipv4_address: 10.1.0.100
+      backend:
 
   # I got "Permission denied at /home/" when exporting a database table.
   # pgadmin:
@@ -54,6 +55,8 @@ services:
       ZOOKEEPER_CLIENT_PORT: 2181
       ZOOKEEPER_SERVER_ID: 1
       ZOOKEEPER_SERVERS: zookeeper:2888:3888
+    networks:
+      - backend
 
   kafka1:
     image: confluentinc/cp-kafka:7.1.1
@@ -81,34 +84,8 @@ services:
       KAFKA_ALLOW_EVERYONE_IF_NO_ACL_FOUND: "true"
     depends_on:
       - zookeeper
-
-# Temporarily disable to reduce memory consumption
-#  kafka2:
-#    image: confluentinc/cp-kafka:7.1.1
-#    container_name: kafka2
-#    hostname: kafka2
-#    # Enable this in Mac Book Pro M1
-#    #platform: linux/x86_64
-#    ports:
-#      - "9093:9093"
-#    volumes:
-#      - kafka2-data:/var/lib/kafka/data
-#    environment:
-#      KAFKA_ADVERTISED_LISTENERS: INSIDE://kafka2:29093,OUTSIDE://localhost:9093
-#      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: INSIDE:PLAINTEXT,OUTSIDE:PLAINTEXT
-#      KAFKA_INTER_BROKER_LISTENER_NAME: INSIDE
-#      KAFKA_ZOOKEEPER_CONNECT: "zookeeper:2181"
-#      KAFKA_BROKER_ID: 2
-#      KAFKA_LOG4J_LOGGERS: "kafka.controller=INFO,kafka.producer.async.DefaultEventHandler=INFO,state.change.logger=INFO"
-#      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
-#      KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
-#      KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
-#      KAFKA_JMX_PORT: 9999
-#      KAFKA_JMX_HOSTNAME: ${DOCKER_HOST_IP:-127.0.0.1}
-#      KAFKA_AUTHORIZER_CLASS_NAME: kafka.security.authorizer.AclAuthorizer
-#      KAFKA_ALLOW_EVERYONE_IF_NO_ACL_FOUND: "true"
-#    depends_on:
-#      - zookeeper
+    networks:
+      - backend
 
   schema-registry:
     image: confluentinc/cp-schema-registry:7.3.0
@@ -117,14 +94,15 @@ services:
     depends_on:
       - zookeeper
       - kafka1
-#      - kafka2
     ports:
       - "8081:8081"
     environment:
       SCHEMA_REGISTRY_HOST_NAME: schema-registry
-      SCHEMA_REGISTRY_KAFKASTORE_BOOTSTRAP_SERVERS: "kafka1:29092,kafka2:29093"
+      SCHEMA_REGISTRY_KAFKASTORE_BOOTSTRAP_SERVERS: "kafka1:29092"
       SCHEMA_REGISTRY_LISTENERS: "http://0.0.0.0:8081"
       SCHEMA_REGISTRY_URL: "http://localhost:8081"
+    networks:
+      - backend
 
   control-center:
     image: confluentinc/cp-enterprise-control-center:7.3.1
@@ -132,7 +110,6 @@ services:
     hostname: control-center
     depends_on:
       - kafka1
-#      - kafka2
       - schema-registry
     ports:
       - "9021:9021"
@@ -144,19 +121,8 @@ services:
       CONTROL_CENTER_MONITORING_INTERCEPTOR_TOPIC_PARTITIONS: 1
       CONFLUENT_METRICS_TOPIC_REPLICATION: 1
       PORT: 9021
-
-#  jenkins:
-#    image: jenkins/jenkins:jdk11
-#    container_name: jenkins
-#    privileged: true
-#    user: root
-#    ports:
-#      - "8082:8080"
-#      - "50000:50000"
-#    volumes:
-#      - jenkins-home:/var/jenkins_home
-#      - /var/run/docker.sock:/var/run/docker.sock
-#      - /usr/local/bin/docker:/usr/local/bin/docker
+    networks:
+      - backend
 
 networks:
   postgres:
@@ -165,6 +131,8 @@ networks:
       driver: default
       config:
         - subnet: 10.1.0.0/24
+  backend:
+    driver: bridge
 
 volumes:
   postgres:
@@ -172,5 +140,4 @@ volumes:
   zookeeper-data:
   zookeeper-transaction-logs:
   kafka1-data:
-  kafka2-data:
   jenkins-home:
