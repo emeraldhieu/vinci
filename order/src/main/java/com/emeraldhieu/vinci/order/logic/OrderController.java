@@ -16,11 +16,12 @@ import java.util.stream.Collectors;
 public class OrderController implements OrdersApi {
 
     private final OrderService orderService;
+    static final String ORDER_PATTERN = "/products/%s";
 
     @Override
     public ResponseEntity<OrderResponse> createOrder(OrderRequest orderRequest) {
         OrderResponse createdOrder = orderService.create(orderRequest);
-        return ResponseEntity.created(URI.create(String.format("/orders/%s", createdOrder.getId())))
+        return ResponseEntity.created(URI.create(String.format(ORDER_PATTERN, createdOrder.getId())))
             .body(createdOrder);
     }
 
