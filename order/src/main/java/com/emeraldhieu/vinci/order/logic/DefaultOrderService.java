@@ -4,6 +4,7 @@ import com.emeraldhieu.vinci.order.logic.event.OrderCreatedEvent;
 import com.emeraldhieu.vinci.order.logic.exception.OrderNotFoundException;
 import com.emeraldhieu.vinci.order.logic.mapping.OrderRequestMapper;
 import com.emeraldhieu.vinci.order.logic.mapping.OrderResponseMapper;
+import com.emeraldhieu.vinci.order.logic.sort.SortOrder;
 import com.emeraldhieu.vinci.order.logic.sort.SortOrderValidator;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -61,18 +62,22 @@ public class DefaultOrderService implements OrderService {
     public Page<OrderResponse> list(int offset, int limit, List<String> sortOrders) {
         sortOrderValidator.validate(sortOrders);
 
-        List<Sort.Order> theSortOrders = sortOrders.stream()
-            .map(sortOrder -> {
-                String[] tokens = sortOrder.split(",");
-                String propertyName = tokens[0];
-                String direction = tokens[1];
+        List<Sort.Order> theSortOrders = getSortOrders(sortOrders);
+        Pageable pageable = PageRequest.of(offset, limit, Sort.by(theSortOrders));
+        return orderRepository.findAll(pageable)
+            .map(orderResponseMapper::toDto);
+    }
+
+    List<Sort.Order> getSortOrders(List<String> sortOrderStrs) {
+        return sortOrderStrs.stream()
+            .map(sortOrderStr -> {
+                SortOrder sortOrder = SortOrder.from(sortOrderStr);
+                String propertyName = sortOrder.getPropertyName();
+                String direction = sortOrder.getDirection();
                 return Sort.Order.by(propertyName)
                     .with(Sort.Direction.fromString(direction));
             })
             .collect(Collectors.toList());
-        Pageable pageable = PageRequest.of(offset, limit, Sort.by(theSortOrders));
-        return orderRepository.findAll(pageable)
-            .map(orderResponseMapper::toDto);
     }
 
     @Override
