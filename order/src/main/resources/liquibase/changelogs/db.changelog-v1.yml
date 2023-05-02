@@ -30,7 +30,7 @@ databaseChangeLog:
                     nullable: false
               - column:
                   name: created_by
-                  type: bigint
+                  type: varchar(32)
                   constraints:
                     nullable: false
               - column:
@@ -40,7 +40,7 @@ databaseChangeLog:
                     nullable: false
               - column:
                   name: updated_by
-                  type: bigint
+                  type: varchar(32)
                   constraints:
                     nullable: false
               - column:
@@ -70,7 +70,7 @@ databaseChangeLog:
               - column:
                   header:  Created by
                   name:  created_by
-                  type:  bigint
+                  type:  varchar(32)
               - column:
                   header:  Created at
                   name:  created_at
@@ -78,7 +78,7 @@ databaseChangeLog:
               - column:
                   header:  Updated by
                   name:  updated_by
-                  type:  bigint
+                  type:  varchar(32)
               - column:
                   header:  Updated at
                   name:  updated_at

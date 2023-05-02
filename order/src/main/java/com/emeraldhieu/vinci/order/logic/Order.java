@@ -55,7 +55,7 @@ public class Order {
 
     @Column(nullable = false)
     @CreatedBy
-    private Long createdBy;
+    private String createdBy;
 
     @Column(nullable = false)
     @CreatedDate
@@ -63,7 +63,7 @@ public class Order {
 
     @Column(nullable = false)
     @LastModifiedBy
-    private Long updatedBy;
+    private String updatedBy;
 
     @Column(nullable = false)
     @LastModifiedDate
@@ -80,14 +80,14 @@ public class Order {
         }
         if (createdBy == null) {
             // TODO Set this value to the user who creates the order.
-            createdBy = 1L;
+            createdBy = UUID.randomUUID().toString().replace("-", "");
         }
         if (createdAt == null) {
             createdAt = LocalDateTime.now();
         }
         if (updatedBy == null) {
             // TODO Set this value to the user who updates the order.
-            updatedBy = 1L;
+            updatedBy = UUID.randomUUID().toString().replace("-", "");
         }
         if (updatedAt == null) {
             updatedAt = LocalDateTime.now();
