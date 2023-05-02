@@ -159,17 +159,15 @@ components:
           type: string
           enum: ["debit", "credit"]
         createdBy:
-          type: integer
-          format: int64
-          example: 42
+          type: string
+          example: ["8b6469bbf2bb44c0aacc3ce43764e8d4"]
         createdAt:
           type: string
           format: date-time
           example: '2022-11-27T01:02:03Z'
         updatedBy:
-          type: integer
-          format: int64
-          example: 42
+          type: string
+          example: ["b95d5cd67a71450b853a188529b68a47"]
         updatedAt:
           type: string
           format: date-time
