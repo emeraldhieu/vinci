@@ -131,7 +131,7 @@ k3d registry create registry42 --port 5050
 
 At the project directory, run this
 ```shell
-k3d cluster create cluster42 -p "8080:50001@loadbalancer" --registry-use k3d-registry42:5050 --registry-config registries.yaml -v <yourLocalPathTo>/vinci/postgres-scripts:/home/docker/postgres-scripts
+k3d cluster create cluster42 -p "8080:50001@loadbalancer" --registry-use k3d-registry42:5050 --registry-config k8s/registries.yaml
 ```
 
 What it does
@@ -139,35 +139,48 @@ What it does
 + Create a k8s cluster
 + Use an existing docker registry
 + Map host machine's port 8080 to [k3d's loadbalancer](https://k3d.io/v5.3.0/design/defaults/#k3d-loadbalancer)'s port 50001
-+ Mount the host machine's directory to the k8s cluster's directory
 
-#### 2) Dockerize apps
+#### 2) Set up Helm chart
 
-2.1) At the directory `order`, build the app
+[Helm](https://helm.sh) is a Kubernetes package manager that allows reusing sets of K8s manifests (called "charts"). To make a long story short, Helm chart is similar to Docker image but used for K8s. This guid assumes you've had Helm [installed](https://helm.sh/docs/intro/install/).
+
+At the project directory, run this
+```shell
+helm install local -f k8s/schema-registry/values.yaml oci://registry-1.docker.io/bitnamicharts/schema-registry --version 10.0.0 
+```
+
+What it does
+
++ Install a Helm chart release named `local` based on [Confluent Schema Registry packaged by Bitnami](https://bitnami.com/stack/schema-registry/helm)
++ Create K8s resources for Kafka and Schema Registry
+
+#### 3) Dockerize apps
+
+3.1) At the directory `order`, build the app
 ```shell
 mvn clean package
 ```
 
-2.2) Create docker image `order`
+3.2) Create docker image `order`
 ```shell
 docker build -t localhost:5050/order:1.0-SNAPSHOT .
 ```
 
-2.3) Push image to the registry
+3.3) Push image to the registry
 ```
 docker push localhost:5050/order:1.0-SNAPSHOT
 ```
 
-Do all the steps again for `payment` and `shipping`.
+Repeat all steps 3.x for `payment` and `shipping`.
 
-#### 3) Apply configuration
+#### 4) Apply configuration
 
 Open another terminal, create k8s resources
 ```shell
 kubectl apply -f deployment.yaml
 ```
 
-#### 4) Verify Postgres
+#### 5) Verify Postgres
 
 Listen on port 5432, forward data to a pod selected by the service "postgres"
 ```shell
@@ -207,7 +220,7 @@ If it returns a JSON response with an ID, it's working.
 
 Listen on port 8081, forward data to a pod selected by the service "schema-registry"
 ```shell
-kubectl port-forward svc/schema-registry 8081
+kubectl port-forward svc/local-schema-registry 8081
 ```
 
 Ask for the very first schema of "order"
@@ -223,6 +236,11 @@ Response
 ```
 
 ## Order API
+
+Note that the endpoint depends on how you deploy the stack
+
++ Profile `local`: The endpoint starts with `http://localhost:50001/orders`
++ Profile `k8s`: The endpoint starts with `http://localhost:8080/order/orders`
 
 ### 1) List orders
 
@@ -252,19 +270,19 @@ curl --location --request GET 'http://localhost:50001/orders?sortOrders=updatedA
 
 ```json
 [
-  {
-    "id": "0a5eb04756f54776ac7752d3c8fae45b",
-    "products":
-    [
-      "car",
-      "bike",
-      "house"
-    ],
-    "createdBy": 5,
-    "createdAt": "2022-11-27T00:00:00",
-    "updatedBy": 6,
-    "updatedAt": "2022-11-28T00:00:00"
-  }
+    {
+        "id": "0a5eb04756f54776ac7752d3c8fae45b",
+        "products":
+        [
+            "car",
+            "bike",
+            "house"
+        ],
+        "createdBy": "20825389f950461b8766c051b9182dd4",
+        "createdAt": "2022-11-27T00:00:00",
+        "updatedBy": "cca4806536fe4b218c12cdcde4d173df",
+        "updatedAt": "2022-11-28T00:00:00"
+    }
 ]
 ```
 
@@ -302,17 +320,17 @@ curl --location --request POST 'http://localhost:50001/orders' \
 
 ```json
 {
-  "id": "9383630cc2844b08a568fe50fb0c0e90",
-  "products":
-  [
-    "coke",
-    "juice",
-    "cider"
-  ],
-  "createdBy": 1,
-  "createdAt": "2022-12-20T17:17:12.918707",
-  "updatedBy": 1,
-  "updatedAt": "2022-12-20T17:17:12.918707"
+    "id": "ac621782642942e3b9cd239f2ce28575",
+    "products":
+    [
+        "coke",
+        "juice",
+        "cider"
+    ],
+    "createdBy": "7f64bc8819ef464aa5dfd704d85a35ef",
+    "createdAt": "2023-05-03T09:18:03.589068545",
+    "updatedBy": "b5920f1ec6234d199de627bca0e297a2",
+    "updatedAt": "2023-05-03T09:18:03.589068545"
 }
 ```
 
@@ -340,16 +358,17 @@ curl --location 'http://localhost:50001/orders/0a5eb04756f54776ac7752d3c8fae45b'
 
 ```json
 {
-  "id": "0a5eb04756f54776ac7752d3c8fae45b",
-  "products": [
-    "car",
-    "bike",
-    "house"
-  ],
-  "createdBy": 5,
-  "createdAt": "2022-11-27T00:00:00",
-  "updatedBy": 6,
-  "updatedAt": "2022-11-28T00:00:00"
+    "id": "0a5eb04756f54776ac7752d3c8fae45b",
+    "products":
+    [
+        "car",
+        "bike",
+        "house"
+    ],
+    "createdBy": "20825389f950461b8766c051b9182dd4",
+    "createdAt": "2022-11-27T00:00:00",
+    "updatedBy": "cca4806536fe4b218c12cdcde4d173df",
+    "updatedAt": "2022-11-28T00:00:00"
 }
 ```
 
@@ -377,9 +396,13 @@ Response status is 204 with no content
 
 ## TODOs
 
-+ ~~Deploy to K8s~~
-+ ~~Scale app services by ingress and loadbalancer~~
-+ Implement OAuth2
-+ Improve database modeling
-+ Improve field validation
-+ Update README.md for other endpoints
++ Infrastructure
+  + ~~Deploy to K8s~~
+  + ~~Scale app services by ingress and loadbalancer~~
+  + ~~Scale Kafka by ingress and loadbalancer~~
+  + ~~Remove Zookeeper since KDraft was introduced~~
++ App
+  + Implement OAuth2
+  + Improve database modeling
+  + Improve field validation
+  + Update README.md for other endpoints
