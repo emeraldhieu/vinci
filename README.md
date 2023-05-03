@@ -197,7 +197,7 @@ List databases. If you see databases `order`, `payment`, and `shipping`, the set
 postgres=# \l
 ```
 
-#### 5) Verify service "order"
+#### 6) Verify service "order"
 
 Since K3d Load balancer has routed requests to app services by K8s ingress rules, you won't need port-forwarding. Mind that the context paths `/order` is mandatory.
 
@@ -216,7 +216,7 @@ curl --location 'http://localhost:8080/order/orders' \
 
 If it returns a JSON response with an ID, it's working.
 
-#### 6) Verify Schema Registry
+#### 7) Verify Schema Registry
 
 Listen on port 8081, forward data to a pod selected by the service "schema-registry"
 ```shell
