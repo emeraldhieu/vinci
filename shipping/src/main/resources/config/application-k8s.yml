@@ -6,6 +6,9 @@ spring:
   jpa:
     show-sql: true
     database: postgresql
+  flyway:
+    # Enabled "clean" to recreate database for testing
+    cleanDisabled: false
   kafka:
     bootstrap-servers: "local-kafka-0.local-kafka-headless.default.svc.cluster.local:9092"
     properties:

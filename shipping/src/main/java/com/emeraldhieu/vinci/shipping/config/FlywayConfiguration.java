@@ -14,7 +14,7 @@ public class FlywayConfiguration {
      * See https://www.baeldung.com/database-migrations-with-flyway#3-empty-flywaymigrationstrategy
      */
     @Bean
-    @Profile("local")
+    @Profile("local | k8s")
     public FlywayMigrationStrategy cleanMigrateStrategy() {
         FlywayMigrationStrategy strategy = flyway -> {
             flyway.clean();
