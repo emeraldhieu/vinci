@@ -9,6 +9,51 @@ data:
   POSTGRES_MULTIPLE_DATABASES: "order,payment,shipping"
 ---
 apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: postgres-script-cm
+  labels:
+    app: postgres
+data:
+  # "|-" is a "Block Chomping Indicator" that strips the final line break and all trailing empty lines
+  # See https://yaml.org/spec/1.2-old/spec.html#id2794534
+  createMultipleDatabases.sh: |-
+    #!/bin/bash
+
+    set -e
+    set -u
+
+    function create_user_and_database() {
+      local database=$1
+      local user=$database
+      echo "  Creating user and database '$database'"
+      PGPASSWORD=$POSTGRES_USER psql --variable ON_ERROR_STOP=1 --username $POSTGRES_PASSWORD <<-EOSQL
+          CREATE USER "$user" WITH PASSWORD '$user';
+
+          CREATE DATABASE "$database" ENCODING "UTF8";
+
+          GRANT ALL PRIVILEGES ON DATABASE "$database" TO "$user";
+    EOSQL
+
+      # Log in with superuser on the database to grant permissions on public schema
+      PGPASSWORD=$POSTGRES_USER psql --variable ON_ERROR_STOP=1 --username $POSTGRES_PASSWORD --dbname $database  <<-EOSQL
+          /*
+            Grant permission to create tables on public schema for a user.
+            Otherwise, "ERROR:  permission denied for schema public" occurs.
+          */
+          GRANT ALL ON SCHEMA public TO "$user";
+    EOSQL
+    }
+
+    if [ -n "$POSTGRES_MULTIPLE_DATABASES" ]; then
+      echo "Multiple database creation requested: $POSTGRES_MULTIPLE_DATABASES"
+      for db in $(echo $POSTGRES_MULTIPLE_DATABASES | tr ',' ' '); do
+        create_user_and_database $db
+      done
+      echo "Multiple databases created"
+    fi
+---
+apiVersion: v1
 kind: Secret
 metadata:
   name: postgres-s
@@ -29,7 +74,8 @@ spec:
     storage: 2Gi
   accessModes:
     - ReadWriteOnce
-  # hostPath volume is used for development and testing on a single node only. It's not used for production.
+  # hostPath volume is used for development on a single node only. It's not used for production.
+  # NOTE: If you want to clean up this data, deleting pvc is not enough. You have to manually delete it in the k8s cluster.
   hostPath:
     path: "/home/docker/postgres-data"
 ---
@@ -44,34 +90,6 @@ spec:
   resources:
     requests:
       storage: 2Gi
----
-apiVersion: v1
-kind: PersistentVolume
-metadata:
-  name: postgres-script-pv
-  labels:
-    type: local
-spec:
-  storageClassName: postgres-script-sc
-  capacity:
-    storage: 1Gi
-  accessModes:
-    - ReadWriteOnce
-  # hostPath volume is used for development and testing on a single node only. It's not used for production.
-  hostPath:
-    path: "/home/docker/postgres-scripts"
----
-apiVersion: v1
-kind: PersistentVolumeClaim
-metadata:
-  name: postgres-script-pvc
-spec:
-  storageClassName: postgres-script-sc
-  accessModes:
-    - ReadWriteOnce
-  resources:
-    requests:
-      storage: 1Gi
 ---
 apiVersion: v1
 kind: Service
@@ -121,8 +139,9 @@ spec:
           persistentVolumeClaim:
             claimName: postgres-data-pvc
         - name: postgres-script
-          persistentVolumeClaim:
-            claimName: postgres-script-pvc
+          configMap:
+            name: postgres-script-cm
+            defaultMode: 0755
 ---
 apiVersion: v1
 kind: ConfigMap
@@ -134,9 +153,6 @@ data:
   SPRING_PROFILES_ACTIVE: k8s
   APPLICATION_DB_HOST: postgres
   APPLICATION_DB_PORT: "5432"
-  APPLICATION_DB_NAME: order
-  APPLICATION_DB_USER: order
-  APPLICATION_DB_PASSWORD: order
 ---
 apiVersion: v1
 kind: Secret
@@ -144,8 +160,9 @@ metadata:
   name: order-s
 type: Opaque
 data:
-  DB_USERNAME: b3JkZXIK
-  DB_PASSWORD: b3JkZXIK
+  APPLICATION_DB_NAME: b3JkZXI=
+  APPLICATION_DB_USER: b3JkZXI=
+  APPLICATION_DB_PASSWORD: b3JkZXI=
 ---
 apiVersion: v1
 kind: Service
@@ -208,9 +225,6 @@ data:
   SPRING_PROFILES_ACTIVE: k8s
   APPLICATION_DB_HOST: postgres
   APPLICATION_DB_PORT: "5432"
-  APPLICATION_DB_NAME: payment
-  APPLICATION_DB_USER: payment
-  APPLICATION_DB_PASSWORD: payment
 ---
 apiVersion: v1
 kind: Secret
@@ -218,8 +232,9 @@ metadata:
   name: payment-s
 type: Opaque
 data:
-  DB_USERNAME: cGF5bWVudAo=
-  DB_PASSWORD: cGF5bWVudAo=
+  APPLICATION_DB_NAME: cGF5bWVudA==
+  APPLICATION_DB_USER: cGF5bWVudA==
+  APPLICATION_DB_PASSWORD: cGF5bWVudA==
 ---
 apiVersion: v1
 kind: Service
@@ -282,9 +297,6 @@ data:
   SPRING_PROFILES_ACTIVE: k8s
   APPLICATION_DB_HOST: postgres
   APPLICATION_DB_PORT: "5432"
-  APPLICATION_DB_NAME: shipping
-  APPLICATION_DB_USER: shipping
-  APPLICATION_DB_PASSWORD: shipping
 ---
 apiVersion: v1
 kind: Secret
@@ -292,8 +304,9 @@ metadata:
   name: shipping-s
 type: Opaque
 data:
-  DB_USERNAME: c2hpcHBpbmcK
-  DB_PASSWORD: c2hpcHBpbmcK
+  APPLICATION_DB_NAME: c2hpcHBpbmc=
+  APPLICATION_DB_USER: c2hpcHBpbmc=
+  APPLICATION_DB_PASSWORD: c2hpcHBpbmc=
 ---
 apiVersion: v1
 kind: Service
