@@ -6,11 +6,6 @@ spring:
   jpa:
     show-sql: true
     database: postgresql
-  liquibase:
-    # Drop the existing to repopulate the whole database
-    # drop-first: true
-    # Used for development to update the changelogs continuously
-    clear-checksums: true
   kafka:
     bootstrap-servers: "local-kafka-0.local-kafka-headless.default.svc.cluster.local:9092"
     properties:
