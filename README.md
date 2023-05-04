@@ -120,11 +120,11 @@ If it returns 200 with a JSON response, the app "order" is working. Check [Order
 
 ### Use K3d
 
-[K3d](https://k3d.io/) is a lightweight Kubernetes distribution. This guide assumes you've had k3d [installed](https://k3d.io/v5.4.4/#installation).
+[K3d](https://k3d.io/) is a lightweight Kubernetes distribution that supports creating a K8s cluster. This guide assumes you've had K3d [installed](https://k3d.io/v5.4.4/#installation).
 
-#### 1) Setup k3d cluster
+#### 1) Set up K8s cluster
 
-Install a local [registry](https://hub.docker.com/_/registry)
+Create a local [registry](https://hub.docker.com/_/registry) to store docker images of our apps
 ```shell
 k3d registry create registry42 --port 5050
 ```
@@ -136,13 +136,13 @@ k3d cluster create cluster42 -p "8080:50001@loadbalancer" --registry-use k3d-reg
 
 What it does
 
-+ Create a k8s cluster
++ Create a K8s cluster
 + Use an existing docker registry
-+ Map host machine's port 8080 to [k3d's loadbalancer](https://k3d.io/v5.3.0/design/defaults/#k3d-loadbalancer)'s port 50001
++ Map host machine's port 8080 to [K3d's loadbalancer](https://k3d.io/v5.3.0/design/defaults/#k3d-loadbalancer)'s port 50001
 
 #### 2) Set up Helm chart
 
-[Helm](https://helm.sh) is a Kubernetes package manager that allows reusing sets of K8s manifests (called "charts"). To make a long story short, Helm chart is similar to Docker image but used for K8s. This guid assumes you've had Helm [installed](https://helm.sh/docs/intro/install/).
+[Helm](https://helm.sh) is a Kubernetes package manager that allows reusing sets of K8s manifests (called "charts"). To make a long story short, Helm chart is similar to Docker image but used for K8s. This guide assumes you've had Helm [installed](https://helm.sh/docs/intro/install/).
 
 At the project directory, run this
 ```shell
