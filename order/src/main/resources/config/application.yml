@@ -34,6 +34,19 @@ server:
   tomcat:
     # Allow pipe character in URL to support passing commas such as "createdAt,asc"
     relaxed-query-chars: "|"
+management:
+  endpoints:
+    web:
+      exposure:
+        # Expose all actuator endpoints
+        include: "*"
+  endpoint:
+    health:
+      # Enable liveness and readiness probes
+      probes:
+        enabled: true
+      # Show full health details
+      show-details: always
 application:
   kafka:
     topic: orders
