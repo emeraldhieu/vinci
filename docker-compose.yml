@@ -3,8 +3,6 @@ version: '3.5'
 services:
   postgres:
     image: postgres:15.1-alpine
-    container_name: postgres
-    hostname: postgres
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
@@ -42,8 +40,6 @@ services:
 
   zookeeper:
     image: confluentinc/cp-zookeeper:7.1.1
-    container_name: zookeeper
-    hostname: zookeeper
     # Enable this in Mac Book Pro M1
     #platform: linux/x86_64
     ports:
@@ -60,8 +56,6 @@ services:
 
   kafka1:
     image: confluentinc/cp-kafka:7.1.1
-    container_name: kafka1
-    hostname: kafka1
     # Enable this in Mac Book Pro M1
     #platform: linux/x86_64
     ports:
@@ -89,8 +83,6 @@ services:
 
   schema-registry:
     image: confluentinc/cp-schema-registry:7.3.0
-    container_name: schema-registry
-    hostname: schema-registry
     depends_on:
       - zookeeper
       - kafka1
@@ -106,8 +98,6 @@ services:
 
   control-center:
     image: confluentinc/cp-enterprise-control-center:7.3.1
-    container_name: control-center
-    hostname: control-center
     depends_on:
       - kafka1
       - schema-registry
@@ -140,4 +130,3 @@ volumes:
   zookeeper-data:
   zookeeper-transaction-logs:
   kafka1-data:
-  jenkins-home:
