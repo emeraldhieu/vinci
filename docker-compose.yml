@@ -3,8 +3,6 @@ version: '3.5'
 services:
   postgres:
     image: postgres:15.1-alpine
-    container_name: postgres
-    hostname: postgres
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
@@ -23,6 +21,8 @@ services:
         # Set static IP for PgAdmin to connect to a specific IP
         ipv4_address: 10.1.0.100
       backend:
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready", "-d", "db_prod"]
 
   # I got "Permission denied at /home/" when exporting a database table.
   # pgadmin:
@@ -42,8 +42,6 @@ services:
 
   zookeeper:
     image: confluentinc/cp-zookeeper:7.1.1
-    container_name: zookeeper
-    hostname: zookeeper
     # Enable this in Mac Book Pro M1
     #platform: linux/x86_64
     ports:
@@ -60,8 +58,6 @@ services:
 
   kafka1:
     image: confluentinc/cp-kafka:7.1.1
-    container_name: kafka1
-    hostname: kafka1
     # Enable this in Mac Book Pro M1
     #platform: linux/x86_64
     ports:
@@ -89,8 +85,6 @@ services:
 
   schema-registry:
     image: confluentinc/cp-schema-registry:7.3.0
-    container_name: schema-registry
-    hostname: schema-registry
     depends_on:
       - zookeeper
       - kafka1
@@ -106,21 +100,82 @@ services:
 
   control-center:
     image: confluentinc/cp-enterprise-control-center:7.3.1
-    container_name: control-center
-    hostname: control-center
     depends_on:
       - kafka1
       - schema-registry
     ports:
       - "9021:9021"
     environment:
-      CONTROL_CENTER_BOOTSTRAP_SERVERS: 'kafka1:29092,kafka2:29093'
+      CONTROL_CENTER_BOOTSTRAP_SERVERS: 'kafka1:29092'
       CONTROL_CENTER_SCHEMA_REGISTRY_URL: "http://schema-registry:8081"
       CONTROL_CENTER_REPLICATION_FACTOR: 1
       CONTROL_CENTER_INTERNAL_TOPICS_PARTITIONS: 1
       CONTROL_CENTER_MONITORING_INTERCEPTOR_TOPIC_PARTITIONS: 1
       CONFLUENT_METRICS_TOPIC_REPLICATION: 1
       PORT: 9021
+    networks:
+      - backend
+
+  order:
+    image: order:1.0-SNAPSHOT
+    ports:
+      - "50001:8080"
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+      APPLICATION_DB_HOST: postgres
+      APPLICATION_DB_PORT: "5432"
+      APPLICATION_DB_NAME: order
+      APPLICATION_DB_USER: order
+      APPLICATION_DB_PASSWORD: order
+      APPLICATION_KAFKA_SERVERS: "kafka1:29092"
+      APPLICATION_SCHEMA_REGISTRY_SERVER: "http://schema-registry:8081"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      kafka1:
+        condition: service_started
+    networks:
+      - backend
+
+  payment:
+    image: payment:1.0-SNAPSHOT
+    ports:
+      - "50002:8080"
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+      APPLICATION_DB_HOST: postgres
+      APPLICATION_DB_PORT: "5432"
+      APPLICATION_DB_NAME: payment
+      APPLICATION_DB_USER: payment
+      APPLICATION_DB_PASSWORD: payment
+      APPLICATION_KAFKA_SERVERS: "kafka1:29092"
+      APPLICATION_SCHEMA_REGISTRY_SERVER: "http://schema-registry:8081"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      kafka1:
+        condition: service_started
+    networks:
+      - backend
+
+  shipping:
+    image: shipping:1.0-SNAPSHOT
+    ports:
+      - "50003:8080"
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+      APPLICATION_DB_HOST: postgres
+      APPLICATION_DB_PORT: "5432"
+      APPLICATION_DB_NAME: shipping
+      APPLICATION_DB_USER: shipping
+      APPLICATION_DB_PASSWORD: shipping
+      APPLICATION_KAFKA_SERVERS: "kafka1:29092"
+      APPLICATION_SCHEMA_REGISTRY_SERVER: "http://schema-registry:8081"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      kafka1:
+        condition: service_started
     networks:
       - backend
 
@@ -140,4 +195,3 @@ volumes:
   zookeeper-data:
   zookeeper-transaction-logs:
   kafka1-data:
-  jenkins-home:

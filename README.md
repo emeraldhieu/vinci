@@ -94,25 +94,44 @@ Vinci uses [Spring 6's Problem Details](https://docs.spring.io/spring-framework/
 
 Like Lombok, [Mapstruct](https://github.com/mapstruct/mapstruct) is a code generator library that supports mapping between entities and DTOs without writing boilerplate code. A significant benefit is that mappers don't need unit tests because there's no code to test!
 
+## Prerequisites
+
+JDK 17, Maven, Docker Desktop.
+
 ## Quickstart
 
-#### Spin up the stack
+#### 1) Build, package, and dockerize the apps
 
-At the project directory, run this command to set up external services.
+At the module directories of `bom`, `order`, `payment`, and `shipping`, run this command
+```shell
+mvn clean install
+```
+
+It will take a while. Be patient. :)
+
+#### 2) Spin up the stack
+
+At the project directory, run this command
 
 ```sh
 docker compose up -d
 ```
 
-In IntelliJ, start `OrderApp`, `PaymentApp`, and `ShippingApp`.
-
-#### Verify an API
+#### 3) Verify an API
 
 ```shell
-curl --location 'http://localhost:50001/orders?sortOrders=updatedAt%2Cdesc%7CcreatedBy%2Casc'
+curl --location 'http://localhost:50001/orders' \ 
+--header 'Content-Type: application/json' \
+--data '{
+    "products": [
+        "coke",
+        "juice",
+        "cider"
+    ]
+}'
 ```
 
-If it returns 200 with a JSON response, the app "order" is working. Check [Order API](#order-api) for other endpoints.
+If it returns 201 with a JSON response, the app "order" is working. Check [Order API](#order-api) for other endpoints.
 
 ## Deploy microservices to Kubernetes
 

@@ -75,19 +75,5 @@ public class Payment {
         if (paymentMethod == null) {
             paymentMethod = PaymentMethod.DEBIT;
         }
-        if (createdBy == null) {
-            // TODO Set this value to the user who creates the payment.
-            createdBy = UUID.randomUUID().toString().replace("-", "");
-        }
-        if (createdAt == null) {
-            createdAt = LocalDateTime.now();
-        }
-        if (updatedBy == null) {
-            // TODO Set this value to the user who updates the payment.
-            updatedBy = UUID.randomUUID().toString().replace("-", "");
-        }
-        if (updatedAt == null) {
-            updatedAt = LocalDateTime.now();
-        }
     }
 }

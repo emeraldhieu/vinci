@@ -1,5 +1,7 @@
 package com.emeraldhieu.vinci.order.logic;
 
+import io.micrometer.observation.Observation;
+import io.micrometer.observation.ObservationRegistry;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
@@ -17,6 +19,7 @@ public class OrderController implements OrdersApi {
 
     private final OrderService orderService;
     static final String ORDER_PATTERN = "/products/%s";
+    private final ObservationRegistry observationRegistry;
 
     @Override
     public ResponseEntity<OrderResponse> createOrder(OrderRequest orderRequest) {
@@ -39,10 +42,18 @@ public class OrderController implements OrdersApi {
 
     @Override
     public ResponseEntity<List<OrderResponse>> listOrders(Integer offset, Integer limit, List<String> sortOrders) {
-        Page<OrderResponse> orderResponsePage = orderService.list(offset, limit, sortOrders);
-        List<OrderResponse> orderResponses = orderResponsePage.stream()
-            .collect(Collectors.toList());
-        return ResponseEntity.ok(orderResponses);
+        /**
+         * Enable metrics observation. How to use:
+         * 1) Call the endpoint #listOrders for several times
+         * 2) Visit http://localhost:50001/actuator/metrics/list-orders
+         */
+        return Observation.createNotStarted("list-orders", observationRegistry)
+            .observe(() -> {
+                Page<OrderResponse> orderResponsePage = orderService.list(offset, limit, sortOrders);
+                List<OrderResponse> orderResponses = orderResponsePage.stream()
+                    .collect(Collectors.toList());
+                return ResponseEntity.ok(orderResponses);
+            });
     }
 
     @Override

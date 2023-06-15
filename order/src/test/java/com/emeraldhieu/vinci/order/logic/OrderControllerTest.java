@@ -1,5 +1,6 @@
 package com.emeraldhieu.vinci.order.logic;
 
+import io.micrometer.observation.ObservationRegistry;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;
@@ -13,11 +14,13 @@ class OrderControllerTest {
 
     private OrderService orderService;
     private OrderController orderController;
+    private ObservationRegistry observationRegistry;
 
     @BeforeEach
     public void setUp() {
         orderService = mock(OrderService.class);
-        orderController = new OrderController(orderService);
+        observationRegistry = mock(ObservationRegistry.class);
+        orderController = new OrderController(orderService, observationRegistry);
     }
 
     @Test
