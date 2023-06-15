@@ -501,10 +501,27 @@
         </pluginManagement>
 
         <plugins>
+            <!--
+                "Packaging executable jar" is no longer needed because Spring Boot supports "packaging OCI image".
+                With OCI image, Dockerfile is not necessary anymore.
+                What this plugin does:
+                + Apply the "repackage" automatically if necessary
+                + Build a docker image using Buildpacks (https://buildpacks.io)
+                See https://docs.spring.io/spring-boot/docs/current/maven-plugin/reference/htmlsingle/#build-image
+             -->
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <goals>
+                            <!-- Bind the goal to the package lifecycle -->
+                            <goal>build-image-no-fork</goal>
+                        </goals>
+                    </execution>
+                </executions>
             </plugin>
+
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
