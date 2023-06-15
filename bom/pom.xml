@@ -520,6 +520,15 @@
                         </goals>
                     </execution>
                 </executions>
+                <configuration>
+                    <image>
+                        <!--
+                            Use smaller image to optimize performance
+                            See https://hub.docker.com/r/paketobuildpacks/builder
+                         -->
+                        <builder>paketobuildpacks/builder:tiny</builder>
+                    </image>
+                </configuration>
             </plugin>
 
             <plugin>
