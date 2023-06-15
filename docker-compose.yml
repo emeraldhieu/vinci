@@ -21,6 +21,8 @@ services:
         # Set static IP for PgAdmin to connect to a specific IP
         ipv4_address: 10.1.0.100
       backend:
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready", "-d", "db_prod"]
 
   # I got "Permission denied at /home/" when exporting a database table.
   # pgadmin:
