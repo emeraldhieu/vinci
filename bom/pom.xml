@@ -279,7 +279,11 @@
                 <version>${grpcSpringBootStarterVersion}</version>
             </dependency>
 
-            <!-- Use Spring Boot gRPC autoconfigure -->
+            <!--
+                Use "net.devh.boot.grpc.client.autoconfigure.xyz" to make gRPC work with Spring Boot 3
+                See https://github.com/yidongnan/grpc-spring-boot-starter/pull/775#issuecomment-1329023335
+                TODO Remove this when upgrading to grpc-spring-boot 2.15
+            -->
             <dependency>
                 <groupId>net.devh</groupId>
                 <artifactId>grpc-client-spring-boot-autoconfigure</artifactId>
@@ -476,7 +480,7 @@
                 </plugin>
 
                 <!--
-                    Use Protobuf Code Generator.
+                    Use Protobuf Code Generator to generate stubs.
                     See https://yidongnan.github.io/grpc-spring-boot-starter/en/server/getting-started.html#maven-interface
                 -->
                 <plugin>
