@@ -21,7 +21,7 @@ public class ShippingDetailController {
 
     @QueryMapping
     public List<ShippingDetailResponse> shippingDetails(@Argument int offset, @Argument int limit,
-                                                           @Argument List<String> sortOrders) {
+                                                        @Argument List<String> sortOrders) {
         Page<ShippingDetailResponse> shippingDetailResponsePage =
             shippingDetailService.getShippingDetails(offset, limit, sortOrders);
         List<ShippingDetailResponse> responses = shippingDetailResponsePage.stream()
