@@ -3,6 +3,8 @@ package com.emeraldhieu.vinci.payment.logic.mapping;
 import com.emeraldhieu.vinci.payment.logic.Payment;
 import com.emeraldhieu.vinci.payment.logic.PaymentMethod;
 import com.emeraldhieu.vinci.payment.logic.PaymentResponse;
+import com.emeraldhieu.vinci.payment.utility.IgnoreUnmappedMapperConfig;
+import com.emeraldhieu.vinci.payment.utility.ResponseMapper;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.Mappings;
@@ -12,7 +14,7 @@ import org.mapstruct.ValueMappings;
 /**
  * Mapper for the entity {@link Payment} and its DTO {@link PaymentResponse}.
  */
-@Mapper(componentModel = "spring")
+@Mapper(componentModel = "spring", config = IgnoreUnmappedMapperConfig.class)
 public interface PaymentResponseMapper extends ResponseMapper<PaymentResponse, Payment> {
 
     @ValueMappings({

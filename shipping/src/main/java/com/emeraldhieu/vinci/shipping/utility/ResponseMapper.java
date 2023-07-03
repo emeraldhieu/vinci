@@ -1,4 +1,4 @@
-package com.emeraldhieu.vinci.shipping.logic.mapping;
+package com.emeraldhieu.vinci.shipping.utility;
 
 import java.util.List;
 

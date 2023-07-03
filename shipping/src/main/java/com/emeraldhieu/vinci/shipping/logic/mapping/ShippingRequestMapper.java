@@ -2,6 +2,8 @@ package com.emeraldhieu.vinci.shipping.logic.mapping;
 
 import com.emeraldhieu.vinci.shipping.grpc.ShippingRequest;
 import com.emeraldhieu.vinci.shipping.logic.Shipping;
+import com.emeraldhieu.vinci.shipping.utility.IgnoreUnmappedMapperConfig;
+import com.emeraldhieu.vinci.shipping.utility.RequestMapper;
 import com.google.protobuf.Timestamp;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
@@ -14,7 +16,7 @@ import java.time.ZoneId;
 /**
  * Mapper for the entity {@link Shipping} and its DTO {@link ShippingRequest}.
  */
-@Mapper(componentModel = "spring")
+@Mapper(componentModel = "spring", config = IgnoreUnmappedMapperConfig.class)
 public interface ShippingRequestMapper extends RequestMapper<ShippingRequest, Shipping> {
 
     @Mappings({

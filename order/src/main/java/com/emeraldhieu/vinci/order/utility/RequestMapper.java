@@ -1,4 +1,4 @@
-package com.emeraldhieu.vinci.payment.logic.mapping;
+package com.emeraldhieu.vinci.order.utility;
 
 import org.mapstruct.BeanMapping;
 import org.mapstruct.MappingTarget;

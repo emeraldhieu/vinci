@@ -4,6 +4,8 @@ import com.emeraldhieu.vinci.shipping.grpc.ShippingResponse;
 import com.emeraldhieu.vinci.shipping.grpc.StatusEnum;
 import com.emeraldhieu.vinci.shipping.logic.Shipping;
 import com.emeraldhieu.vinci.shipping.logic.Status;
+import com.emeraldhieu.vinci.shipping.utility.IgnoreUnmappedMapperConfig;
+import com.emeraldhieu.vinci.shipping.utility.ResponseMapper;
 import com.google.protobuf.Timestamp;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
@@ -17,7 +19,7 @@ import java.time.LocalDateTime;
 /**
  * Mapper for the entity {@link com.emeraldhieu.vinci.shipping.logic.Shipping} and its DTO {@link com.emeraldhieu.vinci.shipping.grpc.ShippingResponse}.
  */
-@Mapper(componentModel = "spring")
+@Mapper(componentModel = "spring", config = IgnoreUnmappedMapperConfig.class)
 public interface ShippingResponseMapper extends ResponseMapper<ShippingResponse, Shipping> {
 
     @Mappings({
