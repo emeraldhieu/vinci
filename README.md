@@ -109,6 +109,13 @@ mvn clean install
 
 It will take a while. Be patient. :)
 
+---
+NOTE: If you're using Apple Chip, as for `grpc-interface`, run this instead
+
+```shell
+mvn clean install -Papple-chip
+```
+
 #### 2) Spin up the stack
 
 At the project directory, run this command
