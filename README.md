@@ -102,7 +102,7 @@ JDK 17, Maven, Docker Desktop.
 
 #### 1) Build, package, and dockerize the apps
 
-At the module directories of `bom`, `order`, `payment`, and `shipping`, run this command
+At the module directories of `bom`, `grpc-interface`, `order`, `payment`, and `shipping`, respectively, run this command
 ```shell
 mvn clean install
 ```
