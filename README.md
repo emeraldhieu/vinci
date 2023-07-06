@@ -109,7 +109,6 @@ mvn clean install
 
 It will take a while. Be patient. :)
 
----
 NOTE: If you're using Apple Chip, as for `grpc-interface`, run this instead
 
 ```shell
@@ -124,7 +123,6 @@ At the project directory, run this command
 docker compose up -d
 ```
 
----
 NOTE: If you're using Apple Chip, uncomment all the lines below in `docker-compse.yml`.
 
 ```yml
