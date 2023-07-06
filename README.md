@@ -124,6 +124,13 @@ At the project directory, run this command
 docker compose up -d
 ```
 
+---
+NOTE: If you're using Apple Chip, uncomment all the lines below in `docker-compse.yml`.
+
+```yml
+platform: linux/x86_64
+```
+
 #### 3) Verify an API
 
 ```shell
