@@ -102,12 +102,18 @@ JDK 17, Maven, Docker Desktop.
 
 #### 1) Build, package, and dockerize the apps
 
-At the module directories of `bom`, `order`, `payment`, and `shipping`, run this command
+At the module directories of `bom`, `grpc-interface`, `order`, `payment`, and `shipping`, respectively, run this command
 ```shell
 mvn clean install
 ```
 
 It will take a while. Be patient. :)
+
+NOTE: If you're using Apple Chip, as for `grpc-interface`, run this instead
+
+```shell
+mvn clean install -Papple-chip
+```
 
 #### 2) Spin up the stack
 
@@ -115,6 +121,12 @@ At the project directory, run this command
 
 ```sh
 docker compose up -d
+```
+
+NOTE: If you're using Apple Chip, uncomment all the lines below in `docker-compse.yml`.
+
+```yml
+platform: linux/x86_64
 ```
 
 #### 3) Verify an API
