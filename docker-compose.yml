@@ -136,6 +136,8 @@ services:
         condition: service_healthy
       kafka1:
         condition: service_started
+      schema-registry:
+        condition: service_started
     networks:
       - backend
 
@@ -159,6 +161,8 @@ services:
         condition: service_healthy
       kafka1:
         condition: service_started
+      schema-registry:
+        condition: service_started
     networks:
       - backend
 
@@ -181,6 +185,8 @@ services:
       postgres:
         condition: service_healthy
       kafka1:
+        condition: service_started
+      schema-registry:
         condition: service_started
     networks:
       - backend
