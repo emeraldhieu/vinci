@@ -1,4 +1,4 @@
-package com.emeraldhieu.vinci.shipping.logic.mapping;
+package com.emeraldhieu.vinci.payment.utility;
 
 import org.mapstruct.BeanMapping;
 import org.mapstruct.MappingTarget;

@@ -2,6 +2,8 @@ package com.emeraldhieu.vinci.shipping.logic.mapping;
 
 import com.emeraldhieu.vinci.shipping.grpc.ShippingDetailResponse;
 import com.emeraldhieu.vinci.shipping.logic.ShippingDetail;
+import com.emeraldhieu.vinci.shipping.utility.IgnoreUnmappedMapperConfig;
+import com.emeraldhieu.vinci.shipping.utility.ResponseMapper;
 import com.google.protobuf.Timestamp;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
@@ -13,7 +15,7 @@ import java.time.LocalDateTime;
 /**
  * Mapper for the entity {@link ShippingDetail} and its DTO {@link ShippingDetailResponse}.
  */
-@Mapper(componentModel = "spring")
+@Mapper(componentModel = "spring", config = IgnoreUnmappedMapperConfig.class)
 public interface ShippingDetailResponseMapper extends ResponseMapper<ShippingDetailResponse, ShippingDetail> {
 
     @Mappings({

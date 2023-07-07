@@ -69,28 +69,28 @@ databaseChangeLog:
                   name: external_id
                   type: string
               - column:
-                  header:  Order ID
-                  name:  order_id
-                  type:  string
+                  header: Order ID
+                  name: order_id
+                  type: string
               - column:
-                  header:  Payment method
-                  name:  payment_method
-                  type:  string
+                  header: Payment method
+                  name: payment_method
+                  type: string
               - column:
-                  header:  Created by
-                  name:  created_by
-                  type:  varchar(32)
+                  header: Created by
+                  name: created_by
+                  type: varchar(32)
               - column:
-                  header:  Created at
-                  name:  created_at
-                  type:  timestamp
+                  header: Created at
+                  name: created_at
+                  type: timestamp
               - column:
-                  header:  Updated by
-                  name:  updated_by
-                  type:  varchar(32)
+                  header: Updated by
+                  name: updated_by
+                  type: varchar(32)
               - column:
-                  header:  Updated at
-                  name:  updated_at
-                  type:  timestamp
-            encoding:  UTF-8
-            file:  liquibase/data/payments.csv
+                  header: Updated at
+                  name: updated_at
+                  type: timestamp
+            encoding: UTF-8
+            file: liquibase/data/payments.csv

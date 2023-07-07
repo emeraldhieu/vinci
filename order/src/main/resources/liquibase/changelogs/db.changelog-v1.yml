@@ -64,24 +64,24 @@ databaseChangeLog:
                   name: external_id
                   type: string
               - column:
-                  header:  Products
-                  name:  products
-                  type:  other
+                  header: Products
+                  name: products
+                  type: other
               - column:
-                  header:  Created by
-                  name:  created_by
-                  type:  varchar(32)
+                  header: Created by
+                  name: created_by
+                  type: varchar(32)
               - column:
-                  header:  Created at
-                  name:  created_at
-                  type:  timestamp
+                  header: Created at
+                  name: created_at
+                  type: timestamp
               - column:
-                  header:  Updated by
-                  name:  updated_by
-                  type:  varchar(32)
+                  header: Updated by
+                  name: updated_by
+                  type: varchar(32)
               - column:
-                  header:  Updated at
-                  name:  updated_at
-                  type:  timestamp
-            encoding:  UTF-8
-            file:  liquibase/data/orders.csv
+                  header: Updated at
+                  name: updated_at
+                  type: timestamp
+            encoding: UTF-8
+            file: liquibase/data/orders.csv

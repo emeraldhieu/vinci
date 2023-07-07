@@ -1,4 +1,4 @@
-package com.emeraldhieu.vinci.order.logic.mapping;
+package com.emeraldhieu.vinci.shipping.utility;
 
 import org.mapstruct.BeanMapping;
 import org.mapstruct.MappingTarget;
