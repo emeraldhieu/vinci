@@ -1,0 +1,12 @@
+type Query {
+    getOrder(id: String!): Order!
+}
+
+type Order {
+    id: String!
+    products: [String!]
+    createdBy: String!
+    createdAt: LocalDateTime!
+    updatedBy: String!
+    updatedAt: LocalDateTime!
+}
