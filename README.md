@@ -76,6 +76,40 @@ Response
 }
 ```
 
+## GraphQL DGS
+
+[GraphQL DGS](https://netflix.github.io/dgs/) is a framework built on top of GraphQL with more improvements.
+
+This is a sample request.
+```
+curl --location 'http://localhost:50001/graphql' \
+--header 'Content-Type: application/json' \
+--data '{"query":"query GetOrder($id : String!) {\n    getOrder(id: $id) {\n        id\n        products\n        createdBy\n        createdAt\n        updatedBy\n        updatedAt\n    }\n}\n","variables":{"id":"0a5eb04756f54776ac7752d3c8fae45b"}}'
+```
+
+Response
+```json
+{
+    "data":
+    {
+        "getOrder":
+        {
+            "id": "0a5eb04756f54776ac7752d3c8fae45b",
+            "products":
+            [
+                "car",
+                "bike",
+                "house"
+            ],
+            "createdBy": "20825389f950461b8766c051b9182dd4",
+            "createdAt": "2022-11-27T00:00:00Z",
+            "updatedBy": "cca4806536fe4b218c12cdcde4d173df",
+            "updatedAt": "2022-11-28T00:00:00Z"
+        }
+    }
+}
+```
+
 ## Problem Details RFC-7807
 
 Vinci uses [Spring 6's Problem Details](https://docs.spring.io/spring-framework/docs/6.0.0-RC1/reference/html/web.html#mvc-ann-rest-exceptions) to keep error responses consistent across microservices.

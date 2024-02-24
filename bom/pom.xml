@@ -80,6 +80,10 @@
         <osMavenPluginVersion>1.7.0</osMavenPluginVersion>
         <grpcSpringBootStarterVersion>2.14.0.RELEASE</grpcSpringBootStarterVersion>
         <protobufJavaVersion>3.22.2</protobufJavaVersion>
+        <graphQlDgsPlatformDependenciesVersion>6.0.5</graphQlDgsPlatformDependenciesVersion>
+        <graphqlCodeGenMavenPluginVersion>1.24</graphqlCodeGenMavenPluginVersion>
+        <graphDateTimeDgsStarterVersion>6.0.0</graphDateTimeDgsStarterVersion>
+        <graphqlDatetimeDgsStarterVersion>6.0.0</graphqlDatetimeDgsStarterVersion>
     </properties>
 
     <dependencyManagement>
@@ -305,6 +309,27 @@
                 <version>${protobufJavaVersion}</version>
                 <scope>runtime</scope>
             </dependency>
+
+            <!--
+                DGS parent pom.
+                See https://netflix.github.io/dgs/getting-started/#adding-the-dgs-framework-dependency
+            -->
+            <dependency>
+                <groupId>com.netflix.graphql.dgs</groupId>
+                <artifactId>graphql-dgs-platform-dependencies</artifactId>
+                <version>${graphQlDgsPlatformDependenciesVersion}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+            <!--
+                Use RFC-3339-compatible date time scalars for GraphQL Java implementation.
+                See https://github.com/tailrocks/graphql-java-datetime#summary
+            -->
+            <dependency>
+                <groupId>com.tailrocks.graphql</groupId>
+                <artifactId>graphql-datetime-dgs-starter</artifactId>
+                <version>${graphqlDatetimeDgsStarterVersion}</version>
+            </dependency>
         </dependencies>
     </dependencyManagement>
 
@@ -500,6 +525,24 @@
                             </goals>
                         </execution>
                     </executions>
+                </plugin>
+
+                <!--
+                    GraphQL codegen
+                    See https://github.com/deweyjose/graphqlcodegen#usage
+                -->
+                <plugin>
+                    <groupId>io.github.deweyjose</groupId>
+                    <artifactId>graphqlcodegen-maven-plugin</artifactId>
+                    <version>${graphqlCodeGenMavenPluginVersion}</version>
+                </plugin>
+                <!--
+                    Add subdirectories of "generated-sources" to the classpath.
+                    See https://github.com/deweyjose/graphqlcodegen/issues/98#issuecomment-1764577123
+                -->
+                <plugin>
+                    <groupId>org.codehaus.mojo</groupId>
+                    <artifactId>build-helper-maven-plugin</artifactId>
                 </plugin>
             </plugins>
         </pluginManagement>

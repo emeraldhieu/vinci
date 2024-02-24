@@ -161,6 +161,21 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-devtools</artifactId>
         </dependency>
+
+        <!-- Use DGS -->
+        <dependency>
+            <groupId>com.netflix.graphql.dgs</groupId>
+            <artifactId>graphql-dgs-spring-boot-starter</artifactId>
+        </dependency>
+
+        <!--
+            Use RFC-3339-compatible date time scalars for GraphQL Java implementation.
+            See https://github.com/tailrocks/graphql-java-datetime#summary
+        -->
+        <dependency>
+            <groupId>com.tailrocks.graphql</groupId>
+            <artifactId>graphql-datetime-dgs-starter</artifactId>
+        </dependency>
     </dependencies>
 
     <build>
@@ -257,6 +272,58 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-failsafe-plugin</artifactId>
+            </plugin>
+
+            <!--
+                GraphQL codegen
+                See https://github.com/deweyjose/graphqlcodegen#usage
+            -->
+            <plugin>
+                <groupId>io.github.deweyjose</groupId>
+                <artifactId>graphqlcodegen-maven-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>generate</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <schemaPaths>
+                        <param>src/main/resources/schema/scalars.graphqls</param>
+                        <param>src/main/resources/schema/schema.graphqls</param>
+                    </schemaPaths>
+                    <packageName>com.emeraldhieu.vinci.order.vinci.graphql</packageName>
+                    <addGeneratedAnnotation>true</addGeneratedAnnotation>
+                    <!--
+                        Explicitly nest graphQL generated source to "graphql"
+                        to avoid conflicting with Open API's generated source
+                        See See https://github.com/deweyjose/graphqlcodegen/issues/98#issuecomment-1764577123
+                    -->
+                    <outputDir>${project.build.directory}/generated-sources/graphql</outputDir>
+                </configuration>
+            </plugin>
+            <!--
+                Add subdirectories of "generated-sources" to the classpath.
+                See https://github.com/deweyjose/graphqlcodegen/issues/98#issuecomment-1764577123
+            -->
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>build-helper-maven-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <phase>generate-sources</phase>
+                        <goals>
+                            <goal>add-source</goal>
+                        </goals>
+                        <configuration>
+                            <sources>
+                                <source>${project.build.directory}/generated-sources/graphql</source>
+                                <source>${project.build.directory}/generated-sources/src/main/java</source>
+                            </sources>
+                        </configuration>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
     </build>
