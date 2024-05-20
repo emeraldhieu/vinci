@@ -10,7 +10,10 @@ spring:
     # Drop the existing to repopulate the whole database
     drop-first: true
     # Used for development to update the changelogs continuously
-    clear-checksums: true
+    # clear-checksums: true
+    # Temporarily set it to false to resolve an issue from Liquibase 4.24
+    # See https://github.com/liquibase/liquibase/issues/5610#issuecomment-2024174007
+    clear-checksums: false
   kafka:
     bootstrap-servers: "localhost:9092"
     properties:
