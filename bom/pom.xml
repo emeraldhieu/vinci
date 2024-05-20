@@ -48,7 +48,7 @@
         <springCloudVersion>2023.0.1</springCloudVersion>
         <mavenS3WagonVersion>1.3.3</mavenS3WagonVersion>
         <springCloudSleuthOtelVersion>1.1.0-M6</springCloudSleuthOtelVersion>
-        <springDocOpenApiUiVersion>1.6.9</springDocOpenApiUiVersion>
+        <springDocOpenApiUiVersion>1.8.0</springDocOpenApiUiVersion>
         <mavenResourcesPluginVersion>3.2.0</mavenResourcesPluginVersion>
         <mavenSurefirePluginVersion>2.22.2</mavenSurefirePluginVersion>
         <mavenFailsafePluginVersion>2.22.2</mavenFailsafePluginVersion>
@@ -67,7 +67,7 @@
         <mustacheVersion>0.9.10</mustacheVersion>
         <lombokMapstructBindingVersion>0.2.0</lombokMapstructBindingVersion>
         <liquibaseSlf4jVersion>4.1.0</liquibaseSlf4jVersion>
-        <springDocOpenApiStarterWebMvcUiVersion>2.0.0</springDocOpenApiStarterWebMvcUiVersion>
+        <springDocOpenApiStarterWebMvcUiVersion>2.5.0</springDocOpenApiStarterWebMvcUiVersion>
         <guavaVersion>31.1-jre</guavaVersion>
         <hypersistenceUtilsHibernate63Version>3.7.5</hypersistenceUtilsHibernate63Version>
         <kafkaAvroSerializerVersion>7.3.0</kafkaAvroSerializerVersion>
