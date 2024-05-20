@@ -84,6 +84,7 @@
         <graphqlCodeGenMavenPluginVersion>1.24</graphqlCodeGenMavenPluginVersion>
         <graphDateTimeDgsStarterVersion>6.0.0</graphDateTimeDgsStarterVersion>
         <graphqlDatetimeDgsStarterVersion>6.0.0</graphqlDatetimeDgsStarterVersion>
+        <testContainersVersion>1.19.8</testContainersVersion>
     </properties>
 
     <dependencyManagement>
@@ -331,6 +332,15 @@
                 <groupId>com.tailrocks.graphql</groupId>
                 <artifactId>graphql-datetime-dgs-starter</artifactId>
                 <version>${graphqlDatetimeDgsStarterVersion}</version>
+            </dependency>
+
+            <!-- Testcontainers dependency management -->
+            <dependency>
+                <groupId>org.testcontainers</groupId>
+                <artifactId>testcontainers-bom</artifactId>
+                <version>${testContainersVersion}</version>
+                <type>pom</type>
+                <scope>import</scope>
             </dependency>
         </dependencies>
     </dependencyManagement>
