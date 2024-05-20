@@ -136,12 +136,14 @@
         </dependency>
 
         <!--
-            Use @JsonType
-            See https://github.com/vladmihalcea/hibernate-types#hibernate-6
-         -->
+            Hibernate support for Spring 6
+            For example, "io.hypersistence.utils.hibernate.type.json.JsonType"
+            Mind that Hibernate Types has been renamed to Hypersistence Utils.
+            See https://github.com/vladmihalcea/hypersistence-utils?tab=readme-ov-file#hibernate-64-and-63
+        -->
         <dependency>
-            <groupId>com.vladmihalcea</groupId>
-            <artifactId>hibernate-types-60</artifactId>
+            <groupId>io.hypersistence</groupId>
+            <artifactId>hypersistence-utils-hibernate-63</artifactId>
         </dependency>
 
         <!-- Use KafkaTemplate -->
