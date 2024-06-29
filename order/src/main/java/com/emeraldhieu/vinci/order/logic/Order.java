@@ -50,7 +50,7 @@ public class Order {
     private String externalId;
 
     @Type(JsonType.class)
-    @Column(nullable = false)
+    @Column(nullable = false, columnDefinition = "json")
     private List<String> products;
 
     @Column(nullable = false)
