@@ -1,6 +1,6 @@
 spring:
   profiles:
-    active: local # Activate "local" profile by default
+    active: local # Activate profile "local" by default
   jackson:
     default-property-inclusion: non_null
   messages:
