@@ -1,4 +1,6 @@
 spring:
+  profiles:
+    active: test # Activate profile "test" by default
   jackson:
     default-property-inclusion: non_null
   messages:
@@ -28,6 +30,15 @@ spring:
     producer:
       key-serializer: io.confluent.kafka.serializers.KafkaAvroSerializer
       value-serializer: io.confluent.kafka.serializers.KafkaAvroSerializer
+    consumer:
+      key-deserializer: io.confluent.kafka.serializers.KafkaAvroDeserializer
+      value-deserializer: io.confluent.kafka.serializers.KafkaAvroDeserializer
+      # Determine which offset to start reading from if the offset doesn't exist on the server.
+      # See https://docs.confluent.io/platform/current/installation/configuration/consumer-configs.html#auto-offset-reset
+      auto-offset-reset: latest
+    properties:
+      # Deserialize to the generated Avro class rather than a GenericRecord type
+      specific.avro.reader: true
 server:
   tomcat:
     # Allow pipe character in URL to support passing commas such as "createdAt,asc"
@@ -48,5 +59,6 @@ management:
 application:
   kafka:
     topic: orders
-    partitions: 2
+    partitions: 1
     replicationFactor: 1
+    groupId: consumer

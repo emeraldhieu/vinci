@@ -1,0 +1,9 @@
+spring:
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+
+logging:
+  level:
+    org.springframework.core.io.support: DEBUG
+    org.springframework.context.annotation: DEBUG

@@ -19,6 +19,7 @@ jobs:
           java-version: '17'
           distribution: 'temurin'
           cache: maven
+
       - name: Build bom
         run: mvn clean install
         working-directory: bom

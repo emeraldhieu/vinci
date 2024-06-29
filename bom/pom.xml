@@ -84,6 +84,7 @@
         <graphqlCodeGenMavenPluginVersion>1.24</graphqlCodeGenMavenPluginVersion>
         <graphDateTimeDgsStarterVersion>6.0.0</graphDateTimeDgsStarterVersion>
         <graphqlDatetimeDgsStarterVersion>6.0.0</graphqlDatetimeDgsStarterVersion>
+        <testContainersVersion>1.19.8</testContainersVersion>
     </properties>
 
     <dependencyManagement>
@@ -332,6 +333,15 @@
                 <artifactId>graphql-datetime-dgs-starter</artifactId>
                 <version>${graphqlDatetimeDgsStarterVersion}</version>
             </dependency>
+
+            <!-- Testcontainers dependency management -->
+            <dependency>
+                <groupId>org.testcontainers</groupId>
+                <artifactId>testcontainers-bom</artifactId>
+                <version>${testContainersVersion}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
         </dependencies>
     </dependencyManagement>
 
@@ -567,6 +577,12 @@
                             <!-- Bind the goal to the package lifecycle -->
                             <goal>build-image-no-fork</goal>
                         </goals>
+                        <!--
+                            Attach the execution to the phase "post-integration-test" of the failsafe plugin.
+                            Otherwise, the phase "repackage" build will run before the phase "integration-test".
+                            See https://stackoverflow.com/questions/50705270/mvn-spring-boot-plugin-breaks-integration-testing#59677153
+                         -->
+                        <phase>post-integration-test</phase>
                     </execution>
                 </executions>
                 <configuration>
