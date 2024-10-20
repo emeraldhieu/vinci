@@ -1,4 +1,6 @@
 spring:
+  profiles:
+    active: local
   jackson:
     default-property-inclusion: non_null
   messages:
