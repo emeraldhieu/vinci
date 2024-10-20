@@ -1,0 +1,14 @@
+scrape_configs:
+  - job_name: 'Prometheus'
+    scrape_interval: 5s
+    static_configs:
+      - targets: [ "localhost:9090" ]
+  - job_name: 'Order'
+    metrics_path: '/actuator/prometheus'
+    scrape_interval: 5s
+    static_configs:
+      - targets: [
+          "host.docker.internal:50001", # The app running on the host machine
+        ]
+        labels:
+          application: "OrderApp"
